@@ -1,16 +1,21 @@
-# yapple
+## YAPPLE FOLDER STRUCTURE
 
-A new Flutter project.
+1. the assets folder is for images, icons, etc
+2. the lib folder contains all the code, inside it:
 
-## Getting Started
+    - the "firebase" folder will contain the backend/database functions of the app.
 
-This project is a starting point for a Flutter application.
+    - the "models" folder will contain our model classes like User, Course etc
 
-A few resources to get you started if this is your first Flutter project:
+    - the "widgets" folder will contain reusable and customizable widgets that we will use multiple times like a button, text field...
+  
+    - the "pages" folder will contain 4 different folders that will hold all of the different pages :
+        - the "globals" will contain the pages that can be accessed by all users, like login, register etc
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+        - the "navigation" folder will contain 2 files for the navigation (navbar) for both students and teachers.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+        - the "students" folder will contain all pages related to students.
+
+        - the "teachers" folder will contain all pages related to teachers.
+    - the main.dart launches the app
+
