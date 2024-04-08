@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "Welcome back! Please enter your details.",
+                    "hei tehre",
                     style: TextStyle(
                       color: Theme.of(context)
                           .colorScheme
