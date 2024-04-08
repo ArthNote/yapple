@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 import '../../widgets/MyButton.dart';
+import '../students/chats.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -35,7 +36,7 @@ class LoginPage extends StatelessWidget {
                         size: 50,
                       ),
                       SizedBox(
-                        width: size.width - 120,
+                        width: size.width * 0.68,
                         child: Divider(
                           height: 5,
                           thickness: 1,
@@ -109,6 +110,14 @@ class LoginPage extends StatelessWidget {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     textColor: Theme.of(context).colorScheme.tertiary,
                     label: "Log in",
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatsPage(),
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(
                     height: 30,

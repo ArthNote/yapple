@@ -8,11 +8,13 @@ class MyButton extends StatelessWidget {
     required this.backgroundColor,
     required this.textColor,
     required this.label,
+    required this.onPressed,
   });
 
   final Color backgroundColor;
   final Color textColor;
   final String label;
+  final Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class MyButton extends StatelessWidget {
       width: double.infinity,
       height: 60,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         child: Text(
           label,
           style: TextStyle(
