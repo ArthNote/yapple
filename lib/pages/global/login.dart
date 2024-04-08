@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "salam to your account",
+                    "aaaaaa to your account",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 30,
