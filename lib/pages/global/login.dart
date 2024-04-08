@@ -59,7 +59,7 @@ class LoginPage extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "Nah I'd enter my details.",
+                    "Welcome back! Please enter your details.",
                     style: TextStyle(
                       color: Theme.of(context)
                           .colorScheme
