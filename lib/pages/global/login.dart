@@ -48,7 +48,7 @@ class LoginPage extends StatelessWidget {
                     height: 30,
                   ),
                   Text(
-                    "Log in to your account",
+                    "Log in to your accounts",
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.tertiary,
                       fontSize: 32,
