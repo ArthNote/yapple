@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.light(
           background: Color.fromRGBO(21, 21, 21, 1),
-          primary: Color.fromRGBO(118, 171, 174, 1),
+          primary: Color.fromRGBO(80, 154, 165, 1),
           secondary: Color.fromRGBO(39, 39, 40, 1),
           tertiary: Color.fromRGBO(238, 238, 238, 1),
         ),
