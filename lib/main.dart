@@ -16,12 +16,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'YAPPLE',
-      theme: ThemeData(
-        colorScheme: ColorScheme.light(
+      themeMode: ThemeMode.light,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(
           background: Color.fromRGBO(21, 21, 21, 1),
-          primary: Color.fromRGBO(80, 154, 165, 1),
-          secondary: Color.fromRGBO(39, 39, 40, 1),
-          tertiary: Color.fromRGBO(238, 238, 238, 1),
+          primary: Color.fromRGBO(201, 68, 68, 1),
+          secondary: Color.fromRGBO(66, 66, 66, 1),
+          tertiary: Color.fromRGBO(221, 221, 221, 1),
+        ),
+      ),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.light(
+          background: Color.fromRGBO(238, 238, 238, 1),
+          primary: Color.fromRGBO(250, 112, 112, 1),
+          secondary: Color.fromRGBO(206, 206, 206, 1),
+          tertiary: Color.fromRGBO(21, 21, 21, 1),
         ),
       ),
       home: LoginPage(),
