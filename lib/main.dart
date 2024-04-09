@@ -29,8 +29,11 @@ class MyApp extends StatelessWidget {
       ),
       theme: ThemeData(
         brightness: Brightness.light,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color.fromRGBO(255, 252, 252, 1),
+        ),
         colorScheme: ColorScheme.light(
-          background: Color.fromRGBO(238, 238, 238, 1),
+          background: Color.fromRGBO(255, 252, 252, 1),
           primary: Color.fromRGBO(250, 112, 112, 1),
           secondary: Color.fromRGBO(206, 206, 206, 1),
           tertiary: Color.fromRGBO(21, 21, 21, 1),

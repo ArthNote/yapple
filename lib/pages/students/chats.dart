@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/global/login.dart';
+import 'package:yapple/pages/students/singleChat.dart';
 import 'package:yapple/widgets/ChatItem.dart';
 
 class ChatsPage extends StatelessWidget {
@@ -18,19 +19,14 @@ class ChatsPage extends StatelessWidget {
             'Chats',
             style: TextStyle(
               color: Theme.of(context).colorScheme.tertiary,
+              fontWeight: FontWeight.w500,
+              fontSize: 25,
             ),
           ),
-          centerTitle: true,
+          centerTitle: false,
           elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          leading: Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Icon(
-              Icons.star_half_sharp,
-              color: Theme.of(context).colorScheme.tertiary,
-              size: 35,
-            ),
-          ),
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          automaticallyImplyLeading: false,
           actions: [
             IconButton(
               onPressed: () {
@@ -46,8 +42,19 @@ class ChatsPage extends StatelessWidget {
             )
           ],
           bottom: TabBar(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              indicator: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(10),
+                shape: BoxShape.rectangle,
+              ),
               dividerColor: Colors.transparent,
+              indicatorSize: TabBarIndicatorSize.tab,
               indicatorColor: Theme.of(context).colorScheme.primary,
+              labelColor: Theme.of(context).colorScheme.background,
+              unselectedLabelStyle:
+                  TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               tabs: [
                 Tab(
                   text: "Students",
@@ -85,13 +92,22 @@ class _BodyState extends State<Body> {
             child: ListView.builder(
                 padding: EdgeInsets.only(bottom: 8, top: 10),
                 itemCount: 12,
-                itemBuilder: (context, index) => (ChatItem(
-                    chatName: "the weird bully",
-                    last_msg: "i am gonna kick ur ass u nigga",
-                    time_sent: "2:12 pm",
-                    runread_msg: 3,
-                    senderId: "senderId",
-                    receiverId: "receiverId"))),
+                itemBuilder: (context, index) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SingleChatPage()),
+                        );
+                      },
+                      child: (ChatItem(
+                          chatName: "the weird bully",
+                          last_msg: "i am gonna kick ur ass u nigga",
+                          time_sent: "2:12 pm",
+                          runread_msg: 3,
+                          senderId: "senderId",
+                          receiverId: "receiverId")),
+                    )),
           )
         ]),
       ),
