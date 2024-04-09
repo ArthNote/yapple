@@ -13,7 +13,7 @@ class ChatsPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           title: Text(
             'Chats',
@@ -24,8 +24,8 @@ class ChatsPage extends StatelessWidget {
             ),
           ),
           centerTitle: false,
-          elevation: 0,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          elevation: 0,
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
@@ -48,8 +48,8 @@ class ChatsPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 shape: BoxShape.rectangle,
               ),
-              dividerColor: Colors.transparent,
               indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: EdgeInsets.symmetric(vertical: 3),
               indicatorColor: Theme.of(context).colorScheme.primary,
               labelColor: Theme.of(context).colorScheme.background,
               unselectedLabelStyle:
@@ -90,14 +90,15 @@ class _BodyState extends State<Body> {
         child: Column(children: [
           Expanded(
             child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 8, top: 10),
+                padding: EdgeInsets.only(bottom: 8, top: 0),
                 itemCount: 12,
                 itemBuilder: (context, index) => GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SingleChatPage()),
+                              builder: (context) => SingleChatPage(
+                                  chatName: "Adolf Hitler", isGroup: false)),
                         );
                       },
                       child: (ChatItem(
@@ -114,38 +115,58 @@ class _BodyState extends State<Body> {
 
       //teachers tab
       Padding(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Column(children: [
           Expanded(
             child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 8, top: 10),
+                padding: EdgeInsets.only(bottom: 8, top: 0),
                 itemCount: 12,
-                itemBuilder: (context, index) => (ChatItem(
-                    chatName: "spoofing",
-                    last_msg: "are u familiar with ibm?",
-                    time_sent: "12:00 am",
-                    runread_msg: 22,
-                    senderId: "senderId",
-                    receiverId: "receiverId"))),
+                itemBuilder: (context, index) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SingleChatPage(
+                                  chatName: "Spoofing", isGroup: false)),
+                        );
+                      },
+                      child: (ChatItem(
+                          chatName: "spoofing",
+                          last_msg: "are u familiar with ibm?",
+                          time_sent: "12:00 am",
+                          runread_msg: 22,
+                          senderId: "senderId",
+                          receiverId: "receiverId")),
+                    )),
           )
         ]),
       ),
 
       //groups tab
       Padding(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Column(children: [
           Expanded(
             child: ListView.builder(
-                padding: EdgeInsets.only(bottom: 8, top: 10),
+                padding: EdgeInsets.only(bottom: 8, top: 0),
                 itemCount: 12,
-                itemBuilder: (context, index) => (ChatItem(
-                    chatName: "hamas",
-                    last_msg: "planted the bomb for salwa",
-                    time_sent: "2:12 pm",
-                    runread_msg: 1,
-                    senderId: "senderId",
-                    receiverId: "receiverId"))),
+                itemBuilder: (context, index) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SingleChatPage(
+                                  chatName: "hamas", isGroup: true)),
+                        );
+                      },
+                      child: (ChatItem(
+                          chatName: "hamas",
+                          last_msg: "planted the bomb for salwa",
+                          time_sent: "2:12 pm",
+                          runread_msg: 1,
+                          senderId: "senderId",
+                          receiverId: "receiverId")),
+                    )),
           )
         ]),
       ),

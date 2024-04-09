@@ -1,91 +1,163 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:yapple/widgets/ChatInput.dart';
+import 'package:yapple/widgets/ChatMessage.dart';
+import 'package:yapple/widgets/GroupMessage.dart';
 
 class SingleChatPage extends StatelessWidget {
-  const SingleChatPage({super.key});
+  SingleChatPage({super.key, required this.chatName, required this.isGroup});
+  final String chatName;
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        bottom: PreferredSize(
-            preferredSize: Size.fromHeight(1),
-            child: Container(
-              height: 1,
-              color: Theme.of(context).colorScheme.primary,
+        leadingWidth: 40,
+        title: ListTile(
+            contentPadding: EdgeInsets.all(0),
+            title: Text(
+              chatName,
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            ),
+            leading: CircleAvatar(
+              radius: 20,
+              child: Text(
+                chatName.substring(0, 1).toUpperCase(),
+                style: TextStyle(fontSize: 18),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             )),
-        title: Text(
-          'Spoofing',
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Divider(
+            height: 1,
+            thickness: 1,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
-        centerTitle: true,
+        actions: [
+          PopupMenuButton(
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: ListTile(
+                  title: Text("View Members"),
+                  leading: Icon(Icons.groups_2),
+                ),
+              )
+            ],
+          )
+        ],
       ),
-      body: Body(),
+      body: Body(
+        isGroup: isGroup,
+      ),
     );
   }
 }
 
 class Body extends StatelessWidget {
-  const Body({super.key});
+  Body({super.key, required this.isGroup});
+  final bool isGroup;
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
-      Expanded(
-        child: ListView.builder(
-            itemCount: 20,
-            itemBuilder: (context, index) => (Text('data $index'))),
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-        child: Row(children: [
-          Expanded(
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              minLines: 1,
-              maxLines: 100,
-              controller: null,
-              decoration: InputDecoration(
-                labelStyle: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 17,
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () => {},
-                  icon: Icon(
-                    Icons.send_rounded,
-                    color: Theme.of(context).colorScheme.primary,
+      isGroup
+          ? Expanded(
+              child: ListView(
+                children: [
+                  GroupMessage(
+                    message: "heey",
+                    byMe: true,
+                    time_sent: "12:00 pm",
+                    isRead: true,
                   ),
-                  iconSize: 30,
-                  splashColor: Colors.blue,
-                ),
-                floatingLabelStyle: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 1.5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.blue,
-                    width: 1.0,
-                    style: BorderStyle.solid,
+                  GroupMessage(
+                      message: "heey",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: true),
+                  GroupMessage(
+                      message:
+                          "heey sssssssssss ssssssssssssssssssssssssssssssssss",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  GroupMessage(
+                      message: "hee sssssssssssssssssssssssyssssss",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  GroupMessage(
+                      message: "heey",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  GroupMessage(
+                      message: "heey",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  GroupMessage(
+                      message: "heey",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                ],
+              ),
+            )
+          : Expanded(
+              child: ListView(
+                children: [
+                  ChatMessage(
+                    message: "heey",
+                    byMe: true,
+                    time_sent: "12:00 pm",
+                    isRead: true,
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                fillColor: Colors.white,
-                filled: true,
-                hintText: "Type your message",
+                  ChatMessage(
+                      message: "heey",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: true),
+                  ChatMessage(
+                      message:
+                          "heey sssssssssss ssssssssssssssssssssssssssssssssss",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  ChatMessage(
+                      message: "hee sssssssssssssssssssssssyssssss",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  ChatMessage(
+                      message: "heey",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  ChatMessage(
+                      message: "heey",
+                      byMe: false,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                  ChatMessage(
+                      message: "heey",
+                      byMe: true,
+                      time_sent: "12:00 pm",
+                      isRead: false),
+                ],
               ),
             ),
-          ),
-        ]),
-      )
+      ChatInput()
     ]);
   }
 }

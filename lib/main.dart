@@ -20,6 +20,10 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color.fromRGBO(36, 36, 36, 1),
+        ),
+        cardColor: Color.fromRGBO(66, 66, 66, 1),
         colorScheme: ColorScheme.dark(
           background: Color.fromRGBO(21, 21, 21, 1),
           primary: Color.fromRGBO(201, 68, 68, 1),
@@ -32,8 +36,9 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(
           backgroundColor: Color.fromRGBO(255, 252, 252, 1),
         ),
+        cardColor: Color.fromRGBO(66, 66, 66, 1),
         colorScheme: ColorScheme.light(
-          background: Color.fromRGBO(255, 252, 252, 1),
+          background: Color.fromRGBO(238, 238, 238, 1),
           primary: Color.fromRGBO(250, 112, 112, 1),
           secondary: Color.fromRGBO(206, 206, 206, 1),
           tertiary: Color.fromRGBO(21, 21, 21, 1),
