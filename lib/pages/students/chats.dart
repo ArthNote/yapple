@@ -26,6 +26,13 @@ class ChatsPage extends StatelessWidget {
             size: 35,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.logout),
+            tooltip: "Logout",
+          )
+        ],
       ),
       body: Body(),
     );
