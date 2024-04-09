@@ -42,18 +42,33 @@ class SingleChatPage extends StatelessWidget {
           ),
         ),
         actions: [
-          PopupMenuButton(
-            color: Theme.of(context).appBarTheme.backgroundColor,
-            surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: ListTile(
-                  title: Text("View Members"),
-                  leading: Icon(Icons.groups_2),
-                ),
-              )
-            ],
-          )
+          isGroup
+              ? PopupMenuButton(
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  surfaceTintColor:
+                      Theme.of(context).appBarTheme.backgroundColor,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: ListTile(
+                        title: Text("View Members"),
+                        leading: Icon(Icons.groups_2_outlined),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: ListTile(
+                        title: Text("Add Members"),
+                        leading: Icon(Icons.person_add_alt_1_outlined),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: ListTile(
+                        title: Text("Remove Members"),
+                        leading: Icon(Icons.person_remove_outlined),
+                      ),
+                    ),
+                  ],
+                )
+              : SizedBox()
         ],
       ),
       body: Body(

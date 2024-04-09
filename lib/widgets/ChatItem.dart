@@ -82,8 +82,10 @@ class _ChatItemState extends State<ChatItem> {
             height: 8,
           ),
           Container(
-            height: 20,
-            width: 20,
+            height: 24,
+            width: widget.runread_msg.toString().length > 2
+                ? widget.runread_msg.toString().length * 10
+                : 24,
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),

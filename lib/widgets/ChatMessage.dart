@@ -75,16 +75,18 @@ class ChatMessage extends StatelessWidget {
                     SizedBox(
                       width: 5,
                     ),
-                    Icon(
-                      Icons.done_all,
-                      color: isRead
-                          ? Colors.blue
-                          : Theme.of(context)
-                              .colorScheme
-                              .tertiary
-                              .withOpacity(0.6),
-                      size: 17,
-                    )
+                    byMe
+                        ? Icon(
+                            Icons.done_all,
+                            color: isRead
+                                ? Colors.blue
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .tertiary
+                                    .withOpacity(0.6),
+                            size: 17,
+                          )
+                        : SizedBox()
                   ],
                 ),
               ),
