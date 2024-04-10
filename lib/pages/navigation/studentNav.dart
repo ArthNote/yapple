@@ -48,13 +48,12 @@ class _StudentNavbarState extends State<StudentNavbar> {
         height: 80,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
           color: Theme.of(context).appBarTheme.backgroundColor,
           boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
         ),
         child: GNav(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
-          activeColor: Theme.of(context).colorScheme.background,
+          activeColor: Colors.white,
           tabBackgroundColor: Theme.of(context).colorScheme.primary,
           gap: 8,
           onTabChange: (pageIndex) {
@@ -63,18 +62,22 @@ class _StudentNavbarState extends State<StudentNavbar> {
           padding: EdgeInsets.all(12),
           tabs: [
             GButton(
+              iconActiveColor: Colors.white,
               icon: index == 0 ? Icons.home : Icons.home_outlined,
               text: 'Home',
             ),
             GButton(
+              iconActiveColor: Colors.white,
               icon: index == 1 ? Icons.school : Icons.school_outlined,
               text: 'Courses',
             ),
             GButton(
+              iconActiveColor: Colors.white,
               icon: index == 2 ? Icons.chat : Icons.chat_outlined,
               text: "Chats",
             ),
             GButton(
+              iconActiveColor: Colors.white,
               icon: index == 3 ? Icons.person : Icons.person_outline,
               text: 'Profile',
             )

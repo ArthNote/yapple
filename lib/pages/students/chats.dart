@@ -27,20 +27,6 @@ class ChatsPage extends StatelessWidget {
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
           automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                );
-              },
-              icon: Icon(Icons.logout),
-              tooltip: "Logout",
-            )
-          ],
           bottom: TabBar(
               padding: EdgeInsets.symmetric(horizontal: 10),
               indicator: BoxDecoration(
@@ -155,8 +141,8 @@ class _BodyState extends State<Body> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                  chatName: "hamas", isGroup: true)),
+                              builder: (context) =>
+                                  ChatPage(chatName: "hamas", isGroup: true)),
                         );
                       },
                       child: (ChatItem(

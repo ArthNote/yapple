@@ -30,7 +30,9 @@ class MenuItem extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-            fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.w500),
       ),
       trailing: Container(
         padding: EdgeInsets.all(10),
@@ -39,7 +41,7 @@ class MenuItem extends StatelessWidget {
             ),
         child: Icon(
           Icons.arrow_forward_ios,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.tertiary,
           size: 14,
         ),
       ),
