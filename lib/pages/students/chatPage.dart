@@ -5,8 +5,8 @@ import 'package:yapple/widgets/ChatInput.dart';
 import 'package:yapple/widgets/ChatMessage.dart';
 import 'package:yapple/widgets/GroupMessage.dart';
 
-class SingleChatPage extends StatelessWidget {
-  SingleChatPage({super.key, required this.chatName, required this.isGroup});
+class ChatPage extends StatelessWidget {
+  ChatPage({super.key, required this.chatName, required this.isGroup});
   final String chatName;
   final bool isGroup;
 

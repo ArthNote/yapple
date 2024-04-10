@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:yapple/pages/students/chats.dart';
+import 'package:yapple/pages/students/courses.dart';
+import 'package:yapple/pages/students/home.dart';
 import 'package:yapple/pages/students/profile.dart';
 
 class StudentNavbar extends StatefulWidget {
@@ -23,8 +25,8 @@ class _StudentNavbarState extends State<StudentNavbar> {
     pageController = PageController(initialPage: index);
 
     pages = [
-      ChatsPage(),
-      StudentProfile(),
+      HomePage(),
+      CoursesPage(),
       ChatsPage(),
       StudentProfile(),
     ];
@@ -43,10 +45,12 @@ class _StudentNavbarState extends State<StudentNavbar> {
         },
       ),
       bottomNavigationBar: Container(
+        height: 80,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Theme.of(context).appBarTheme.backgroundColor,
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
         ),
         child: GNav(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
@@ -59,19 +63,19 @@ class _StudentNavbarState extends State<StudentNavbar> {
           padding: EdgeInsets.all(12),
           tabs: [
             GButton(
-              icon: Icons.home_outlined,
+              icon: index == 0 ? Icons.home : Icons.home_outlined,
               text: 'Home',
             ),
             GButton(
-              icon: Icons.school_outlined,
+              icon: index == 1 ? Icons.school : Icons.school_outlined,
               text: 'Courses',
             ),
             GButton(
-              icon: Icons.chat_outlined,
+              icon: index == 2 ? Icons.chat : Icons.chat_outlined,
               text: "Chats",
             ),
             GButton(
-              icon: Icons.person_outline,
+              icon: index == 3 ? Icons.person : Icons.person_outline,
               text: 'Profile',
             )
           ],

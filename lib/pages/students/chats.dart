@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/global/login.dart';
-import 'package:yapple/pages/students/singleChat.dart';
+import 'package:yapple/pages/students/chatPage.dart';
 import 'package:yapple/widgets/ChatItem.dart';
 
 class ChatsPage extends StatelessWidget {
@@ -97,7 +97,7 @@ class _BodyState extends State<Body> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SingleChatPage(
+                              builder: (context) => ChatPage(
                                   chatName: "Adolf Hitler", isGroup: false)),
                         );
                       },
@@ -126,7 +126,7 @@ class _BodyState extends State<Body> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SingleChatPage(
+                              builder: (context) => ChatPage(
                                   chatName: "Spoofing", isGroup: false)),
                         );
                       },
@@ -155,7 +155,7 @@ class _BodyState extends State<Body> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SingleChatPage(
+                              builder: (context) => ChatPage(
                                   chatName: "hamas", isGroup: true)),
                         );
                       },
