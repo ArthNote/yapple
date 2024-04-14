@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 
+import '../../widgets/MyDrawer.dart';
+
 class StudentProfile extends StatelessWidget {
   const StudentProfile({super.key});
 
@@ -11,11 +13,12 @@ class StudentProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
+        drawer: MyDrawer(),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
         ),
         body: Body(),
       ),
@@ -69,7 +72,10 @@ class Body extends StatelessWidget {
                 SizedBox(height: 5),
                 Text(
                   "hitler@gmail.com",
-                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary, fontSize: 16,),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 16,
+                  ),
                 )
               ]),
             )),
@@ -83,7 +89,8 @@ class Body extends StatelessWidget {
               //give it a box shadow
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                  color:
+                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
                   spreadRadius: 1,
                   blurRadius: 7,
                 )

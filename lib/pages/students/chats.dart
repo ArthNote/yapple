@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/students/chatPage.dart';
 import 'package:yapple/widgets/ChatItem.dart';
+import 'package:yapple/widgets/MyDrawer.dart';
 
 class ChatsPage extends StatelessWidget {
   const ChatsPage({super.key});
@@ -13,6 +14,7 @@ class ChatsPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        drawer: MyDrawer(),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           title: Text(
@@ -26,7 +28,7 @@ class ChatsPage extends StatelessWidget {
           centerTitle: false,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           bottom: TabBar(
               padding: EdgeInsets.symmetric(horizontal: 10),
               indicator: BoxDecoration(

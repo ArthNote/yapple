@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
+import 'package:yapple/widgets/MyDrawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,6 +10,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
+        drawer: MyDrawer(),
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           title: Text(
@@ -20,7 +24,6 @@ class HomePage extends StatelessWidget {
           centerTitle: false,
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
-          automaticallyImplyLeading: false,
         ),
         body: Body(),
       ),
