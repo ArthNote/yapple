@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
+import 'package:yapple/pages/students/home.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 import '../../widgets/MyButton.dart';

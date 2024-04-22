@@ -69,7 +69,10 @@ class Body extends StatelessWidget {
                 SizedBox(height: 5),
                 Text(
                   "hitler@gmail.com",
-                  style: TextStyle(color: Theme.of(context).colorScheme.tertiary, fontSize: 16,),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 16,
+                  ),
                 )
               ]),
             )),
@@ -83,7 +86,8 @@ class Body extends StatelessWidget {
               //give it a box shadow
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                  color:
+                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
                   spreadRadius: 1,
                   blurRadius: 7,
                 )
