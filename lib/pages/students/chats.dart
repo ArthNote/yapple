@@ -5,7 +5,6 @@ import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/students/chatPage.dart';
 import 'package:yapple/widgets/ChatItem.dart';
 
-
 class ChatsPage extends StatelessWidget {
   const ChatsPage({super.key});
 
@@ -24,19 +23,10 @@ class ChatsPage extends StatelessWidget {
               forceElevated: innerBoxIsScrolled,
               surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
               snap: true,
-              title: Text(
-                'Chats',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 25,
-                ),
-              ),
               centerTitle: false,
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: 5,
-              automaticallyImplyLeading: true,
-              bottom: TabBar(
+              automaticallyImplyLeading: false,
+              title: TabBar(
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   indicator: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,

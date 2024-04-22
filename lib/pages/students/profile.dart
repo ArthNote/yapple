@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 
-
-
 class StudentProfile extends StatelessWidget {
   const StudentProfile({super.key});
 
@@ -13,12 +11,11 @@ class StudentProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
-
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
-          automaticallyImplyLeading: true,
+          automaticallyImplyLeading: false,
         ),
         body: Body(),
       ),

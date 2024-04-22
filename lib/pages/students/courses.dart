@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/material.dart';
 
 class CoursesPage extends StatelessWidget {
   const CoursesPage({super.key});
@@ -9,21 +10,7 @@ class CoursesPage extends StatelessWidget {
     return Scaffold(
       body: Scaffold(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        appBar: AppBar(
-          title: Text(
-            'Courses',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.w500,
-              fontSize: 25,
-            ),
-          ),
-          centerTitle: false,
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          elevation: 0,
-          automaticallyImplyLeading: true,
-        ),
-        body: Body(),
+        body: SafeArea(child: Body()),
       ),
     );
   }
