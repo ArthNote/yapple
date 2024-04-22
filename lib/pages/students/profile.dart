@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 
-import '../../widgets/MyDrawer.dart';
+
 
 class StudentProfile extends StatelessWidget {
   const StudentProfile({super.key});
@@ -13,7 +13,7 @@ class StudentProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
-        drawer: MyDrawer(),
+
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         appBar: AppBar(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
