@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:yapple/models/staticData.dart';
+import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,13 +24,13 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //news block
-          Container(
+        child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        //news block
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Container(
             height: 170,
             width: double.infinity,
             child: Center(
@@ -60,40 +62,60 @@ class Body extends StatelessWidget {
               boxShadow: [
                 BoxShadow(color: Colors.black12, blurRadius: 10),
               ],
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
+        ),
 
-          //modules horizental list
-          SizedBox(
-            height: 25,
+        //modules horizental list
+        SizedBox(
+          height: 25,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "My Modules",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              Text(
+                "View more",
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+              ),
+            ],
           ),
-          Text(
-            "My Modules",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.primary,
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SizedBox(
+            height: 160,
+            child: ListView(
+              padding: EdgeInsets.all(10),
+              scrollDirection: Axis.horizontal,
+              children: modules
+                  .map((module) => ModuleCardSM(
+                        moduleName: module['moduleName'].toString(),
+                        moduleCode: module['moduleCode'].toString(),
+                        moduleCategory: module['moduleCategory'].toString(),
+                        isStarred: module['isStarred'] as bool,
+                      ))
+                  .toList(),
             ),
           ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            height: 110,
-            width: 200,
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 10),
-              ],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text("Mobile & Web Technologies"),
-          )
-        ],
-      ),
+        ),
+      ],
     ));
   }
 }
