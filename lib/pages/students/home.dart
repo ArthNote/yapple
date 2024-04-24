@@ -60,7 +60,7 @@ class Body extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 10),
+                BoxShadow(color: Colors.black12, blurRadius: 5),
               ],
               borderRadius: BorderRadius.circular(10),
             ),
@@ -77,7 +77,7 @@ class Body extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "My Modules",
+                "Starred Modules",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

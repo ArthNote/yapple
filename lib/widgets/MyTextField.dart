@@ -8,12 +8,13 @@ class MyTextField extends StatefulWidget {
       required this.myController,
       required this.isPass,
       required this.hintText,
-      required this.icon});
+      required this.icon, required this.bgColor});
 
   final TextEditingController myController;
   final bool isPass;
   final String hintText;
   final IconData icon;
+  final Color bgColor;
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();
@@ -63,7 +64,7 @@ class _MyTextFieldState extends State<MyTextField> {
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
           ),
-          fillColor: Theme.of(context).colorScheme.secondary,
+          fillColor: widget.bgColor,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide.none,

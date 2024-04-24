@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 
@@ -85,12 +86,7 @@ class Body extends StatelessWidget {
           decoration: BoxDecoration(
               //give it a box shadow
               boxShadow: [
-                BoxShadow(
-                  color:
-                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 7,
-                )
+                BoxShadow(color: Colors.black12, blurRadius: 5),
               ],
               color: Theme.of(context).appBarTheme.backgroundColor,
               borderRadius: BorderRadius.only(
@@ -117,7 +113,12 @@ class Body extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(17, 24, 13, 0),
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  },
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(

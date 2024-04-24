@@ -31,7 +31,7 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 10),
+          BoxShadow(color: Colors.black12, blurRadius: 5),
         ],
         borderRadius: BorderRadius.circular(10),
       ),
