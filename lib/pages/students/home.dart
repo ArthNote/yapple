@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/widgets/ModuleCardMD.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class HomePage extends StatelessWidget {
@@ -66,7 +67,6 @@ class Body extends StatelessWidget {
             ),
           ),
         ),
-
         //modules horizental list
         SizedBox(
           height: 25,

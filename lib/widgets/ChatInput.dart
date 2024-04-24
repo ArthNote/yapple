@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
 
@@ -13,41 +13,48 @@ class ChatInput extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
       child: Row(children: [
         Expanded(
-          child: TextField(
-            keyboardType: TextInputType.multiline,
-            minLines: 1,
-            maxLines: 100,
-            controller: null,
-            decoration: InputDecoration(
-              labelStyle: TextStyle(
-                color: Colors.grey,
-                fontSize: 17,
-              ),
-              suffixIcon: IconButton(
-                onPressed: () => {},
-                icon: Icon(
-                  Icons.send_rounded,
-                  color: Theme.of(context).colorScheme.primary,
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 5),
+              ],
+            ),
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              minLines: 1,
+              maxLines: 100,
+              controller: null,
+              decoration: InputDecoration(
+                labelStyle: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 17,
                 ),
-                iconSize: 30,
-              ),
-              floatingLabelStyle:
-                  TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.white, width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  width: 1.0,
-                  color: Colors.transparent,
-                  style: BorderStyle.solid,
+                suffixIcon: IconButton(
+                  onPressed: () => {},
+                  icon: Icon(
+                    Icons.send_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  iconSize: 30,
                 ),
-                borderRadius: BorderRadius.circular(8),
+                floatingLabelStyle:
+                    TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 1.0,
+                    color: Colors.transparent,
+                    style: BorderStyle.solid,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                fillColor: Theme.of(context).appBarTheme.backgroundColor,
+                filled: true,
+                hintText: "Type your message...",
               ),
-              fillColor: Theme.of(context).appBarTheme.backgroundColor,
-              filled: true,
-              hintText: "Type your message...",
             ),
           ),
         ),
