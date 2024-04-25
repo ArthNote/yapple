@@ -86,16 +86,7 @@ class Body extends StatelessWidget {
           decoration: BoxDecoration(
               //give it a box shadow
               boxShadow: [
-<<<<<<< HEAD
-                BoxShadow(
-                  color:
-                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 7,
-                )
-=======
                 BoxShadow(color: Colors.black12, blurRadius: 5),
->>>>>>> yassin-testing
               ],
               color: Theme.of(context).appBarTheme.backgroundColor,
               borderRadius: BorderRadius.only(

@@ -21,11 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'YAPPLE',
       //toggle between light and dark to switch the theme
-<<<<<<< HEAD
-      themeMode: ThemeMode.light,
-=======
       themeMode: ThemeMode.system,
->>>>>>> yassin-testing
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         appBarTheme: AppBarTheme(
