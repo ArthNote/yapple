@@ -1,38 +1,68 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_local_variable
 
-class CoursesPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:yapple/models/staticData.dart';
+import 'package:yapple/widgets/ModuleCardMD.dart';
+import 'package:yapple/widgets/SearchField.dart';
+
+class CoursesPage extends StatefulWidget {
   const CoursesPage({super.key});
 
   @override
+  State<CoursesPage> createState() => _CoursesPageState();
+}
+
+class _CoursesPageState extends State<CoursesPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Scaffold(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        appBar: AppBar(
-          title: Text(
-            'Courses',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.w500,
-              fontSize: 25,
-            ),
-          ),
-          centerTitle: false,
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-        ),
-        body: Body(),
-      ),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      body: SafeArea(child: Body()),
     );
   }
 }
 
 class Body extends StatelessWidget {
-  const Body({super.key});
+  Body({super.key});
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    //get size of screen
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SearchField(
+            myController: searchController,
+            hintText: "Search",
+            icon: Icons.search,
+            bgColor: Colors.white,
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        //courses list
+        Expanded(
+          child: GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: 0.78,
+            mainAxisSpacing: 20,
+            crossAxisSpacing: 20,
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            children: modules
+                .map((module) => ModuleCardMD(
+                      isStarred: module['isStarred'] as bool,
+                      moduleName: module['moduleName'].toString(),
+                      moduleCategory: module['moduleCategory'].toString(),
+                      color: module['color'] as Color,
+                    ))
+                .toList(),
+          ),
+        ),
+      ],
+    );
   }
 }

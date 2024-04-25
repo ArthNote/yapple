@@ -76,6 +76,7 @@ class LoginPage extends StatelessWidget {
                       isPass: false,
                       hintText: "Enter your email",
                       icon: Icons.email_outlined,
+                      bgColor: Theme.of(context).colorScheme.secondary,
                     ),
                     SizedBox(
                       height: 25,
@@ -85,6 +86,7 @@ class LoginPage extends StatelessWidget {
                       isPass: true,
                       hintText: "Enter your password",
                       icon: Icons.lock_outline,
+                      bgColor: Theme.of(context).colorScheme.secondary,
                     ),
                     SizedBox(
                       height: 15,

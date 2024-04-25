@@ -14,46 +14,47 @@ class ChatsPage extends StatelessWidget {
       length: 3,
       child: Scaffold(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        appBar: AppBar(
-          title: Text(
-            'Chats',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.w500,
-              fontSize: 25,
+        body: NestedScrollView(
+          body: Body(),
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              floating: true,
+              forceElevated: innerBoxIsScrolled,
+              surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
+              snap: true,
+              centerTitle: false,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              automaticallyImplyLeading: false,
+              title: TabBar(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  indicator: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(10),
+                    shape: BoxShape.rectangle,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorPadding: EdgeInsets.symmetric(vertical: 3),
+                  indicatorColor: Theme.of(context).colorScheme.primary,
+                  labelColor: Theme.of(context).colorScheme.background,
+                  unselectedLabelStyle:
+                      TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  labelStyle:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  tabs: [
+                    Tab(
+                      text: "Students",
+                    ),
+                    Tab(
+                      text: "Teachers",
+                    ),
+                    Tab(
+                      text: "Groups",
+                    ),
+                  ]),
             ),
-          ),
-          centerTitle: false,
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          bottom: TabBar(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              indicator: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(10),
-                shape: BoxShape.rectangle,
-              ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: EdgeInsets.symmetric(vertical: 3),
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              labelColor: Theme.of(context).colorScheme.background,
-              unselectedLabelStyle:
-                  TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-              labelStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              tabs: [
-                Tab(
-                  text: "Students",
-                ),
-                Tab(
-                  text: "Teachers",
-                ),
-                Tab(
-                  text: "Groups",
-                ),
-              ]),
+          ],
         ),
-        body: Body(),
       ),
     );
   }
