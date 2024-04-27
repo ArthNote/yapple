@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardMD.dart';
 import 'package:yapple/widgets/SearchField.dart';
 
@@ -53,11 +54,22 @@ class Body extends StatelessWidget {
             crossAxisSpacing: 20,
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             children: modules
-                .map((module) => ModuleCardMD(
-                      isStarred: module['isStarred'] as bool,
-                      moduleName: module['moduleName'].toString(),
-                      moduleCategory: module['moduleCategory'].toString(),
-                      color: module['color'] as Color,
+                .map((module) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CourseDetailsPage(
+                                      moduleName:
+                                          module['moduleName'].toString(),
+                                    )));
+                      },
+                      child: ModuleCardMD(
+                        isStarred: module['isStarred'] as bool,
+                        moduleName: module['moduleName'].toString(),
+                        moduleCategory: module['moduleCategory'].toString(),
+                        color: module['color'] as Color,
+                      ),
                     ))
                 .toList(),
           ),

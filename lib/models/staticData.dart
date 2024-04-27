@@ -59,3 +59,18 @@ const modules = [
     "color": Color.fromARGB(255, 167, 88, 216),
   },
 ];
+
+const students = [
+  {
+    "name": "John Doe",
+    "email": "jdoe@me.com",
+  },
+  {
+    "name": "Jane Doe",
+    "email": "jdoe@me.com",
+  },
+  {
+    "name": "Adam Doe",
+    "email": "jdoe@me.com",
+  },
+];
