@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/students/courseMaterial.dart';
+import 'package:yapple/widgets/AssigmentItem.dart';
+import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
@@ -41,7 +44,7 @@ class CourseDetailsPage extends StatelessWidget {
             BodyDetails(
               moduleName: moduleName,
             ),
-            Text("Resources"),
+            BodyResources(),
             BodyCircle(),
           ],
         ),
@@ -139,6 +142,7 @@ class BodyDetails extends StatelessWidget {
           Text(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum.",
             textAlign: TextAlign.justify,
+            style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           )
         ],
       ),
@@ -170,6 +174,93 @@ class BodyCircle extends StatelessWidget {
               children: students.map((student) => StudentItem()).toList(),
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class BodyResources extends StatefulWidget {
+  const BodyResources({super.key});
+
+  @override
+  State<BodyResources> createState() => _BodyResourcesState();
+}
+
+class _BodyResourcesState extends State<BodyResources> {
+  bool customIcon = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Column(
+        children: [
+          ExpansionTile(
+            initiallyExpanded: true,
+            title: Text(
+              "Content Material",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+            childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+            expandedAlignment: Alignment.centerLeft,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            collapsedBackgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            //add a collapsed shape
+            collapsedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            children: students
+                .map((student) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    CourseMaterialPage(name: "material name")));
+                      },
+                      child: ContentMaterialItem(
+                        name: "Introduction to Flutter",
+                      ),
+                    ))
+                .toList(),
+            onExpansionChanged: (bool expanded) {
+              setState(() => customIcon = expanded);
+            },
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          ExpansionTile(
+            initiallyExpanded: false,
+            title: Text(
+              "Assigments",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+            childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+            expandedAlignment: Alignment.centerLeft,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            collapsedBackgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            //add a collapsed shape
+            collapsedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            children: students
+                .map(
+                  (student) => AssigmentItem(
+                    name: "PRAC1",
+                  ),
+                )
+                .toList(),
+            onExpansionChanged: (bool expanded) {
+              setState(() => customIcon = expanded);
+            },
+          ),
         ],
       ),
     );
