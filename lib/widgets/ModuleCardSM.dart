@@ -29,7 +29,7 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
       width: 250,
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).appBarTheme.backgroundColor,
         boxShadow: [
           BoxShadow(color: Colors.black12, blurRadius: 5),
         ],

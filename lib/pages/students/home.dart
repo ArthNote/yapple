@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class HomePage extends StatelessWidget {
@@ -58,7 +59,7 @@ class Body extends StatelessWidget {
               ),
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).appBarTheme.backgroundColor,
               boxShadow: [
                 BoxShadow(color: Colors.black12, blurRadius: 5),
               ],
@@ -104,11 +105,22 @@ class Body extends StatelessWidget {
               padding: EdgeInsets.all(10),
               scrollDirection: Axis.horizontal,
               children: modules
-                  .map((module) => ModuleCardSM(
-                        moduleName: module['moduleName'].toString(),
-                        moduleCode: module['moduleCode'].toString(),
-                        moduleCategory: module['moduleCategory'].toString(),
-                        isStarred: module['isStarred'] as bool,
+                  .map((module) => GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CourseDetailsPage(
+                                        moduleName:
+                                            module['moduleName'].toString(),
+                                      )));
+                        },
+                        child: ModuleCardSM(
+                          moduleName: module['moduleName'].toString(),
+                          moduleCode: module['moduleCode'].toString(),
+                          moduleCategory: module['moduleCategory'].toString(),
+                          isStarred: module['isStarred'] as bool,
+                        ),
                       ))
                   .toList(),
             ),

@@ -84,12 +84,12 @@ class _BodyState extends State<Body> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ChatPage(
-                                  chatName: "Adolf Hitler", isGroup: false)),
+                                  chatName: "Student Name", isGroup: false)),
                         );
                       },
                       child: (ChatItem(
-                          chatName: "the weird bully",
-                          last_msg: "i am gonna kick ur ass u nigga",
+                          chatName: "Student Name",
+                          last_msg: "did you check the email we got?",
                           time_sent: "2:12 pm",
                           runread_msg: 3,
                           senderId: "senderId",
@@ -113,12 +113,12 @@ class _BodyState extends State<Body> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ChatPage(
-                                  chatName: "Spoofing", isGroup: false)),
+                                  chatName: "Professor Nader", isGroup: false)),
                         );
                       },
                       child: (ChatItem(
-                          chatName: "spoofing",
-                          last_msg: "are u familiar with ibm?",
+                          chatName: "Professor Nader",
+                          last_msg: "i uploaded the slides",
                           time_sent: "12:00 am",
                           runread_msg: 22,
                           senderId: "senderId",
@@ -141,13 +141,13 @@ class _BodyState extends State<Body> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ChatPage(chatName: "hamas", isGroup: true)),
+                              builder: (context) => ChatPage(
+                                  chatName: "Software Year 2", isGroup: true)),
                         );
                       },
                       child: (ChatItem(
-                          chatName: "hamas",
-                          last_msg: "planted the bomb for salwa",
+                          chatName: "Software Year 2",
+                          last_msg: "i didnt understand the assignment either",
                           time_sent: "2:12 pm",
                           runread_msg: 1,
                           senderId: "senderId",

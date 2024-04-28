@@ -90,7 +90,7 @@ class Body extends StatelessWidget {
               child: ListView(
                 children: [
                   GroupMessage(
-                    message: "heey",
+                    message: "hey",
                     byMe: true,
                     time_sent: "12:00 pm",
                     isRead: true,

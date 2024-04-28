@@ -11,9 +11,9 @@ class StudentProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Scaffold(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           elevation: 0,
           automaticallyImplyLeading: false,
         ),
@@ -59,7 +59,7 @@ class Body extends StatelessWidget {
               child: Column(children: [
                 Text(
                   // make the first letter of the word capital
-                  "Adolf Hitler",
+                  "Student Name",
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.tertiary,
@@ -68,7 +68,7 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  "hitler@gmail.com",
+                  "name@gmail.com",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.tertiary,
                     fontSize: 16,
