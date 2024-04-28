@@ -1,12 +1,11 @@
-// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, prefer_const_literals_to_create_immutables, sort_child_properties_last, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
-import 'package:yapple/pages/students/home.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 import '../../widgets/MyButton.dart';
-import '../students/chats.dart';
+
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});

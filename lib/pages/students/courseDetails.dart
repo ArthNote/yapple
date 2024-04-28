@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
-import 'package:yapple/pages/students/courseMaterial.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/SearchField.dart';

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/widgets/MenuItem.dart';
-import 'package:yapple/widgets/MyButton.dart';
 
 class StudentProfile extends StatelessWidget {
   const StudentProfile({super.key});
