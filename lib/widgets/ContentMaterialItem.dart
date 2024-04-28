@@ -20,6 +20,11 @@ class ContentMaterialItem extends StatelessWidget {
         style: TextStyle(
             fontSize: 17, color: Theme.of(context).colorScheme.tertiary),
       ),
+      trailing: IconButton(
+        onPressed: () {},
+        icon: Icon(Icons.download),
+        color: Theme.of(context).colorScheme.primary,
+      ),
     );
   }
 }

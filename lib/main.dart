@@ -20,7 +20,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'YAPPLE',
-      //toggle between light and dark to switch the theme
       themeMode: ThemeMode.system,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -51,4 +50,5 @@ class MyApp extends StatelessWidget {
       home: LoginPage(),
     );
   }
+
 }

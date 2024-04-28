@@ -17,7 +17,7 @@ class _CoursesPageState extends State<CoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(child: Body()),
     );
   }
@@ -39,7 +39,7 @@ class Body extends StatelessWidget {
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,
-            bgColor: Colors.white,
+            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
           ),
         ),
         SizedBox(

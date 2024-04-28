@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/students/chatPage.dart';
 import 'package:yapple/widgets/ChatItem.dart';
 
@@ -13,7 +12,7 @@ class ChatsPage extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.background,
         body: NestedScrollView(
           body: Body(),
           floatHeaderSlivers: true,

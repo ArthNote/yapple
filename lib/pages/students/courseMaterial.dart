@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 
@@ -46,38 +46,6 @@ class _BodyState extends State<Body> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ExpansionTile(
-            initiallyExpanded: false,
-            title: Text(
-              "About",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-            ),
-            childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-            expandedAlignment: Alignment.centerLeft,
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            collapsedBackgroundColor:
-                Theme.of(context).appBarTheme.backgroundColor,
-            //add a collapsed shape
-            collapsedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            children: [
-              Text(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum.",
-                textAlign: TextAlign.justify,
-                style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
-              ),
-            ],
-            onExpansionChanged: (bool expanded) {
-              setState(() => customIcon = expanded);
-            },
-          ),
-          SizedBox(
-            height: 25,
-          ),
           ListTile(
             contentPadding: EdgeInsets.zero,
             title: Text(
@@ -87,21 +55,7 @@ class _BodyState extends State<Body> {
                   fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.tertiary),
             ),
-            subtitle: Text('Sun 21 april 2024, 04:00 PM'),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'Due date',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.tertiary),
-            ),
-            subtitle: Text('Sun 21 april 2024, 04:00 PM'),
+            subtitle: Text('Sun 21 april 2024, 04:00 PM', style: TextStyle(color: Theme.of(context).colorScheme.tertiary),),
           ),
         ],
       ),

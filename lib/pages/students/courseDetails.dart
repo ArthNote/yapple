@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/students/assigmentPage.dart';
 import 'package:yapple/pages/students/courseMaterial.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
@@ -164,7 +165,7 @@ class BodyCircle extends StatelessWidget {
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,
-            bgColor: Colors.white,
+            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
           ),
           SizedBox(
             height: 15,
@@ -201,10 +202,11 @@ class _BodyResourcesState extends State<BodyResources> {
               "Content Material",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
-            childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+            childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
             expandedAlignment: Alignment.centerLeft,
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            collapsedBackgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            collapsedBackgroundColor:
+                Theme.of(context).appBarTheme.backgroundColor,
             //add a collapsed shape
             collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -213,17 +215,8 @@ class _BodyResourcesState extends State<BodyResources> {
               borderRadius: BorderRadius.circular(10),
             ),
             children: students
-                .map((student) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    CourseMaterialPage(name: "material name")));
-                      },
-                      child: ContentMaterialItem(
-                        name: "Introduction to Flutter",
-                      ),
+                .map((student) => ContentMaterialItem(
+                      name: "Introduction to Flutter",
                     ))
                 .toList(),
             onExpansionChanged: (bool expanded) {
@@ -242,7 +235,8 @@ class _BodyResourcesState extends State<BodyResources> {
             childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
             expandedAlignment: Alignment.centerLeft,
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            collapsedBackgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            collapsedBackgroundColor:
+                Theme.of(context).appBarTheme.backgroundColor,
             //add a collapsed shape
             collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -252,8 +246,18 @@ class _BodyResourcesState extends State<BodyResources> {
             ),
             children: students
                 .map(
-                  (student) => AssigmentItem(
-                    name: "PRAC1",
+                  (student) => GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AssignmentPage(
+                                    name: "PRAC1",
+                                  )));
+                    },
+                    child: AssigmentItem(
+                      name: "PRAC1",
+                    ),
                   ),
                 )
                 .toList(),
