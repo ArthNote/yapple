@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:yapple/widgets/ProfileDialog.dart';
 
 class GroupMessage extends StatelessWidget {
   GroupMessage(
@@ -24,15 +25,27 @@ class GroupMessage extends StatelessWidget {
         children: [
           byMe
               ? SizedBox()
-              : Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: CircleAvatar(
-                    radius: 17,
-                    child: Text(
-                      "A",
-                      style: TextStyle(fontSize: 16),
+              : GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ProfileDialog(
+                        name: "person name",
+                        email: "name@email.com",
+                        role: "Human",
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: CircleAvatar(
+                      radius: 17,
+                      child: Text(
+                        "A",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
                     ),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
                 ),
           Flexible(

@@ -1,12 +1,9 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
-class ContentMaterialItem extends StatelessWidget {
-  ContentMaterialItem({super.key, required this.name});
+class UploadedAssigmentItem extends StatelessWidget {
+  UploadedAssigmentItem({super.key, required this.name, required this.onPressed});
   final String name;
-  
-
+  final Function() onPressed;
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -22,8 +19,8 @@ class ContentMaterialItem extends StatelessWidget {
             fontSize: 17, color: Theme.of(context).colorScheme.tertiary),
       ),
       trailing: IconButton(
-        onPressed: () {},
-        icon: Icon(Icons.download),
+        onPressed: onPressed,
+        icon: Icon(Icons.delete),
         color: Theme.of(context).colorScheme.primary,
       ),
     );

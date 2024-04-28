@@ -5,6 +5,7 @@ import 'package:yapple/models/staticData.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
+import 'package:yapple/widgets/ProfileDialog.dart';
 import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
@@ -97,6 +98,16 @@ class BodyDetails extends StatelessWidget {
             height: 15,
           ),
           ListTile(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => ProfileDialog(
+                  name: "Yassine Laarbaoui",
+                  email: "name@email.com",
+                  role: "Human",
+                ),
+              );
+            },
             tileColor: Theme.of(context).colorScheme.secondary,
             contentPadding: EdgeInsets.symmetric(horizontal: 8),
             shape: RoundedRectangleBorder(
@@ -171,7 +182,24 @@ class BodyCircle extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-              children: students.map((student) => StudentItem()).toList(),
+              children: students
+                  .map((student) => GestureDetector(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ProfileDialog(
+                              name: student['name'].toString(),
+                              email: student['email'].toString(),
+                              role: "Student",
+                            ),
+                          );
+                        },
+                        child: StudentItem(
+                          name: student['name'].toString(),
+                          email: student['email'].toString(),
+                        ),
+                      ))
+                  .toList(),
             ),
           )
         ],

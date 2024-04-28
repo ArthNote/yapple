@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
 import 'package:yapple/widgets/ChatInput.dart';
 import 'package:yapple/widgets/ChatMessage.dart';
 import 'package:yapple/widgets/GroupMessage.dart';
+import 'package:yapple/widgets/ProfileDialog.dart';
 
 class ChatPage extends StatelessWidget {
   ChatPage({super.key, required this.chatName, required this.isGroup});
@@ -20,6 +21,18 @@ class ChatPage extends StatelessWidget {
         elevation: 0,
         leadingWidth: 40,
         title: ListTile(
+            onTap: () {
+              isGroup
+                  ? null
+                  : showDialog(
+                      context: context,
+                      builder: (context) => ProfileDialog(
+                        name: chatName,
+                        email: "name@email.com",
+                        role: "Human",
+                      ),
+                    );
+            },
             contentPadding: EdgeInsets.all(0),
             title: Text(
               chatName,

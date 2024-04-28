@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 
 class StudentItem extends StatelessWidget {
-  const StudentItem({super.key});
+  StudentItem({super.key, required this.name, required this.email});
+  final String name;
+  final String email;
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +20,14 @@ class StudentItem extends StatelessWidget {
         ),
       ),
       title: Text(
-        "Karim affa",
+        name,
         style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.tertiary),
       ),
       subtitle: Text(
-        'karimaffa@gmail.com',
+        email,
         style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
       ),
       trailing: Icon(

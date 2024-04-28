@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
+import 'package:yapple/widgets/UploadedAssigmentItem.dart';
 
 class AssignmentPage extends StatelessWidget {
   AssignmentPage({super.key, required this.name});
@@ -43,6 +46,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   bool customIcon = false;
+  List<PlatformFile> files = [];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -154,12 +158,63 @@ class _BodyState extends State<Body> {
             SizedBox(
               height: 15,
             ),
+            files.isNotEmpty
+                ? ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Uploaded Files",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    children: files
+                        .map((file) => UploadedAssigmentItem(
+                              name: file.name,
+                              onPressed: () {
+                                setState(() {
+                                  files.remove(file);
+                                });
+                              },
+                            ))
+                        .toList(),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  )
+                : SizedBox(),
+            SizedBox(
+              height: 15,
+            ),
             MyButton(
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
-              label: "Submit",
-              onPressed: () {},
-            )
+              label: files.isEmpty ? "Upload" : "Submit",
+              onPressed: () async {
+                if (files.isEmpty) {
+                  var result =
+                      await FilePicker.platform.pickFiles(allowMultiple: true);
+                  if (result == null) return;
+                  setState(() {
+                    files = result.files.map((file) => file).toList();
+                  });
+                } else {
+                  return;
+                }
+                //OpenFile.open(file.path);
+              },
+            ),
           ],
         ),
       ),

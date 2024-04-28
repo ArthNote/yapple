@@ -6,7 +6,6 @@ import 'package:yapple/widgets/MyTextField.dart';
 
 import '../../widgets/MyButton.dart';
 
-
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   TextEditingController emailController = TextEditingController();
