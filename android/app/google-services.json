@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "212222952999",
+    "project_id": "yapple-1bc28",
+    "storage_bucket": "yapple-1bc28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212222952999:android:a98dcdef7975a849353002",
+        "android_client_info": {
+          "package_name": "com.example.yapple"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgz5Tvjy5MITCuDMWzP9QckIT_CItW7XQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
