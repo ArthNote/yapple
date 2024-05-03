@@ -49,7 +49,12 @@ class _StudentNavbarState extends State<StudentNavbar> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).appBarTheme.backgroundColor,
-          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 10,
+            )
+          ],
         ),
         child: GNav(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
@@ -58,6 +63,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
           gap: 8,
           onTabChange: (pageIndex) {
             pageController.jumpToPage(pageIndex);
+            index = pageIndex;
           },
           padding: EdgeInsets.all(12),
           tabs: [

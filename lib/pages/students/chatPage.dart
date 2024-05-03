@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, prefer_const_constructors_in_immutables
 
+import 'dart:io';
+
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/widgets/ChatInput.dart';
 import 'package:yapple/widgets/ChatMessage.dart';
@@ -16,7 +19,6 @@ class ChatPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leadingWidth: 40,
@@ -46,14 +48,6 @@ class ChatPage extends StatelessWidget {
               ),
               backgroundColor: Theme.of(context).colorScheme.primary,
             )),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(
-            height: 1,
-            thickness: 1,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
         actions: [
           isGroup
               ? PopupMenuButton(
@@ -91,14 +85,23 @@ class ChatPage extends StatelessWidget {
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   Body({super.key, required this.isGroup});
   final bool isGroup;
 
   @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+
+
+  TextEditingController controller = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     return Column(children: [
-      isGroup
+      widget.isGroup
           ? Expanded(
               child: ListView(
                 children: [
@@ -185,7 +188,10 @@ class Body extends StatelessWidget {
                 ],
               ),
             ),
-      ChatInput()
+      ChatInput(
+        controller: controller,
+        
+      ),
     ]);
   }
 }

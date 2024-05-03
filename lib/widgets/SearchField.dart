@@ -20,6 +20,7 @@ class SearchField extends StatefulWidget {
 
 class _SearchFieldState extends State<SearchField> {
   bool isTyping = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(

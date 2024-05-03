@@ -46,6 +46,7 @@ dependencies:
   firebase_auth:
   fluttertoast:
   intl:
+  emoji_picker_flutter: ^2.1.1
 
 dev_dependencies:
   flutter_test:

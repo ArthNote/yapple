@@ -8,7 +8,9 @@ import 'pages/global/login.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+    SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: Colors.transparent),
   );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color.fromRGBO(36, 36, 36, 1),
         ),
         cardColor: Color.fromRGBO(66, 66, 66, 1),
+        primaryColor: Color.fromRGBO(36, 36, 36, 1),
         colorScheme: ColorScheme.dark(
           background: Color.fromRGBO(21, 21, 21, 1),
           primary: Color.fromRGBO(201, 68, 68, 1),
@@ -50,8 +53,9 @@ class MyApp extends StatelessWidget {
           backgroundColor: Color.fromRGBO(255, 252, 252, 1),
         ),
         cardColor: Color.fromRGBO(66, 66, 66, 1),
+        primaryColor: Color.fromRGBO(238, 238, 238, 1),
         colorScheme: ColorScheme.light(
-          background: Color.fromRGBO(238, 238, 238, 1),
+          background: Color.fromRGBO(255, 252, 252, 1),
           primary: Color.fromRGBO(250, 112, 112, 1),
           secondary: Color.fromRGBO(206, 206, 206, 1),
           tertiary: Color.fromRGBO(21, 21, 21, 1),
@@ -60,5 +64,4 @@ class MyApp extends StatelessWidget {
       home: LoginPage(),
     );
   }
-
 }

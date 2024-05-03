@@ -23,14 +23,6 @@ class AssignmentPage extends StatelessWidget {
           name,
           style: TextStyle(fontSize: 17),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Divider(
-            height: 1,
-            thickness: 1,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
       ),
       body: Body(),
     );
