@@ -236,11 +236,17 @@ class _BodyResourcesState extends State<BodyResources> {
                 Theme.of(context).appBarTheme.backgroundColor,
             //add a collapsed shape
             collapsedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1,
+                )),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1,
+                )),
             children: students
                 .map((student) => ContentMaterialItem(
                       name: "Introduction to Flutter",
@@ -266,11 +272,17 @@ class _BodyResourcesState extends State<BodyResources> {
                 Theme.of(context).appBarTheme.backgroundColor,
             //add a collapsed shape
             collapsedShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1,
+                )),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary,
+                  width: 1,
+                )),
             children: students
                 .map(
                   (student) => GestureDetector(

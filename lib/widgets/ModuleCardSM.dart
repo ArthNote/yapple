@@ -9,12 +9,14 @@ class ModuleCardSM extends StatefulWidget {
     required this.moduleCode,
     required this.moduleCategory,
     required this.isStarred,
+    required this.color,
   });
 
   final String moduleName;
   final String moduleCode;
   final String moduleCategory;
   bool isStarred;
+  final Color color;
 
   @override
   State<ModuleCardSM> createState() => _ModuleCardSMState();
@@ -29,10 +31,14 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
       width: 250,
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       decoration: BoxDecoration(
-        color: Theme.of(context).appBarTheme.backgroundColor,
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 5),
-        ],
+        color: widget.color,
+        // boxShadow: [
+        //   BoxShadow(color: Colors.black12, blurRadius: 5),
+        // ],
+        // border: Border.all(
+        //   color: Theme.of(context).colorScheme.secondary,
+        //   width: 1,
+        // ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -47,8 +53,8 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
                   widget.moduleName,
                   style: TextStyle(
                     fontSize: 17,
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.tertiary,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).appBarTheme.backgroundColor,
                   ),
                 ),
               ),
@@ -74,15 +80,18 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
-                  color: Theme.of(context).colorScheme.tertiary,
+                  color: Theme.of(context).appBarTheme.backgroundColor,
                 ),
               ),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).appBarTheme.backgroundColor,
                     borderRadius: BorderRadius.circular(50)),
-                child: Text(widget.moduleCategory),
+                child: Text(
+                  widget.moduleCategory,
+                  style: TextStyle(color: widget.color),
+                ),
               )
             ],
           ),

@@ -14,6 +14,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         body: SafeArea(
@@ -24,23 +25,14 @@ class LoginPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Icon(
-                          Icons.star_half_sharp,
-                          color: Theme.of(context).colorScheme.tertiary,
-                          size: 50,
-                        ),
-                        SizedBox(
-                          width: size.width * 0.68,
-                          child: Divider(
-                            height: 5,
-                            thickness: 1,
-                            color: Theme.of(context).colorScheme.tertiary,
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      height: 80,
+                      child: Image.asset(
+                        'assets/yapple.png',
+                        color: isDarkTheme
+                            ? Theme.of(context).colorScheme.tertiary
+                            : null,
+                      ),
                     ),
                     SizedBox(
                       height: 30,
@@ -49,7 +41,7 @@ class LoginPage extends StatelessWidget {
                       "Log in to your account",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 32,
+                        fontSize: 30,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -63,7 +55,7 @@ class LoginPage extends StatelessWidget {
                             .colorScheme
                             .tertiary
                             .withOpacity(0.5),
-                        fontSize: 17,
+                        fontSize: 16,
                       ),
                     ),
                     SizedBox(

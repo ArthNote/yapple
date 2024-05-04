@@ -60,11 +60,17 @@ class _BodyState extends State<Body> {
                   Theme.of(context).appBarTheme.backgroundColor,
               //add a collapsed shape
               collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
               children: [
                 Text(
                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum.",
@@ -133,11 +139,17 @@ class _BodyState extends State<Body> {
                   Theme.of(context).appBarTheme.backgroundColor,
               //add a collapsed shape
               collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
               children: students
                   .map((student) => ContentMaterialItem(
                         name: "Introduction to Flutter",
@@ -166,11 +178,17 @@ class _BodyState extends State<Body> {
                         Theme.of(context).appBarTheme.backgroundColor,
                     //add a collapsed shape
                     collapsedShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
                     children: files
                         .map((file) => UploadedAssigmentItem(
                               name: file.name,

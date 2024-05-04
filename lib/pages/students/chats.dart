@@ -27,6 +27,9 @@ class ChatsPage extends StatelessWidget {
                     bgColor: Theme.of(context).appBarTheme.backgroundColor!,
                   ),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   height: 47,

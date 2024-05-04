@@ -13,23 +13,91 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        body: SafeArea(child: Body()),
+        body: Body(),
       ),
     );
   }
 }
 
 class Body extends StatelessWidget {
-  const Body({super.key});
+  Body({super.key});
+
+  List items = [
+    {
+      'title': 'Calendar',
+      'icon': Icons.calendar_month_rounded,
+      'color': Color(0xffffcf2f)
+    },
+    {'title': 'Tasks', 'icon': Icons.task_rounded, 'color': Color(0xff6fe08d)},
+    {
+      'title': 'Feedback',
+      'icon': Icons.feedback_rounded,
+      'color': Color(0xff61bdfd)
+    },
+    {
+      'title': 'Grades',
+      'icon': Icons.grading_rounded,
+      'color': Color(0xfffc7f7f)
+    }
+  ];
+
+  
 
   @override
   Widget build(BuildContext context) {
+
+
     return SingleChildScrollView(
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         //news block
-        Padding(
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              )),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 35,
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                SizedBox(
+                  height: 50,
+                  child: Image.asset(
+                    'assets/yapple.png',
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                  ),
+                ),
+                Icon(
+                  Icons.notifications,
+                  size: 30,
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                )
+              ]),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Hi, Adrian!',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                  wordSpacing: 2,
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                ),
+              )
+            ],
+          ),
+        ),
+        /*Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
             height: 170,
@@ -63,11 +131,54 @@ class Body extends StatelessWidget {
               boxShadow: [
                 BoxShadow(color: Colors.black12, blurRadius: 5),
               ],
+              border: Border.all(
+                color: Theme.of(context).colorScheme.secondary,
+                width: 1,
+              ),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
-        ),
+        ),*/
         //modules horizental list
+        SizedBox(
+          height: 25,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: items
+                .map((item) => Column(
+                      children: [
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: item['color'] as Color,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                              child: Icon(
+                            item['icon'] as IconData,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            size: 30,
+                          )),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(item['title'] as String,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).colorScheme.tertiary,
+                            ))
+                      ],
+                    ))
+                .toList(),
+          ),
+        ),
         SizedBox(
           height: 25,
         ),
@@ -79,16 +190,17 @@ class Body extends StatelessWidget {
               Text(
                 "Starred Modules",
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 22,
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
               ),
               Text(
-                "View more",
+                "See All",
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).colorScheme.tertiary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ],
@@ -120,6 +232,7 @@ class Body extends StatelessWidget {
                           moduleCode: module['moduleCode'].toString(),
                           moduleCategory: module['moduleCategory'].toString(),
                           isStarred: module['isStarred'] as bool,
+                          color: module['color'] as Color,
                         ),
                       ))
                   .toList(),

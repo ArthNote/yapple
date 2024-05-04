@@ -16,45 +16,25 @@ class StudentNavbar extends StatefulWidget {
 
 class _StudentNavbarState extends State<StudentNavbar> {
   int index = 0;
-  late PageController pageController = new PageController(initialPage: index);
-  late List<Widget> pages;
-
-  @override
-  void initState() {
-    super.initState();
-    pageController = PageController(initialPage: index);
-
-    pages = [
-      HomePage(),
-      CoursesPage(),
-      ChatsPage(),
-      StudentProfile(),
-    ];
-  }
+  List<Widget> pages = [
+    HomePage(),
+    CoursesPage(),
+    ChatsPage(),
+    StudentProfile(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: pageController,
-        children: pages,
-        onPageChanged: (pageIndex) {
-          setState(() {
-            index = pageIndex;
-          });
-        },
+      body: Center(
+        child: pages.elementAt(index),
       ),
       bottomNavigationBar: Container(
-        height: 80,
+        height: 95,
+        alignment: Alignment.topCenter,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
         decoration: BoxDecoration(
           color: Theme.of(context).appBarTheme.backgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-            )
-          ],
         ),
         child: GNav(
           backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
@@ -62,8 +42,9 @@ class _StudentNavbarState extends State<StudentNavbar> {
           tabBackgroundColor: Theme.of(context).colorScheme.primary,
           gap: 8,
           onTabChange: (pageIndex) {
-            pageController.jumpToPage(pageIndex);
-            index = pageIndex;
+            setState(() {
+              index = pageIndex;
+            });
           },
           padding: EdgeInsets.all(12),
           tabs: [

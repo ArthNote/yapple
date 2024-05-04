@@ -8,7 +8,8 @@ class MyTextField extends StatefulWidget {
       required this.myController,
       required this.isPass,
       required this.hintText,
-      required this.icon, required this.bgColor});
+      required this.icon,
+      required this.bgColor});
 
   final TextEditingController myController;
   final bool isPass;
@@ -64,14 +65,20 @@ class _MyTextFieldState extends State<MyTextField> {
           hintStyle: TextStyle(
             color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
           ),
-          fillColor: widget.bgColor,
+          fillColor: Theme.of(context).appBarTheme.backgroundColor,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 1,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 1,
+            ),
           )),
     );
   }
