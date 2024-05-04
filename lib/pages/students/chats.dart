@@ -28,14 +28,14 @@ class ChatsPage extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  height: 50,
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  height: 47,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context).colorScheme.secondary),
                   child: TabBar(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
                       indicatorSize: TabBarIndicatorSize.tab,
                       dividerHeight: 0,
-                      indicatorPadding: EdgeInsets.symmetric(vertical: 3),
                       labelColor: Theme.of(context).colorScheme.background,
                       unselectedLabelStyle:
                           TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
