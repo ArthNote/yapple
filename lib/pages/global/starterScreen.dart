@@ -52,7 +52,7 @@ class StarterScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
                 )),
-          ),
+          ),          
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

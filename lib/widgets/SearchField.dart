@@ -24,11 +24,7 @@ class _SearchFieldState extends State<SearchField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 5),
-        ],
-      ),
+      decoration: BoxDecoration(),
       child: TextField(
         controller: widget.myController,
         style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
@@ -58,6 +54,8 @@ class _SearchFieldState extends State<SearchField> {
                       });
                     },
                     icon: Icon(Icons.clear),
+                    color:
+                        Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
                   )
                 : null,
             hintText: widget.hintText,
@@ -68,11 +66,13 @@ class _SearchFieldState extends State<SearchField> {
             fillColor: widget.bgColor,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondary, width: 1),
             )),
       ),
     );

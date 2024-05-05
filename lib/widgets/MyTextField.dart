@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_if_null_operators
 
 import 'package:flutter/material.dart';
 
@@ -8,14 +8,18 @@ class MyTextField extends StatefulWidget {
       required this.myController,
       required this.isPass,
       required this.hintText,
-      required this.icon,
-      required this.bgColor});
+      this.icon,
+      this.bgColor,
+      required this.keyboardType,
+      this.suffixIcon});
 
   final TextEditingController myController;
   final bool isPass;
   final String hintText;
-  final IconData icon;
-  final Color bgColor;
+  final IconData? icon;
+  final Color? bgColor;
+  final TextInputType keyboardType;
+  final IconButton? suffixIcon;
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();
@@ -33,13 +37,17 @@ class _MyTextFieldState extends State<MyTextField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: widget.myController,
+      keyboardType: widget.keyboardType,
       obscureText: widget.isPass ? isHidden : false,
       style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
       decoration: InputDecoration(
-          prefixIcon: Icon(
-            widget.icon,
-            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
-          ),
+          prefixIcon: widget.icon != null
+              ? Icon(
+                  widget.icon,
+                  color:
+                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                )
+              : null,
           suffixIcon: widget.isPass
               ? IconButton(
                   onPressed: toggleVisibility,
@@ -59,7 +67,9 @@ class _MyTextFieldState extends State<MyTextField> {
                               .withOpacity(0.5),
                         ),
                 )
-              : null,
+              : widget.suffixIcon != null
+                  ? widget.suffixIcon
+                  : null,
           hintText: widget.hintText,
           filled: true,
           hintStyle: TextStyle(

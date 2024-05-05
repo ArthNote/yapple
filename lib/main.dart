@@ -10,7 +10,9 @@ import 'pages/global/login.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(systemNavigationBarColor: Colors.transparent),
+    SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        statusBarColor: Colors.transparent),
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
@@ -52,6 +54,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         appBarTheme: AppBarTheme(
+          backgroundColor: Color.fromRGBO(255, 252, 252, 1),
+        ),
+        timePickerTheme: TimePickerThemeData(
           backgroundColor: Color.fromRGBO(255, 252, 252, 1),
         ),
         cardColor: Color.fromRGBO(66, 66, 66, 1),

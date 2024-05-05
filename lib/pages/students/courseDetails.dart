@@ -3,9 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
+import 'package:yapple/pages/students/quizzPage.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/ProfileDialog.dart';
+import 'package:yapple/widgets/QuizzItem.dart';
 import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
@@ -219,92 +221,142 @@ class _BodyResourcesState extends State<BodyResources> {
   bool customIcon = false;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        children: [
-          ExpansionTile(
-            initiallyExpanded: true,
-            title: Text(
-              "Content Material",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            ExpansionTile(
+              initiallyExpanded: true,
+              title: Text(
+                "Content Material",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+              expandedAlignment: Alignment.centerLeft,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              collapsedBackgroundColor:
+                  Theme.of(context).appBarTheme.backgroundColor,
+              //add a collapsed shape
+              collapsedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              children: students
+                  .map((student) => ContentMaterialItem(
+                        name: "Introduction to Flutter",
+                      ))
+                  .toList(),
+              onExpansionChanged: (bool expanded) {
+                setState(() => customIcon = expanded);
+              },
             ),
-            childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
-            expandedAlignment: Alignment.centerLeft,
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            collapsedBackgroundColor:
-                Theme.of(context).appBarTheme.backgroundColor,
-            //add a collapsed shape
-            collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1,
-                )),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1,
-                )),
-            children: students
-                .map((student) => ContentMaterialItem(
-                      name: "Introduction to Flutter",
-                    ))
-                .toList(),
-            onExpansionChanged: (bool expanded) {
-              setState(() => customIcon = expanded);
-            },
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          ExpansionTile(
-            initiallyExpanded: false,
-            title: Text(
-              "Assigments",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            SizedBox(
+              height: 30,
             ),
-            childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-            expandedAlignment: Alignment.centerLeft,
-            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            collapsedBackgroundColor:
-                Theme.of(context).appBarTheme.backgroundColor,
-            //add a collapsed shape
-            collapsedShape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1,
-                )),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 1,
-                )),
-            children: students
-                .map(
-                  (student) => GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AssignmentPage(
-                                    name: "PRAC1",
-                                  )));
-                    },
-                    child: AssigmentItem(
-                      name: "PRAC1",
+            ExpansionTile(
+              initiallyExpanded: false,
+              title: Text(
+                "Assigments",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+              expandedAlignment: Alignment.centerLeft,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              collapsedBackgroundColor:
+                  Theme.of(context).appBarTheme.backgroundColor,
+              //add a collapsed shape
+              collapsedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              children: students
+                  .map(
+                    (student) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AssignmentPage(
+                                      name: "PRAC1",
+                                    )));
+                      },
+                      child: AssigmentItem(
+                        name: "PRAC1",
+                      ),
                     ),
-                  ),
-                )
-                .toList(),
-            onExpansionChanged: (bool expanded) {
-              setState(() => customIcon = expanded);
-            },
-          ),
-        ],
+                  )
+                  .toList(),
+              onExpansionChanged: (bool expanded) {
+                setState(() => customIcon = expanded);
+              },
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            ExpansionTile(
+              initiallyExpanded: false,
+              title: Text(
+                "Quizzes",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
+              expandedAlignment: Alignment.centerLeft,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              collapsedBackgroundColor:
+                  Theme.of(context).appBarTheme.backgroundColor,
+              //add a collapsed shape
+              collapsedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.secondary,
+                    width: 1,
+                  )),
+              children: students
+                  .map(
+                    (student) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => QuizzPage(
+                                      name: "Simple quizz",
+                                    )));
+                      },
+                      child: QuizzItem(
+                        name: "Simple quizz",
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onExpansionChanged: (bool expanded) {
+                setState(() => customIcon = expanded);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

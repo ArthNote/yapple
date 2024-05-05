@@ -74,3 +74,30 @@ const students = [
     "email": "jdoe@me.com",
   },
 ];
+
+const quizz = [
+  {
+    'title': "who's the best player in 2023",
+    'answers': [
+      {'answer': "messi", 'correct': true},
+      {'answer': "ronaldo", 'correct': false},
+      {'answer': "you", 'correct': false},
+    ]
+  },
+  {
+    'title': "who's the worst player in 2023",
+    'answers': [
+      {'answer': "you", 'correct': true},
+      {'answer': "ziach", 'correct': false},
+      {'answer': "rahimi", 'correct': false}
+    ]
+  },
+  {
+    'title': "best programming language is?",
+    'answers': [
+      {'answer': "flutter", 'correct': true},
+      {'answer': "python", 'correct': false},
+      {'answer': "php", 'correct': false}
+    ]
+  },
+];
