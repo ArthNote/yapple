@@ -2,14 +2,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
+import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 import '../../widgets/MyButton.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
+
   TextEditingController passwordController = TextEditingController();
+  String selectedType = "Select account type";
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +102,35 @@ class LoginPage extends StatelessWidget {
                               color: Theme.of(context).colorScheme.tertiary,
                             ),
                           ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    DropdownList(
+                      selectedType: selectedType,
+                      selectedItem: selectedType,
+                      title: 'Select account type',
+                      items: [
+                        DropdownMenuItem(
+                          value: "Select account type",
+                          child: Text(
+                            "Select a Type",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Hybrid",
+                          child: Text("Hybrid"),
+                        ),
+                        DropdownMenuItem(
+                          value: "On-Site",
+                          child: Text("On-Site"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Remote",
+                          child: Text("Remote"),
                         ),
                       ],
                     ),

@@ -93,11 +93,55 @@ const quizz = [
     ]
   },
   {
-    'title': "best programming language is?",
+    'title': "best programming language is",
     'answers': [
       {'answer': "flutter", 'correct': true},
       {'answer': "python", 'correct': false},
       {'answer': "php", 'correct': false}
     ]
   },
+];
+
+const questions = [
+  {
+    'question': '1. What is the capital of France?',
+    'correctAnswerIndex': 1,
+    'options': [
+      'a) Madrid',
+      'b) Paris',
+      'c) Berlin',
+      'd) Rome',
+    ],
+  },
+  //generate more questions
+  {
+    'question': '2. What is the capital of Spain?',
+    'correctAnswerIndex': 0,
+    'options': [
+      'a) Madrid',
+      'b) Paris',
+      'c) Berlin',
+      'd) Rome',
+    ],
+  },
+  {
+    'question': '3. What is the capital of Germany?',
+    'correctAnswerIndex': 2,
+    'options': [
+      'a) Madrid',
+      'b) Paris',
+      'c) Berlin',
+      'd) Rome',
+    ],
+  },
+  {
+    'question': '4. What is the capital of Italy?',
+    'correctAnswerIndex': 3,
+    'options': [
+      'a) Madrid',
+      'b) Paris',
+      'c) Berlin',
+      'd) Rome',
+    ],
+  }
 ];
