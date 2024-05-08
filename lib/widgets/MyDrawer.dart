@@ -5,7 +5,7 @@ import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/students/chats.dart';
 import 'package:yapple/pages/students/courses.dart';
 import 'package:yapple/pages/students/home.dart';
-import 'package:yapple/pages/students/profile.dart';
+import 'package:yapple/pages/global/profile.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -52,15 +52,17 @@ class MyDrawer extends StatelessWidget {
               runSpacing: 20,
               children: [
                 DrawerItem(
-                    title: "Home", icon: Icons.home_rounded, page: HomePage()),
+                    title: "Home",
+                    icon: Icons.home_rounded,
+                    page: StudentHomePage()),
                 DrawerItem(
                     title: "Courses",
                     icon: Icons.school_rounded,
-                    page: CoursesPage()),
+                    page: StudentChatsPage()),
                 DrawerItem(
                     title: "Chats",
                     icon: Icons.chat_rounded,
-                    page: ChatsPage()),
+                    page: StudentChatsPage()),
                 DrawerItem(
                     title: "Profile",
                     icon: Icons.person_rounded,
@@ -83,7 +85,7 @@ class MyDrawer extends StatelessWidget {
                 DrawerItem(
                     title: "Settings",
                     icon: Icons.settings_rounded,
-                    page: HomePage()),
+                    page: StudentHomePage()),
                 DrawerItem(
                     title: "Log out",
                     icon: Icons.logout_rounded,

@@ -2,18 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
-import 'package:yapple/pages/students/courseDetails.dart';
+import 'package:yapple/pages/teachers/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardMD.dart';
 import 'package:yapple/widgets/SearchField.dart';
 
-class StudentCoursesPage extends StatefulWidget {
-  const StudentCoursesPage({super.key});
+class TeacherCoursesPage extends StatelessWidget {
+  const TeacherCoursesPage({super.key});
 
-  @override
-  State<StudentCoursesPage> createState() => _CoursesPageState();
-}
-
-class _CoursesPageState extends State<StudentCoursesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +54,7 @@ class Body extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => StudentCourseDetailsPage(
+                                builder: (context) => TeacherCourseDetailsPage(
                                       moduleName:
                                           module['moduleName'].toString(),
                                     )));

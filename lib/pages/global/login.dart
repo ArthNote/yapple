@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
+import 'package:yapple/pages/navigation/teacherNav.dart';
 import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
@@ -90,6 +91,44 @@ class _LoginPageState extends State<LoginPage> {
                       keyboardType: TextInputType.visiblePassword,
                     ),
                     SizedBox(
+                      height: 25,
+                    ),
+                    DropdownList(
+                      selectedType: selectedType,
+                      selectedItem: selectedType,
+                      onPressed: (String newValue) {
+                        setState(() {
+                          selectedType = newValue;
+                        });
+                      },
+                      title: 'Select account type',
+                      items: [
+                        DropdownMenuItem(
+                          value: "Select account type",
+                          child: Text(
+                            "Select account type",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Student",
+                          child: Text("Student"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Teacher",
+                          child: Text("Teacher"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Administrator",
+                          child: Text("Administrator"),
+                        ),
+                        DropdownMenuItem(
+                          value: "Parent",
+                          child: Text("Parent"),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
                       height: 15,
                     ),
                     Row(
@@ -106,35 +145,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                     SizedBox(
-                      height: 25,
-                    ),
-                    DropdownList(
-                      selectedType: selectedType,
-                      selectedItem: selectedType,
-                      title: 'Select account type',
-                      items: [
-                        DropdownMenuItem(
-                          value: "Select account type",
-                          child: Text(
-                            "Select a Type",
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: "Hybrid",
-                          child: Text("Hybrid"),
-                        ),
-                        DropdownMenuItem(
-                          value: "On-Site",
-                          child: Text("On-Site"),
-                        ),
-                        DropdownMenuItem(
-                          value: "Remote",
-                          child: Text("Remote"),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
                       height: 30,
                     ),
                     MyButton(
@@ -142,12 +152,47 @@ class _LoginPageState extends State<LoginPage> {
                       textColor: Theme.of(context).colorScheme.tertiary,
                       label: "Log in",
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StudentNavbar(),
-                          ),
-                        );
+                        if (selectedType == "Student") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentNavbar(),
+                            ),
+                          );
+                        } else if (selectedType == "Teacher") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TeacherNavBar(),
+                            ),
+                          );
+                        } else if (selectedType == "Administrator") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentNavbar(),
+                            ),
+                          );
+                        } else if (selectedType == "Parent") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => StudentNavbar(),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Please select a valid account type",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                            ),
+                          );
+                        }
                       },
                     ),
                     SizedBox(

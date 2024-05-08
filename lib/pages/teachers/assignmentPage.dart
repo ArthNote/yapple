@@ -2,16 +2,20 @@
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:open_file/open_file.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/teachers/submissionPage.dart';
+import 'package:yapple/widgets/AssigmentAbout.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
-import 'package:yapple/widgets/SubmissionStatusBox.dart';
 import 'package:yapple/widgets/UploadedAssigmentItem.dart';
+import 'package:yapple/widgets/submissionItem.dart';
 
-class StudentAssignmentPage extends StatelessWidget {
-  StudentAssignmentPage({super.key, required this.name});
+class TeacherAssignmentPage extends StatelessWidget {
+  TeacherAssignmentPage({super.key, required this.name});
   final String name;
+  TextEditingController aboutController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,38 @@ class StudentAssignmentPage extends StatelessWidget {
         ),
       ),
       body: Body(),
+      floatingActionButton: SpeedDial(
+        foregroundColor: Colors.white,
+        spacing: 20,
+        spaceBetweenChildren: 10,
+        animatedIcon: AnimatedIcons.menu_close,
+        children: [
+          SpeedDialChild(
+            shape: CircleBorder(),
+            child: Icon(Icons.file_present_rounded),
+            label: "Add content",
+            onTap: () async {
+              var result =
+                  await FilePicker.platform.pickFiles(allowMultiple: true);
+            },
+          ),
+          SpeedDialChild(
+            shape: CircleBorder(),
+            child: Icon(Icons.edit),
+            label: "Edit About Section",
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AssigmentAbout(
+                    controller: aboutController,
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
@@ -39,7 +75,6 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   bool customIcon = false;
-  List<PlatformFile> files = [];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -101,29 +136,6 @@ class _BodyState extends State<Body> {
                 style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                'Status',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.tertiary),
-              ),
-              subtitle: Row(
-                children: [
-                  SubmissionStatusBox(
-                    name: "Submitted",
-                    color: Colors.green.shade400,
-                  ),
-                  SizedBox(width: 10),
-                  SubmissionStatusBox(
-                    name: "Not Graded",
-                    color: Colors.red.shade400,
-                  ),
-                ],
-              ),
-            ),
             SizedBox(
               height: 15,
             ),
@@ -154,7 +166,7 @@ class _BodyState extends State<Body> {
               children: students
                   .map((student) => ContentMaterialItem(
                         name: "Introduction to Flutter",
-                        icon: Icons.download_rounded,
+                        icon: Icons.delete_rounded,
                         onPressed: () {},
                       ))
                   .toList(),
@@ -165,11 +177,11 @@ class _BodyState extends State<Body> {
             SizedBox(
               height: 15,
             ),
-            files.isNotEmpty
+            submissions.isNotEmpty
                 ? ExpansionTile(
                     initiallyExpanded: true,
                     title: Text(
-                      "Uploaded Files",
+                      "Submissions",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
@@ -192,14 +204,21 @@ class _BodyState extends State<Body> {
                           color: Theme.of(context).colorScheme.secondary,
                           width: 1,
                         )),
-                    children: files
-                        .map((file) => UploadedAssigmentItem(
-                              name: file.name,
-                              onPressed: () {
-                                setState(() {
-                                  files.remove(file);
-                                });
+                    children: submissions
+                        .map((submission) => GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SubmissionPage(
+                                            submission: submission,
+                                          )),
+                                );
                               },
+                              child: SubmissionItem(
+                                name: submission['name'] as String,
+                                isGraded: submission['graded'] as bool,
+                              ),
                             ))
                         .toList(),
                     onExpansionChanged: (bool expanded) {
@@ -208,25 +227,7 @@ class _BodyState extends State<Body> {
                   )
                 : SizedBox(),
             SizedBox(
-              height: 15,
-            ),
-            MyButton(
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).appBarTheme.backgroundColor!,
-              label: files.isEmpty ? "Upload" : "Submit",
-              onPressed: () async {
-                if (files.isEmpty) {
-                  var result =
-                      await FilePicker.platform.pickFiles(allowMultiple: true);
-                  if (result == null) return;
-                  setState(() {
-                    files = result.files.map((file) => file).toList();
-                  });
-                } else {
-                  return;
-                }
-                //OpenFile.open(file.path);
-              },
+              height: 50,
             ),
           ],
         ),

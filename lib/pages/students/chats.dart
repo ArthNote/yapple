@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:yapple/pages/students/chatPage.dart';
+import 'package:yapple/pages/global/chatPage.dart';
 import 'package:yapple/widgets/ChatItem.dart';
 import 'package:yapple/widgets/SearchField.dart';
 
-class ChatsPage extends StatelessWidget {
-  ChatsPage({super.key});
+class StudentChatsPage extends StatelessWidget {
+  StudentChatsPage({super.key});
   TextEditingController searchController = TextEditingController();
 
   @override

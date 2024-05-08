@@ -2,20 +2,24 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:yapple/pages/global/profile.dart';
+import 'package:yapple/pages/teachers/chats.dart';
+import 'package:yapple/pages/teachers/courses.dart';
+import 'package:yapple/pages/teachers/home.dart';
 
-class StudentNavbar extends StatefulWidget {
-  const StudentNavbar({super.key});
+class TeacherNavBar extends StatefulWidget {
+  const TeacherNavBar({super.key});
 
   @override
-  State<StudentNavbar> createState() => _StudentNavbarState();
+  State<TeacherNavBar> createState() => _TeacherNavBarState();
 }
 
-class _StudentNavbarState extends State<StudentNavbar> {
+class _TeacherNavBarState extends State<TeacherNavBar> {
   int index = 0;
   List<Widget> pages = [
-    HomePage(),
-    CoursesPage(),
-    ChatsPage(),
+    TeacherHomePage(),
+    TeacherCoursesPage(),
+    TeachersChatsPage(),
     StudentProfile(),
   ];
 
@@ -52,7 +56,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
             GButton(
               iconActiveColor: Colors.white,
               icon: index == 1 ? Icons.school : Icons.school_outlined,
-              text: 'Courses',
+              text: 'Modules',
             ),
             GButton(
               iconActiveColor: Colors.white,

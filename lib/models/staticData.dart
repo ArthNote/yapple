@@ -145,3 +145,47 @@ const questions = [
     ],
   }
 ];
+
+const submissions = [
+  {
+    'name': 'John Doe',
+    'date': 'Sun 21 april 2024',
+    'graded': false,
+    'grade': 0,
+    'time': '12:00 PM',
+    'files': [
+      'file1.pdf',
+      'file2.pdf',
+      'file3.pdf',
+    ],
+    'comment': '',
+  },
+  {
+    'name': 'Jane Doe',
+    'date': 'Sun 21 april 2024',
+    'graded': true,
+    'grade': 83,
+    'time': '12:00 PM',
+    'files': [
+      'file1.pdf',
+      'file2.pdf',
+      'file3.pdf',
+    ],
+    'comment':
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget sapien.',
+  },
+  {
+    'name': 'Adam Doe',
+    'date': 'Sun 21 april 2024',
+    'graded': true,
+    'grade': 52,
+    'time': '12:00 PM',
+    'files': [
+      'file1.pdf',
+      'file2.pdf',
+      'file3.pdf',
+    ],
+    'comment':
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget sapien.',
+  },
+];

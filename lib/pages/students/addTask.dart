@@ -55,169 +55,171 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-            myController: titleController,
-            isPass: false,
-            hintText: "Enter task title",
-            keyboardType: TextInputType.text,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          MyTextField(
-            myController: noteController,
-            isPass: false,
-            hintText: "Enter task note",
-            keyboardType: TextInputType.multiline,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: MyTextField(
-                    myController: startTimeController,
-                    isPass: false,
-                    hintText: "Start Time",
-                    keyboardType: TextInputType.datetime,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        var startTime = showTimePicker(
-                          initialEntryMode: TimePickerEntryMode.input,
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                        startTime.then((selectedTime) {
-                          if (selectedTime != null) {
-                            String format = DateFormat.Hm().format(DateTime(
-                              DateTime.now().year,
-                              DateTime.now().month,
-                              DateTime.now().day,
-                              selectedTime.hour,
-                              selectedTime.minute,
-                            ));
-                            setState(() {
-                              startTimeController.text = format;
-                            });
-                          }
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+              myController: titleController,
+              isPass: false,
+              hintText: "Enter task title",
+              keyboardType: TextInputType.text,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            MyTextField(
+              myController: noteController,
+              isPass: false,
+              hintText: "Enter task note",
+              keyboardType: TextInputType.multiline,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: MyTextField(
+                      myController: startTimeController,
+                      isPass: false,
+                      hintText: "Start Time",
+                      keyboardType: TextInputType.datetime,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          var startTime = showTimePicker(
+                            initialEntryMode: TimePickerEntryMode.input,
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          startTime.then((selectedTime) {
+                            if (selectedTime != null) {
+                              String format = DateFormat.Hm().format(DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                selectedTime.hour,
+                                selectedTime.minute,
+                              ));
+                              setState(() {
+                                startTimeController.text = format;
+                              });
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          Icons.access_time_rounded,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.5),
+                        ),
+                      )),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: MyTextField(
+                      myController: endTimeController,
+                      isPass: false,
+                      hintText: "End Time",
+                      keyboardType: TextInputType.datetime,
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          var endTime = showTimePicker(
+                            initialEntryMode: TimePickerEntryMode.input,
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          endTime.then((selectedTime) {
+                            if (selectedTime != null) {
+                              String format = DateFormat.Hm().format(DateTime(
+                                DateTime.now().year,
+                                DateTime.now().month,
+                                DateTime.now().day,
+                                selectedTime.hour,
+                                selectedTime.minute,
+                              ));
+                              setState(() {
+                                endTimeController.text = format;
+                              });
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          Icons.access_time_rounded,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.5),
+                        ),
+                      )),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Select a Color",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.tertiary),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: List<Widget>.generate(5, (index) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedColor = index;
                         });
                       },
-                      icon: Icon(
-                        Icons.access_time_rounded,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .tertiary
-                            .withOpacity(0.5),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundColor: colors[index],
+                          child: selectedColor == index
+                              ? Icon(
+                                  Icons.done,
+                                  color: Colors.black,
+                                  size: 16,
+                                )
+                              : null,
+                        ),
                       ),
-                    )),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: MyTextField(
-                    myController: endTimeController,
-                    isPass: false,
-                    hintText: "End Time",
-                    keyboardType: TextInputType.datetime,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        var endTime = showTimePicker(
-                          initialEntryMode: TimePickerEntryMode.input,
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        );
-                        endTime.then((selectedTime) {
-                          if (selectedTime != null) {
-                            String format = DateFormat.Hm().format(DateTime(
-                              DateTime.now().year,
-                              DateTime.now().month,
-                              DateTime.now().day,
-                              selectedTime.hour,
-                              selectedTime.minute,
-                            ));
-                            setState(() {
-                              endTimeController.text = format;
-                            });
-                          }
-                        });
-                      },
-                      icon: Icon(
-                        Icons.access_time_rounded,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .tertiary
-                            .withOpacity(0.5),
-                      ),
-                    )),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Select a Color",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.tertiary),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: List<Widget>.generate(5, (index) {
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedColor = index;
-                      });
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CircleAvatar(
-                        radius: 15,
-                        backgroundColor: colors[index],
-                        child: selectedColor == index
-                            ? Icon(
-                                Icons.done,
-                                color: Colors.black,
-                                size: 16,
-                              )
-                            : null,
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 23,
-          ),
-          MyButton(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).appBarTheme.backgroundColor!,
-            label: "Add Task",
-            onPressed: () {},
-          ),
-        ],
+                    );
+                  }),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 23,
+            ),
+            MyButton(
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).appBarTheme.backgroundColor!,
+              label: "Add Task",
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }

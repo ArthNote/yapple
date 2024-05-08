@@ -1,20 +1,17 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import 'package:yapple/widgets/SubmissionStatusBox.dart';
 
-class ContentMaterialItem extends StatelessWidget {
-  ContentMaterialItem({super.key, required this.name, required this.icon, required this.onPressed});
+class SubmissionItem extends StatelessWidget {
+  SubmissionItem({super.key, required this.name, required this.isGraded});
   final String name;
-  final IconData icon;
-  final Function() onPressed;
-  
+  final bool isGraded;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(
-        Icons.file_present_rounded,
+        Icons.assignment_rounded,
         size: 28,
         color: Theme.of(context).colorScheme.primary,
       ),
@@ -23,10 +20,9 @@ class ContentMaterialItem extends StatelessWidget {
         style: TextStyle(
             fontSize: 17, color: Theme.of(context).colorScheme.tertiary),
       ),
-      trailing: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon),
-        color: Theme.of(context).colorScheme.primary,
+      trailing: SubmissionStatusBox(
+        name: isGraded ? "Graded" : "Not Graded",
+        color: isGraded ? Colors.green.shade400 : Colors.red.shade400,
       ),
     );
   }

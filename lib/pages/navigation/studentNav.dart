@@ -5,7 +5,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:yapple/pages/students/chats.dart';
 import 'package:yapple/pages/students/courses.dart';
 import 'package:yapple/pages/students/home.dart';
-import 'package:yapple/pages/students/profile.dart';
+import 'package:yapple/pages/global/profile.dart';
 
 class StudentNavbar extends StatefulWidget {
   const StudentNavbar({super.key});
@@ -17,9 +17,9 @@ class StudentNavbar extends StatefulWidget {
 class _StudentNavbarState extends State<StudentNavbar> {
   int index = 0;
   List<Widget> pages = [
-    HomePage(),
-    CoursesPage(),
-    ChatsPage(),
+    StudentHomePage(),
+    StudentCoursesPage(),
+    StudentChatsPage(),
     StudentProfile(),
   ];
 
@@ -56,7 +56,7 @@ class _StudentNavbarState extends State<StudentNavbar> {
             GButton(
               iconActiveColor: Colors.white,
               icon: index == 1 ? Icons.school : Icons.school_outlined,
-              text: 'Courses',
+              text: 'Modules',
             ),
             GButton(
               iconActiveColor: Colors.white,

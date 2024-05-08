@@ -1,13 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
-import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/pages/students/tasks.dart';
+import 'package:yapple/pages/teachers/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
-class StudentHomePage extends StatelessWidget {
-  const StudentHomePage({super.key});
+class TeacherHomePage extends StatelessWidget {
+  const TeacherHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +40,6 @@ class Body extends StatelessWidget {
       'icon': Icons.feedback_rounded,
       'color': Color(0xff61bdfd)
     },
-    {
-      'title': 'Grades',
-      'icon': Icons.grading_rounded,
-      'color': Color(0xfffc7f7f)
-    }
   ];
 
   @override
@@ -87,7 +82,7 @@ class Body extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  'Hi, Student!',
+                  'Hi, Teacher!',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.w600,
@@ -100,56 +95,14 @@ class Body extends StatelessWidget {
             ),
           ),
         ),
-        /*Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
-            height: 170,
-            width: double.infinity,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Reminder Instanbul end of year trip",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    "by: Academic Department",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.tertiary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 5),
-              ],
-              border: Border.all(
-                color: Theme.of(context).colorScheme.secondary,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),*/
-        //modules horizental list
+
         SizedBox(
           height: 25,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: items
                 .map((item) => Column(
                       children: [
@@ -236,7 +189,7 @@ class Body extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => StudentCourseDetailsPage(
+                                  builder: (context) => TeacherCourseDetailsPage(
                                         moduleName:
                                             module['moduleName'].toString(),
                                       )));
