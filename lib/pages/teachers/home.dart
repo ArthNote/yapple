@@ -29,7 +29,6 @@ class Body extends StatelessWidget {
       'title': 'Calendar',
       'icon': Icons.calendar_month_rounded,
       'color': Color(0xffffcf2f),
-      'page': DemoApp(),
     },
     {
       'title': 'Tasks',

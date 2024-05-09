@@ -112,6 +112,23 @@ class _BodyState extends State<Body> {
                         readOnly: false,
                         correctIndexController: correctAnswerIndex,
                         onPressed: () {
+                          if (int.parse(correctAnswerIndex.text) > 4) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Correct answer index should be between 1 and 4',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context)
+                                          .appBarTheme
+                                          .backgroundColor!,
+                                    )),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.error,
+                              ),
+                            );
+                          }
                           var question = {
                             'question': titleController.text,
                             'correctAnswerIndex':
@@ -132,6 +149,7 @@ class _BodyState extends State<Body> {
                             ],
                           };
                           questions.add(question);
+                          setState(() {});
                           isInside.add(index);
                           print(questions);
                         },
@@ -191,6 +209,7 @@ class _BodyState extends State<Body> {
                           questions.add(question);
                           print(questions);
                           isInside.add(index);
+                          setState(() {});
                         },
                       ),
                     );
@@ -310,12 +329,14 @@ class _QuizzQuestionListState extends State<QuizzQuestionList> {
           ],
         ),
         SizedBox(height: 15),
-        MyButton(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          textColor: Theme.of(context).appBarTheme.backgroundColor!,
-          label: 'Add Question',
-          onPressed: widget.onPressed ?? () {},
-        ),
+        !widget.readOnly!
+            ? MyButton(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                textColor: Theme.of(context).appBarTheme.backgroundColor!,
+                label: 'Add Question',
+                onPressed: widget.onPressed ?? () {},
+              )
+            : SizedBox(),
       ],
       onExpansionChanged: (bool expanded) {
         setState(() => customIcon = expanded);

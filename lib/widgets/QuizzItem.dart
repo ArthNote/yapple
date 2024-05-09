@@ -1,8 +1,11 @@
+// ignore_for_file: unnecessary_null_in_if_null_operators
+
 import 'package:flutter/material.dart';
 
 class QuizzItem extends StatelessWidget {
-  QuizzItem({super.key, required this.name});
+  QuizzItem({super.key, required this.name, this.iconButton});
   final String name;
+  final IconButton? iconButton;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +21,7 @@ class QuizzItem extends StatelessWidget {
         style: TextStyle(
             fontSize: 17, color: Theme.of(context).colorScheme.tertiary),
       ),
+      trailing: iconButton ?? null,
     );
   }
 }

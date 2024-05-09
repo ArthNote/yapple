@@ -377,6 +377,13 @@ class _BodyResourcesState extends State<BodyResources> {
                       },
                       child: QuizzItem(
                         name: "Simple quizz",
+                        iconButton: IconButton(
+                          color: Theme.of(context).colorScheme.primary,
+                          icon: Icon(
+                            Icons.delete_rounded,
+                          ),
+                          onPressed: () {},
+                        ),
                       ),
                     ),
                   )
