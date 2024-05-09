@@ -13,7 +13,7 @@ class MyTextField extends StatefulWidget {
       this.bgColor,
       required this.keyboardType,
       this.suffixIcon,
-      this.formatters});
+      this.formatters, this.readOnly});
 
   final TextEditingController myController;
   final bool isPass;
@@ -23,6 +23,7 @@ class MyTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final IconButton? suffixIcon;
   final List<TextInputFormatter>? formatters;
+  final bool? readOnly;
 
   @override
   State<MyTextField> createState() => _MyTextFieldState();
@@ -47,6 +48,7 @@ class _MyTextFieldState extends State<MyTextField> {
         style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         inputFormatters: widget.formatters,
         minLines: 1,
+        readOnly: widget.readOnly ?? false,
         maxLines: widget.keyboardType == TextInputType.multiline ? 200 : 1,
         decoration: InputDecoration(
             prefixIcon: widget.icon != null

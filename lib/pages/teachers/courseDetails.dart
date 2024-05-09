@@ -1,10 +1,12 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/pages/students/quizzPage.dart';
 import 'package:yapple/pages/teachers/addAssignment.dart';
+import 'package:yapple/pages/teachers/addQuizz.dart';
 import 'package:yapple/pages/teachers/assignmentPage.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
@@ -91,7 +93,9 @@ class _TeacherCourseDetailsPageState extends State<TeacherCourseDetailsPage>
                   shape: CircleBorder(),
                   child: Icon(Icons.file_present_rounded),
                   label: "Add content",
-                  onTap: () {},
+                  onTap: () async {
+                    await FilePicker.platform.pickFiles(allowMultiple: true);
+                  },
                 ),
                 SpeedDialChild(
                   shape: CircleBorder(),
@@ -108,7 +112,12 @@ class _TeacherCourseDetailsPageState extends State<TeacherCourseDetailsPage>
                   shape: CircleBorder(),
                   child: Icon(Icons.quiz_rounded),
                   label: "Add quiz",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddQuizzPage()));
+                  },
                 ),
               ],
             )

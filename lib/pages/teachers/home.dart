@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/navigation/hiba.dart';
 import 'package:yapple/pages/students/tasks.dart';
 import 'package:yapple/pages/teachers/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
@@ -27,7 +28,8 @@ class Body extends StatelessWidget {
     {
       'title': 'Calendar',
       'icon': Icons.calendar_month_rounded,
-      'color': Color(0xffffcf2f)
+      'color': Color(0xffffcf2f),
+      'page': DemoApp(),
     },
     {
       'title': 'Tasks',
@@ -189,7 +191,8 @@ class Body extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TeacherCourseDetailsPage(
+                                  builder: (context) =>
+                                      TeacherCourseDetailsPage(
                                         moduleName:
                                             module['moduleName'].toString(),
                                       )));
