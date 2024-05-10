@@ -8,7 +8,9 @@ class ModuleCardMD extends StatefulWidget {
       required this.isStarred,
       required this.moduleCategory,
       required this.moduleName,
-      required this.color, required this.icon, required this.onPressed});
+      required this.color,
+      required this.icon,
+      required this.onPressed});
   bool isStarred;
   final Color color;
   final String moduleCategory;
@@ -28,14 +30,9 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
       height: 200,
       width: size.width * 0.4,
       decoration: BoxDecoration(
-          color: widget.color,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
-              blurRadius: 3,
-            )
-          ]),
+        color: widget.color,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(

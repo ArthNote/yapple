@@ -77,7 +77,6 @@ class _BodyState extends State<Body> {
       uid = currentUser!.uid;
       loadStarredModules();
     }
-    print(starredModulesIds);
     getStudentClass();
   }
 
@@ -289,26 +288,13 @@ class _BodyState extends State<Body> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Starred Modules",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-              ),
-              Text(
-                "See All",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ],
+          child: Text(
+            "Starred Modules",
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
           ),
         ),
         SizedBox(
