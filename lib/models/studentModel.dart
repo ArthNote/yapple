@@ -1,4 +1,4 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:yapple/models/userModel.dart';
 
 class studentModel extends userModel {
@@ -18,7 +18,7 @@ class studentModel extends userModel {
 
   factory studentModel.fromJson(Map<String, dynamic> json) {
     return studentModel(
-      id: json['id'],
+      id: json['id'] ?? '',
       name: json['name'],
       email: json['email'],
       password: json['password'],
@@ -39,4 +39,20 @@ class studentModel extends userModel {
         'major': major,
         'classID': classID,
       };
+
+  factory studentModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    return studentModel(
+      id: document.id,
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      password: data['password'] ?? '',
+      profilePicUrl: data['profilePicUrl'] ?? '',
+      role: data['role'] ?? '',
+      major: data['major'] ?? '',
+      classID: data['classID'] ?? '',
+    );
+    //return something
+  }
 }

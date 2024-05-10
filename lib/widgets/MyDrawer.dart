@@ -5,7 +5,7 @@ import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/students/chats.dart';
 import 'package:yapple/pages/students/courses.dart';
 import 'package:yapple/pages/students/home.dart';
-import 'package:yapple/pages/global/profile.dart';
+import 'package:yapple/pages/students/profile.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});

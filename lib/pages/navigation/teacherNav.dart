@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:yapple/pages/global/profile.dart';
 import 'package:yapple/pages/teachers/chats.dart';
 import 'package:yapple/pages/teachers/courses.dart';
 import 'package:yapple/pages/teachers/home.dart';
+import 'package:yapple/pages/teachers/profile.dart';
 
 class TeacherNavBar extends StatefulWidget {
   const TeacherNavBar({super.key});
@@ -20,7 +20,7 @@ class _TeacherNavBarState extends State<TeacherNavBar> {
     TeacherHomePage(),
     TeacherCoursesPage(),
     TeachersChatsPage(),
-    StudentProfile(),
+    TeacherProfile(),
   ];
 
   @override

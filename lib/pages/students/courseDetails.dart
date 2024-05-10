@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables
 
 import 'package:flutter/material.dart';
+import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
 import 'package:yapple/pages/students/quizzPage.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
@@ -12,8 +15,8 @@ import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
 class StudentCourseDetailsPage extends StatelessWidget {
-  StudentCourseDetailsPage({super.key, required this.moduleName});
-  final String moduleName;
+  final moduleModel module;
+  StudentCourseDetailsPage({super.key, required this.module});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +27,7 @@ class StudentCourseDetailsPage extends StatelessWidget {
         appBar: AppBar(
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             title: Text(
-              moduleName,
+              module.name,
               style: TextStyle(fontSize: 17),
             ),
             bottom: TabBar(
@@ -44,11 +47,15 @@ class StudentCourseDetailsPage extends StatelessWidget {
             )),
         body: TabBarView(
           children: [
-            BodyDetails(
-              moduleName: moduleName,
+            SingleChildScrollView(
+              child: BodyDetails(
+                module: module,
+              ),
             ),
             BodyResources(),
-            BodyCircle(),
+            BodyCircle(
+              module: module,
+            ),
           ],
         ),
       ),
@@ -57,8 +64,8 @@ class StudentCourseDetailsPage extends StatelessWidget {
 }
 
 class BodyDetails extends StatelessWidget {
-  BodyDetails({super.key, required this.moduleName});
-  final String moduleName;
+  final moduleModel module;
+  BodyDetails({super.key, required this.module});
 
   @override
   Widget build(BuildContext context) {
@@ -71,18 +78,18 @@ class BodyDetails extends StatelessWidget {
             width: double.infinity,
             height: 200,
             child: Icon(
-              Icons.code,
+              module.icon,
               size: 80,
               color: Theme.of(context).appBarTheme.backgroundColor,
             ),
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: module.color,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
           SizedBox(height: 30),
           Text(
-            moduleName,
+            module.name,
             style: TextStyle(
               fontSize: 21,
               fontWeight: FontWeight.w500,
@@ -104,9 +111,9 @@ class BodyDetails extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (context) => ProfileDialog(
-                  name: "Yassine Laarbaoui",
-                  email: "name@email.com",
-                  role: "Human",
+                  name: module.teacher.name,
+                  email: module.teacher.email,
+                  role: module.teacher.role,
                 ),
               );
             },
@@ -128,7 +135,7 @@ class BodyDetails extends StatelessWidget {
               ),
             ),
             title: Text(
-              "Yassine Laarbaoui",
+              module.teacher.name,
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500),
             ),
             subtitle: Text("Teacher"),
@@ -153,7 +160,7 @@ class BodyDetails extends StatelessWidget {
             height: 15,
           ),
           Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum.",
+            module.about,
             textAlign: TextAlign.justify,
             style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
           )
@@ -163,9 +170,36 @@ class BodyDetails extends StatelessWidget {
   }
 }
 
-class BodyCircle extends StatelessWidget {
-  BodyCircle({super.key});
+class BodyCircle extends StatefulWidget {
+  final moduleModel module;
+  BodyCircle({super.key, required this.module});
+
+  @override
+  State<BodyCircle> createState() => _BodyCircleState();
+}
+
+class _BodyCircleState extends State<BodyCircle> {
   TextEditingController searchController = TextEditingController();
+
+  UserService userService = UserService();
+
+  List<studentModel> foundStudents = [];
+  String searchTerm = "";
+
+  Future<List<studentModel>> runFilter(String enteredKeyword) async {
+    this.searchTerm = enteredKeyword;
+    final students = await userService.getCircleStudents(widget.module.classID);
+    List<studentModel> results = [];
+    if (enteredKeyword.isEmpty) {
+      return results = students;
+    } else {
+      results = students
+          .where((student) =>
+              student.name.toLowerCase().contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+    return foundStudents = results;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,32 +212,53 @@ class BodyCircle extends StatelessWidget {
             hintText: "Search",
             icon: Icons.search,
             bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+            onchanged: (value) {
+              setState(() {
+                searchTerm = value;
+              });
+            },
           ),
           SizedBox(
             height: 15,
           ),
-          Expanded(
-            child: ListView(
-              children: students
-                  .map((student) => GestureDetector(
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => ProfileDialog(
-                              name: student['name'].toString(),
-                              email: student['email'].toString(),
-                              role: "Student",
-                            ),
-                          );
-                        },
-                        child: StudentItem(
-                          name: student['name'].toString(),
-                          email: student['email'].toString(),
-                        ),
-                      ))
-                  .toList(),
-            ),
-          )
+          FutureBuilder<List<studentModel>>(
+              future: runFilter(searchTerm),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasData) {
+                    List<studentModel> students =
+                        snapshot.data! as List<studentModel>;
+                    return Expanded(
+                      child: ListView(
+                        children: students
+                            .map((student) => GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => ProfileDialog(
+                                        name: student.name,
+                                        email: student.email,
+                                        role: "Student",
+                                      ),
+                                    );
+                                  },
+                                  child: StudentItem(
+                                    name: student.name,
+                                    email: student.email,
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text(snapshot.error.toString()));
+                  } else {
+                    return Center(child: Text("Something went wrong"));
+                  }
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
         ],
       ),
     );

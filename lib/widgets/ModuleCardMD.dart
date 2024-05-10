@@ -8,11 +8,13 @@ class ModuleCardMD extends StatefulWidget {
       required this.isStarred,
       required this.moduleCategory,
       required this.moduleName,
-      required this.color});
+      required this.color, required this.icon, required this.onPressed});
   bool isStarred;
   final Color color;
   final String moduleCategory;
   final String moduleName;
+  final IconData icon;
+  final void Function() onPressed;
 
   @override
   State<ModuleCardMD> createState() => _ModuleCardMDState();
@@ -43,16 +45,12 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(
-                  Icons.code,
+                  widget.icon,
                   color: Theme.of(context).appBarTheme.backgroundColor,
                   size: 35,
                 ),
                 GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      widget.isStarred = !widget.isStarred;
-                    });
-                  },
+                  onTap: widget.onPressed,
                   child: Icon(
                     widget.isStarred ? Icons.star : Icons.star_outline,
                     color: Colors.yellow.shade700,

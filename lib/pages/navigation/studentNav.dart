@@ -5,7 +5,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:yapple/pages/students/chats.dart';
 import 'package:yapple/pages/students/courses.dart';
 import 'package:yapple/pages/students/home.dart';
-import 'package:yapple/pages/global/profile.dart';
+import 'package:yapple/pages/students/profile.dart';
 
 class StudentNavbar extends StatefulWidget {
   const StudentNavbar({super.key});

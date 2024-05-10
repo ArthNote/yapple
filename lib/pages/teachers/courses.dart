@@ -31,6 +31,7 @@ class Body extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: SearchField(
+            onchanged: (value) {},
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,
@@ -60,7 +61,11 @@ class Body extends StatelessWidget {
                                     )));
                       },
                       child: ModuleCardMD(
+                        onPressed: () {
+                          print('Starred');
+                        },
                         isStarred: module['isStarred'] as bool,
+                        icon: Icons.book,
                         moduleName: module['moduleName'].toString(),
                         moduleCategory: module['moduleCategory'].toString(),
                         color: module['color'] as Color,

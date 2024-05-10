@@ -201,6 +201,7 @@ class Body extends StatelessWidget {
                           moduleCode: module['moduleCode'].toString(),
                           moduleCategory: module['moduleCategory'].toString(),
                           isStarred: module['isStarred'] as bool,
+                          onPressed: () {},
                           color: module['color'] as Color,
                         ),
                       ))

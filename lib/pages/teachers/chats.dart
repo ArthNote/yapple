@@ -23,6 +23,7 @@ class TeachersChatsPage extends StatelessWidget {
                   hintText: "Search",
                   icon: Icons.search,
                   bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+                  onchanged: (value) {},
                 ),
               ),
               SizedBox(

@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:yapple/pages/global/login.dart';
 
 class AuthService {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -40,8 +41,7 @@ class AuthService {
             content:
                 Text("No user found with the provided email and password")));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("An error occurred: ${e.code}")));
+        print(e.code);
       }
       return {'user': null, 'success': false, 'error': e.code};
     }
@@ -51,7 +51,7 @@ class AuthService {
       String email, String password) async {
     try {
       final docStudent = db
-          .collection("students")
+          .collection('temporary')
           .where("email", isEqualTo: email)
           .where("password", isEqualTo: password);
       final snapshot = await docStudent.get();
@@ -67,16 +67,24 @@ class AuthService {
 
   Future<bool> changeDocumentId(String oldId, String newId, String name) async {
     try {
-      final collection = db.collection(name);
+      final temporaryCollection = db.collection('temporary');
 
-      final oldDocument = await collection.doc(oldId).get();
+      final oldDocument = await temporaryCollection.doc(oldId).get();
+
+      final collection = db.collection(name);
 
       await collection.doc(newId).set(oldDocument.data()!);
 
-      await collection.doc(oldId).delete();
+      await temporaryCollection.doc(oldId).delete();
       return true;
     } on FirebaseAuthException catch (e) {
       return false;
     }
+  }
+
+  void logout(BuildContext context) {
+    FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 }

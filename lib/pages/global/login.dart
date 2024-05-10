@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
+import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
 import 'package:yapple/pages/navigation/teacherNav.dart';
 import 'package:yapple/widgets/DropdownList.dart';
@@ -21,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
-  String selectedType = "Select account type";
+  String accountType = "";
   AuthService auth = AuthService();
 
   void login() async {
@@ -37,58 +38,58 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
       return;
-    } else if (selectedType == "Select account type") {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Please select an account type",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-      return;
     }
-
     Map<String, dynamic> signInResult = await auth.signInWithEmailPassword(
         emailController.text, passwordController.text, context);
 
-    if (signInResult['success']) {
-      if (selectedType == "Student") {
+    if (signInResult['success'] as bool) {
+      bool studentExists = await UserService().userExists(
+          emailController.text, passwordController.text, 'students', context);
+      if (studentExists) {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => StudentNavbar(),
           ),
         );
-      } else if (selectedType == "Teacher") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TeacherNavBar(),
-          ),
-        );
-      } else if (selectedType == "Administrator") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StudentNavbar(),
-          ),
-        );
+      } else {
+        bool teacherExists = await UserService().userExists(
+            emailController.text, passwordController.text, 'teachers', context);
+        if (teacherExists) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeacherNavBar(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "No user found with the provided email and password",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
       }
-    } else if (signInResult['error'] == 'user-not-found' ||
-        signInResult['error'] == 'invalid-credential') {
+    } else if (signInResult['error'] as String == 'user-not-found' ||
+        signInResult['error'] as String == 'invalid-credential') {
       Map<String, dynamic> isFound = await auth.findRecordWithEmailAndPassword(
           emailController.text, passwordController.text);
       if (isFound['success'] as bool) {
         Map<String, dynamic> result = await auth.signUpWithEmailPassword(
             emailController.text, passwordController.text, context);
-        if (result['success']) {
+        if (result['success'] as bool) {
+          String selectedType = await UserService()
+              .getType(emailController.text, passwordController.text, context);
+          String selectedTypeLowerCase = selectedType.toLowerCase() + 's';
           bool changeDoc = await auth.changeDocumentId(
               isFound['recordID'] as String,
               result['user'] as String,
-              selectedType);
+              selectedTypeLowerCase);
           if (selectedType == "Student") {
             Navigator.push(
               context,
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  "Please select a valid account type",
+                  "An error occurred: ${result['error']}",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -155,6 +156,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     }
   }
+  //130 lines of code
 
   @override
   Widget build(BuildContext context) {
@@ -225,10 +227,7 @@ class _LoginPageState extends State<LoginPage> {
                       bgColor: Theme.of(context).colorScheme.secondary,
                       keyboardType: TextInputType.visiblePassword,
                     ),
-                    SizedBox(
-                      height: 25,
-                    ),
-                    DropdownList(
+                    /*DropdownList(
                       selectedType: selectedType,
                       selectedItem: selectedType,
                       onPressed: (String newValue) {
@@ -263,6 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
+                    */
                     SizedBox(
                       height: 15,
                     ),
@@ -284,7 +284,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     MyButton(
                       backgroundColor: Theme.of(context).colorScheme.primary,
-                      textColor: Theme.of(context).colorScheme.tertiary,
+                      textColor: Theme.of(context).appBarTheme.backgroundColor!,
                       label: "Log in",
                       onPressed: () => login(),
                     ),

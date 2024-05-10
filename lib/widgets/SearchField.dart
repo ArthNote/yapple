@@ -8,11 +8,12 @@ class SearchField extends StatefulWidget {
       required this.myController,
       required this.hintText,
       required this.icon,
-      required this.bgColor});
+      required this.bgColor, required this.onchanged});
   final TextEditingController myController;
   final String hintText;
   final IconData icon;
   final Color bgColor;
+  final Function(String) onchanged;
 
   @override
   State<SearchField> createState() => _SearchFieldState();
@@ -29,6 +30,7 @@ class _SearchFieldState extends State<SearchField> {
         controller: widget.myController,
         style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
         onChanged: (value) {
+          widget.onchanged(value);
           if (value.isNotEmpty || value != "") {
             setState(() {
               isTyping = true;

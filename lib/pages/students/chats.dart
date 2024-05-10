@@ -21,6 +21,7 @@ class StudentChatsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SearchField(
+                    onchanged: (value) {},
                     myController: searchController,
                     hintText: "Search",
                     icon: Icons.search,

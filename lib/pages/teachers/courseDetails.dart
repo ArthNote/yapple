@@ -202,6 +202,7 @@ class BodyCircle extends StatelessWidget {
       child: Column(
         children: [
           SearchField(
+            onchanged: (value) {},
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,

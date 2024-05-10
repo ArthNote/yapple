@@ -10,6 +10,7 @@ class ModuleCardSM extends StatefulWidget {
     required this.moduleCategory,
     required this.isStarred,
     required this.color,
+    required this.onPressed,
   });
 
   final String moduleName;
@@ -17,6 +18,7 @@ class ModuleCardSM extends StatefulWidget {
   final String moduleCategory;
   bool isStarred;
   final Color color;
+  final void Function() onPressed;
 
   @override
   State<ModuleCardSM> createState() => _ModuleCardSMState();
@@ -32,13 +34,6 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       decoration: BoxDecoration(
         color: widget.color,
-        // boxShadow: [
-        //   BoxShadow(color: Colors.black12, blurRadius: 5),
-        // ],
-        // border: Border.all(
-        //   color: Theme.of(context).colorScheme.secondary,
-        //   width: 1,
-        // ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -59,11 +54,7 @@ class _ModuleCardSMState extends State<ModuleCardSM> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  setState(() {
-                    widget.isStarred = !widget.isStarred;
-                  });
-                },
+                onTap: widget.onPressed,
                 child: Icon(
                   widget.isStarred ? Icons.star : Icons.star_outline,
                   color: Colors.yellow.shade700,

@@ -1,7 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_local_variable, must_be_immutable
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_local_variable, must_be_immutable, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:yapple/models/staticData.dart';
+import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/moduleModel.dart';
+import 'package:yapple/models/starredModel.dart';
 import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardMD.dart';
 import 'package:yapple/widgets/SearchField.dart';
@@ -23,9 +27,167 @@ class _CoursesPageState extends State<StudentCoursesPage> {
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   Body({super.key});
+
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
   TextEditingController searchController = TextEditingController();
+
+  ModuleService moduleService = ModuleService();
+  final currentUser = FirebaseAuth.instance.currentUser;
+  List<moduleModel> foundModules = [];
+  String searchTerm = "";
+  String classID = '';
+  String uid = "";
+
+  Set<String> starredModulesIds = Set<String>();
+
+  Future<void> loadStarredModules() async {
+    List<starredModel> stares =
+        await moduleService.getStarredModules(uid, 'students');
+    setState(() {
+      starredModulesIds = Set<String>.from(stares.map((star) => star.id));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (currentUser != null) {
+      uid = currentUser!.uid;
+      loadStarredModules();
+    }
+    getStudentClass();
+  }
+
+  Future<void> getStudentClass() async {
+    String id = await UserService().getStudentClass(uid, context);
+    setState(() {
+      classID = id;
+    });
+  }
+
+  Future<List<moduleModel>> runFilter(String enteredKeyword) async {
+    this.searchTerm = enteredKeyword;
+    final modules = await moduleService.getModules(classID);
+    List<moduleModel> results = [];
+    if (enteredKeyword.isEmpty) {
+      return results = modules;
+    } else {
+      results = modules
+          .where((module) =>
+              module.name
+                  .toLowerCase()
+                  .contains(enteredKeyword.toLowerCase()) ||
+              module.category
+                  .toLowerCase()
+                  .contains(enteredKeyword.toLowerCase()) ||
+              module.code
+                  .toLowerCase()
+                  .contains(enteredKeyword.toLowerCase()) ||
+              module.teacher.name
+                  .toLowerCase()
+                  .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+    return foundModules = results;
+  }
+
+  void starModule(moduleModel module) async {
+    var newStar = starredModel(
+      id: "",
+      name: module.name,
+      category: module.category,
+      code: module.code,
+      color: module.color,
+      icon: module.icon,
+    );
+    bool check =
+        await moduleService.checkStarred('students', uid, module.id, context);
+    if (check == true) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              "Remove Starred?",
+              style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+            ),
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "This module is already starred.",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Are you sure you want to remove it?",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.tertiary),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                  removeStarred(module.id);
+                },
+                child: Text("Remove"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      bool r = await moduleService.starModule(
+          newStar, 'students', uid, context, module.id);
+      if (r == true) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Starred successfully"),
+        ));
+        setState(() {
+          loadStarredModules();
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Something went wrong while starring"),
+        ));
+      }
+    }
+  }
+
+  void removeStarred(String moduleId) async {
+    bool result =
+        await moduleService.removeStar('students', uid, moduleId, context);
+    if (result) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Starred removed successfully"),
+      ));
+      setState(() {
+        loadStarredModules();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Something went wrong while removing starred"),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,40 +202,68 @@ class Body extends StatelessWidget {
             hintText: "Search",
             icon: Icons.search,
             bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+            onchanged: (value) {
+              setState(() {
+                searchTerm = value;
+              });
+            },
           ),
         ),
         SizedBox(
           height: 10,
         ),
         //courses list
-        Expanded(
-          child: GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 0.78,
-            mainAxisSpacing: 20,
-            crossAxisSpacing: 20,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            children: modules
-                .map((module) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
+        FutureBuilder<List<moduleModel>>(
+            future: runFilter(searchTerm),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData) {
+                  List<moduleModel> modules =
+                      snapshot.data! as List<moduleModel>;
+                  return Expanded(
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.78,
+                      mainAxisSpacing: 20,
+                      crossAxisSpacing: 20,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      children: List.generate(modules.length, (index) {
+                        var module = modules[index];
+                        bool isStarred = starredModulesIds.contains(module.id);
+                        print(module.id);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
                                 builder: (context) => StudentCourseDetailsPage(
-                                      moduleName:
-                                          module['moduleName'].toString(),
-                                    )));
-                      },
-                      child: ModuleCardMD(
-                        isStarred: module['isStarred'] as bool,
-                        moduleName: module['moduleName'].toString(),
-                        moduleCategory: module['moduleCategory'].toString(),
-                        color: module['color'] as Color,
-                      ),
-                    ))
-                .toList(),
-          ),
-        ),
+                                  module: module,
+                                ),
+                              ),
+                            );
+                          },
+                          child: ModuleCardMD(
+                            isStarred: isStarred,
+                            moduleName: module.name,
+                            moduleCategory: module.category,
+                            color: module.color,
+                            icon: module.icon,
+                            onPressed: () => starModule(module),
+                          ),
+                        );
+                      }),
+                    ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                } else {
+                  return Center(child: Text("Something went wrong"));
+                }
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }),
       ],
     );
   }
