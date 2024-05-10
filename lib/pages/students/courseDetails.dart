@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/chatModel.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/models/studentModel.dart';
@@ -14,9 +17,26 @@ import 'package:yapple/widgets/QuizzItem.dart';
 import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
-class StudentCourseDetailsPage extends StatelessWidget {
+class StudentCourseDetailsPage extends StatefulWidget {
   final moduleModel module;
   StudentCourseDetailsPage({super.key, required this.module});
+
+  @override
+  State<StudentCourseDetailsPage> createState() =>
+      _StudentCourseDetailsPageState();
+}
+
+class _StudentCourseDetailsPageState extends State<StudentCourseDetailsPage> {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  String uid = "";
+
+  @override
+  void initState() {
+    super.initState();
+    if (currentUser != null) {
+      uid = currentUser!.uid;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +47,7 @@ class StudentCourseDetailsPage extends StatelessWidget {
         appBar: AppBar(
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             title: Text(
-              module.name,
+              widget.module.name,
               style: TextStyle(fontSize: 17),
             ),
             bottom: TabBar(
@@ -49,12 +69,14 @@ class StudentCourseDetailsPage extends StatelessWidget {
           children: [
             SingleChildScrollView(
               child: BodyDetails(
-                module: module,
+                module: widget.module,
+                uid: uid,
               ),
             ),
             BodyResources(),
             BodyCircle(
-              module: module,
+              module: widget.module,
+              uid: uid,
             ),
           ],
         ),
@@ -65,7 +87,47 @@ class StudentCourseDetailsPage extends StatelessWidget {
 
 class BodyDetails extends StatelessWidget {
   final moduleModel module;
-  BodyDetails({super.key, required this.module});
+  final String uid;
+  BodyDetails({super.key, required this.module, required this.uid});
+
+  void startChat(BuildContext context) async {
+    try {
+      String uniqueID = uid + "_" + module.teacher.id;
+      bool check = await ChatService().checkChat(uniqueID);
+      if (check == true) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Chat already exists"),
+        ));
+      } else {
+        final newChat = chatModel(
+          id: '',
+          lastMessage: '',
+          timeSent: null,
+          unreadMessages: 0,
+          isGroup: false,
+          members: [
+            uid,
+            module.teacher.id,
+          ],
+          singleChatId: uniqueID,
+        );
+        bool r = await ChatService().startChat(newChat, context);
+        if (r == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Chat created successfully"),
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Failed to create chat"),
+          ));
+        }
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(error.toString()),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +176,7 @@ class BodyDetails extends StatelessWidget {
                   name: module.teacher.name,
                   email: module.teacher.email,
                   role: module.teacher.role,
+                  onPressed: () => startChat(context),
                 ),
               );
             },
@@ -172,7 +235,8 @@ class BodyDetails extends StatelessWidget {
 
 class BodyCircle extends StatefulWidget {
   final moduleModel module;
-  BodyCircle({super.key, required this.module});
+  final String uid;
+  BodyCircle({super.key, required this.module, required this.uid});
 
   @override
   State<BodyCircle> createState() => _BodyCircleState();
@@ -199,6 +263,55 @@ class _BodyCircleState extends State<BodyCircle> {
           .toList();
     }
     return foundStudents = results;
+  }
+
+  void startChat(BuildContext context, studentModel student) async {
+    try {
+      String uniqueID = widget.uid + "_" + student.id;
+      if (widget.uid == student.id) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            "You can't chat with yourself",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ));
+      } else {
+        bool check = await ChatService().checkChat(uniqueID);
+        if (check == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Chat already exists"),
+          ));
+        } else {
+          final newChat = chatModel(
+            id: '',
+            lastMessage: '',
+            timeSent: null,
+            unreadMessages: 0,
+            isGroup: false,
+            members: [
+              widget.uid,
+              student.id,
+            ],
+            singleChatId: uniqueID,
+          );
+          bool r = await ChatService().startChat(newChat, context);
+          if (r == true) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Chat created successfully"),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Failed to create chat"),
+            ));
+          }
+        }
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(error.toString()),
+      ));
+    }
   }
 
   @override
@@ -239,6 +352,8 @@ class _BodyCircleState extends State<BodyCircle> {
                                         name: student.name,
                                         email: student.email,
                                         role: "Student",
+                                        onPressed: () =>
+                                            startChat(context, student),
                                       ),
                                     );
                                   },
