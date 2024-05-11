@@ -231,7 +231,6 @@ class _BodyState extends State<Body> {
                       children: List.generate(modules.length, (index) {
                         var module = modules[index];
                         bool isStarred = starredModulesIds.contains(module.id);
-                        print(module.id);
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(

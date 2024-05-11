@@ -23,9 +23,9 @@ class ChatService {
   Future<bool> checkChat(String uniqueID) async {
     try {
       final chatSnapshot = await db
-        .collection("chats")
-        .where("singleChatId", isEqualTo: uniqueID)
-        .get();
+          .collection("chats")
+          .where("singleChatId", isEqualTo: uniqueID)
+          .get();
 
       if (chatSnapshot.docs.isEmpty) {
         return false;
@@ -37,11 +37,30 @@ class ChatService {
     }
   }
 
-  Stream<QuerySnapshot> getChats(String uid, BuildContext context) {
+  Future<String> getChatID(String uniqueID) async {
+    try {
+      final chatSnapshot = await db
+          .collection("chats")
+          .where("singleChatId", isEqualTo: uniqueID)
+          .get();
+
+      if (chatSnapshot.docs.isEmpty) {
+        return "";
+      } else {
+        return chatSnapshot.docs[0].id;
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Stream<QuerySnapshot> getTypedChats(
+      String uid, BuildContext context, String type) {
     try {
       return FirebaseFirestore.instance
           .collection("chats")
-          .where('members', arrayContains: uid)
+          .where('type', isEqualTo: type)
+          .where('membersId', arrayContains: uid)
           .orderBy("timeSent", descending: true)
           .snapshots();
     } catch (e) {
@@ -49,6 +68,32 @@ class ChatService {
         content: Text(e.toString()),
       ));
       return Stream.empty();
+    }
+  }
+
+  Future<bool> updateChat(String id, String msg, Timestamp ts) async {
+    try {
+      final docChat = db.collection("chats").doc(id);
+      await docChat.update({"lastMessage": msg, "timeSent": ts});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateChatInfo(chatModel chat) async {
+    try {
+      final docChat = db.collection("chats").doc(chat.id);
+      await docChat.update({
+        "name": chat.name,
+        "members": chat.members.map((member) => member.toJson()).toList(),
+        "membersId": chat.membersId
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 }

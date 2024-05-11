@@ -8,16 +8,12 @@ class ChatItem extends StatefulWidget {
       required this.chatName,
       required this.last_msg,
       required this.time_sent,
-      required this.runread_msg,
-      required this.senderId,
-      required this.receiverId});
+      required this.runread_msg});
 
   final String chatName;
   final String last_msg;
   final String time_sent;
   final int runread_msg;
-  final String senderId;
-  final String receiverId;
 
   @override
   State<ChatItem> createState() => _ChatItemState();
@@ -59,8 +55,8 @@ class _ChatItemState extends State<ChatItem> {
                 children: [
                   //add the message delivered icon
                   Text(
-                    widget.last_msg.length > 28
-                        ? widget.last_msg.substring(0, 28) + "..."
+                    widget.last_msg.length > 22
+                        ? widget.last_msg.substring(0, 20) + "..."
                         : widget.last_msg,
                     style: TextStyle(
                       fontSize: 14,

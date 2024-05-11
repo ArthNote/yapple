@@ -5,11 +5,17 @@ import 'package:yapple/widgets/MyButton.dart';
 
 class ProfileDialog extends StatelessWidget {
   ProfileDialog(
-      {super.key, required this.name, required this.email, required this.role, this.onPressed});
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.role,
+      this.onPressed,
+      this.showButton});
   final String name;
   final String email;
   final String role;
   final void Function()? onPressed;
+  final bool? showButton;
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -69,11 +75,13 @@ class ProfileDialog extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              MyButton(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).appBarTheme.backgroundColor!,
-                  label: "Message",
-                  onPressed: onPressed ?? () {})
+              showButton ?? true
+                  ? MyButton(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      textColor: Theme.of(context).appBarTheme.backgroundColor!,
+                      label: "Message",
+                      onPressed: onPressed ?? () {})
+                  : SizedBox(),
             ])),
           ],
         ),

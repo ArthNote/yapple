@@ -6,9 +6,11 @@ class ChatInput extends StatefulWidget {
   ChatInput({
     super.key,
     required this.controller,
+    required this.onPressed,
   });
 
   TextEditingController controller;
+  final void Function() onPressed;
 
   @override
   State<ChatInput> createState() => _ChatInputState();
@@ -102,7 +104,7 @@ class _ChatInputState extends State<ChatInput> {
             )),
             isTyping
                 ? GestureDetector(
-                    onTap: () {},
+                    onTap: widget.onPressed,
                     child: Container(
                       height: 60,
                       margin: EdgeInsets.only(bottom: 20, left: 8),

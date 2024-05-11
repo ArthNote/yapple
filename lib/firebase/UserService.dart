@@ -119,4 +119,31 @@ class UserService {
       return "";
     }
   }
+
+  Future<String> getStudentName(String id, BuildContext context) async {
+    try {
+      final docUser = FirebaseFirestore.instance.collection("students").doc(id);
+      final snapShot = await docUser.get();
+      return snapShot.get("name");
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+      return "";
+    }
+  }
+
+  Future<String> getStudentProfilePic(String id, BuildContext context) async {
+    try {
+      final docUser = FirebaseFirestore.instance.collection("students").doc(id);
+      final snapShot = await docUser.get();
+      return snapShot.get("profilePicUrl");
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+      return "";
+    }
+  }
+
 }

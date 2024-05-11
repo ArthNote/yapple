@@ -1,13 +1,16 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables, use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/chatModel.dart';
+import 'package:yapple/models/chatParticipantModel.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/models/studentModel.dart';
+import 'package:yapple/pages/global/chatPage.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
 import 'package:yapple/pages/students/quizzPage.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
@@ -29,6 +32,15 @@ class StudentCourseDetailsPage extends StatefulWidget {
 class _StudentCourseDetailsPageState extends State<StudentCourseDetailsPage> {
   final currentUser = FirebaseAuth.instance.currentUser;
   String uid = "";
+  var me = studentModel(
+      id: '',
+      name: '',
+      email: '',
+      password: '',
+      profilePicUrl: '',
+      role: '',
+      major: '',
+      classID: '');
 
   @override
   void initState() {
@@ -65,20 +77,33 @@ class _StudentCourseDetailsPageState extends State<StudentCourseDetailsPage> {
                 ),
               ],
             )),
-        body: TabBarView(
-          children: [
-            SingleChildScrollView(
-              child: BodyDetails(
-                module: widget.module,
-                uid: uid,
-              ),
-            ),
-            BodyResources(),
-            BodyCircle(
-              module: widget.module,
-              uid: uid,
-            ),
-          ],
+        body: FutureBuilder(
+          future: UserService().getStudentData(uid, context),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              studentModel user = snapshot.data as studentModel;
+              return TabBarView(
+                children: [
+                  SingleChildScrollView(
+                    child: BodyDetails(
+                      module: widget.module,
+                      uid: uid,
+                      user: user,
+                    ),
+                  ),
+                  BodyResources(),
+                  BodyCircle(
+                    module: widget.module,
+                    uid: uid,
+                    user: user,
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Error${snapshot.error}"));
+            }
+            return Center(child: CircularProgressIndicator());
+          },
         ),
       ),
     );
@@ -88,28 +113,85 @@ class _StudentCourseDetailsPageState extends State<StudentCourseDetailsPage> {
 class BodyDetails extends StatelessWidget {
   final moduleModel module;
   final String uid;
-  BodyDetails({super.key, required this.module, required this.uid});
+  final studentModel user;
+  BodyDetails(
+      {super.key, required this.module, required this.uid, required this.user});
 
   void startChat(BuildContext context) async {
     try {
       String uniqueID = uid + "_" + module.teacher.id;
       bool check = await ChatService().checkChat(uniqueID);
       if (check == true) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("Chat already exists"),
-        ));
+        String chatID = await ChatService().getChatID(uniqueID);
+        if (chatID == null || chatID.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Failed to open chat"),
+          ));
+        }
+        var teacher = chatParticipantModel(
+          id: module.teacher.id,
+          name: module.teacher.name,
+          email: module.teacher.email,
+          profilePicUrl: module.teacher.profilePicUrl,
+          role: module.teacher.role,
+        );
+        var me = chatParticipantModel(
+          id: uid,
+          name: user.name,
+          email: user.email,
+          profilePicUrl: user.profilePicUrl,
+          role: user.role,
+        );
+        final chat = chatModel(
+          id: chatID,
+          lastMessage: '',
+          timeSent: DateTime.now(),
+          unreadMessages: 0,
+          type: 'teacher',
+          members: [me, teacher],
+          singleChatId: uniqueID,
+          membersId: [
+            uid,
+            module.teacher.id,
+          ],
+        );
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChatPage(
+                      chatName: module.teacher.name,
+                      isGroup: false,
+                      type: 'student',
+                      chat: chat,
+                    )));
       } else {
+        var teacher = chatParticipantModel(
+          id: module.teacher.id,
+          name: module.teacher.name,
+          email: module.teacher.email,
+          profilePicUrl: module.teacher.profilePicUrl,
+          role: module.teacher.role,
+        );
+        var me = chatParticipantModel(
+          id: uid,
+          name: user.name,
+          email: user.email,
+          profilePicUrl: user.profilePicUrl,
+          role: user.role,
+        );
         final newChat = chatModel(
           id: '',
           lastMessage: '',
           timeSent: null,
           unreadMessages: 0,
-          isGroup: false,
-          members: [
+          type: 'teacher',
+          members: [me, teacher],
+          singleChatId: uniqueID,
+          membersId: [
             uid,
             module.teacher.id,
           ],
-          singleChatId: uniqueID,
         );
         bool r = await ChatService().startChat(newChat, context);
         if (r == true) {
@@ -236,7 +318,9 @@ class BodyDetails extends StatelessWidget {
 class BodyCircle extends StatefulWidget {
   final moduleModel module;
   final String uid;
-  BodyCircle({super.key, required this.module, required this.uid});
+  final studentModel user;
+  BodyCircle(
+      {super.key, required this.module, required this.uid, required this.user});
 
   @override
   State<BodyCircle> createState() => _BodyCircleState();
@@ -279,22 +363,74 @@ class _BodyCircleState extends State<BodyCircle> {
       } else {
         bool check = await ChatService().checkChat(uniqueID);
         if (check == true) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Chat already exists"),
-          ));
-        } else {
-          final newChat = chatModel(
-            id: '',
-            lastMessage: '',
-            timeSent: null,
-            unreadMessages: 0,
-            isGroup: false,
-            members: [
-              widget.uid,
-              student.id,
-            ],
-            singleChatId: uniqueID,
+          String chatID = await ChatService().getChatID(uniqueID);
+          if (chatID == null || chatID.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Failed to open chat"),
+            ));
+          }
+          var studentt = chatParticipantModel(
+            id: student.id,
+            name: student.name,
+            email: student.email,
+            profilePicUrl: student.profilePicUrl,
+            role: student.role,
           );
+          var me = chatParticipantModel(
+            id: widget.uid,
+            name: widget.user.name,
+            email: widget.user.email,
+            profilePicUrl: widget.user.profilePicUrl,
+            role: widget.user.role,
+          );
+          final chat = chatModel(
+              id: chatID,
+              lastMessage: '',
+              timeSent: DateTime.now(),
+              unreadMessages: 0,
+              type: 'student',
+              members: [me, studentt],
+              singleChatId: uniqueID,
+              membersId: [
+                widget.uid,
+                student.id,
+              ]);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChatPage(
+                        chatName: studentt.name,
+                        isGroup: false,
+                        type: 'student',
+                        chat: chat,
+                      )));
+        } else {
+          var studentt = chatParticipantModel(
+            id: student.id,
+            name: student.name,
+            email: student.email,
+            profilePicUrl: student.profilePicUrl,
+            role: student.role,
+          );
+          var me = chatParticipantModel(
+            id: widget.uid,
+            name: widget.user.name,
+            email: widget.user.email,
+            profilePicUrl: widget.user.profilePicUrl,
+            role: widget.user.role,
+          );
+          final newChat = chatModel(
+              id: '',
+              lastMessage: '',
+              timeSent: null,
+              unreadMessages: 0,
+              type: 'student',
+              members: [me, studentt],
+              singleChatId: uniqueID,
+              membersId: [
+                widget.uid,
+                student.id,
+              ]);
           bool r = await ChatService().startChat(newChat, context);
           if (r == true) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(

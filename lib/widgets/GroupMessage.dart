@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/material.dart';
+import 'package:yapple/models/chatParticipantModel.dart';
 import 'package:yapple/widgets/ProfileDialog.dart';
 
 class GroupMessage extends StatelessWidget {
@@ -9,8 +10,10 @@ class GroupMessage extends StatelessWidget {
       required this.message,
       required this.byMe,
       required this.time_sent,
-      required this.isRead});
+      required this.isRead,
+      required this.sender});
   final String message;
+  final chatParticipantModel sender;
   final bool byMe;
   final String time_sent;
   final bool isRead;
@@ -30,9 +33,10 @@ class GroupMessage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) => ProfileDialog(
-                        name: "person name",
-                        email: "name@email.com",
-                        role: "Human",
+                        name: sender.name,
+                        email: sender.email,
+                        role: sender.role,
+                        showButton: false,
                       ),
                     );
                   },
@@ -41,7 +45,7 @@ class GroupMessage extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 17,
                       child: Text(
-                        "A",
+                        sender.name.substring(0, 1).toUpperCase(),
                         style: TextStyle(fontSize: 16),
                       ),
                       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -83,7 +87,7 @@ class GroupMessage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Row(
                   mainAxisAlignment:
                       byMe ? MainAxisAlignment.end : MainAxisAlignment.start,

@@ -13,7 +13,8 @@ class MyTextField extends StatefulWidget {
       this.bgColor,
       required this.keyboardType,
       this.suffixIcon,
-      this.formatters, this.readOnly});
+      this.formatters,
+      this.readOnly});
 
   final TextEditingController myController;
   final bool isPass;
@@ -51,55 +52,56 @@ class _MyTextFieldState extends State<MyTextField> {
         readOnly: widget.readOnly ?? false,
         maxLines: widget.keyboardType == TextInputType.multiline ? 200 : 1,
         decoration: InputDecoration(
-            prefixIcon: widget.icon != null
-                ? Icon(
-                    widget.icon,
-                    color:
-                        Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
-                  )
-                : null,
-            suffixIcon: widget.isPass
-                ? IconButton(
-                    onPressed: toggleVisibility,
-                    icon: isHidden
-                        ? Icon(
-                            Icons.visibility_off_outlined,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiary
-                                .withOpacity(0.5),
-                          )
-                        : Icon(
-                            Icons.visibility_outlined,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiary
-                                .withOpacity(0.5),
-                          ),
-                  )
-                : widget.suffixIcon != null
-                    ? widget.suffixIcon
-                    : null,
-            hintText: widget.hintText,
-            filled: true,
-            hintStyle: TextStyle(
-              color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+          prefixIcon: widget.icon != null
+              ? Icon(
+                  widget.icon,
+                  color:
+                      Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+                )
+              : null,
+          suffixIcon: widget.isPass
+              ? IconButton(
+                  onPressed: toggleVisibility,
+                  icon: isHidden
+                      ? Icon(
+                          Icons.visibility_off_outlined,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.5),
+                        )
+                      : Icon(
+                          Icons.visibility_outlined,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.5),
+                        ),
+                )
+              : widget.suffixIcon != null
+                  ? widget.suffixIcon
+                  : null,
+          hintText: widget.hintText,
+          filled: true,
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
+          ),
+          fillColor: Theme.of(context).appBarTheme.backgroundColor,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 1,
             ),
-            fillColor: Theme.of(context).appBarTheme.backgroundColor,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.secondary,
-                width: 1,
-              ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 1,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.secondary,
-                width: 1,
-              ),
-            )),
+          ),
+        ),
       ),
     );
   }
