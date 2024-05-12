@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/pages/global/calendar.dart';
 import 'package:yapple/pages/navigation/hiba.dart';
 import 'package:yapple/pages/students/tasks.dart';
 import 'package:yapple/pages/teachers/courseDetails.dart';
@@ -29,6 +30,7 @@ class Body extends StatelessWidget {
       'title': 'Calendar',
       'icon': Icons.calendar_month_rounded,
       'color': Color(0xffffcf2f),
+      'page': calendarPage(),
     },
     {
       'title': 'Tasks',
