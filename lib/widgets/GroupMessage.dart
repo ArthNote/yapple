@@ -11,12 +11,14 @@ class GroupMessage extends StatelessWidget {
       required this.byMe,
       required this.time_sent,
       required this.isRead,
-      required this.sender});
+      required this.sender,
+      required this.show});
   final String message;
   final chatParticipantModel sender;
   final bool byMe;
   final String time_sent;
   final bool isRead;
+  final bool show;
 
   @override
   Widget build(BuildContext context) {
@@ -28,42 +30,73 @@ class GroupMessage extends StatelessWidget {
         children: [
           byMe
               ? SizedBox()
-              : GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => ProfileDialog(
-                        name: sender.name,
-                        email: sender.email,
-                        role: sender.role,
-                        showButton: false,
+              : show
+                  ? GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => ProfileDialog(
+                            name: sender.name,
+                            email: sender.email,
+                            role: sender.role,
+                            showButton: false,
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: CircleAvatar(
+                          radius: 17,
+                          child: Text(
+                            sender.name.substring(0, 1).toUpperCase(),
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        ),
                       ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: CircleAvatar(
-                      radius: 17,
-                      child: Text(
-                        sender.name.substring(0, 1).toUpperCase(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
+                    )
+                  : SizedBox(),
           Flexible(
               child: Column(
             crossAxisAlignment:
                 byMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
+              byMe
+                  ? SizedBox(
+                      height: 0,
+                    )
+                  : show
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            mainAxisAlignment: byMe
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                sender.name,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
               Container(
                 constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.65,
                 ),
                 padding: EdgeInsets.all(12),
                 margin: EdgeInsets.symmetric(
-                  horizontal: byMe ? 16 : 5,
+                  horizontal: byMe
+                      ? 16
+                      : show
+                          ? 5
+                          : 50,
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
@@ -87,7 +120,7 @@ class GroupMessage extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.symmetric(horizontal: show ? 5 : 50),
                 child: Row(
                   mainAxisAlignment:
                       byMe ? MainAxisAlignment.end : MainAxisAlignment.start,

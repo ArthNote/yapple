@@ -24,7 +24,7 @@ class MessageService {
           .collection("chats")
           .doc(chat_id)
           .collection("messages")
-          .orderBy("timeSent", descending: true)
+          .orderBy("timeSent", descending: false)
           .snapshots();
     } catch (e) {
       print(e.toString());
@@ -34,7 +34,12 @@ class MessageService {
 
   Future<bool> markAsSeen(String id, String senderID) async {
     try {
-      final docMsg = db.collection("chats").doc(id).collection('messages').where('senderID', isNotEqualTo: senderID).get();
+      final docMsg = db
+          .collection("chats")
+          .doc(id)
+          .collection('messages')
+          .where('senderID', isNotEqualTo: senderID)
+          .get();
       for (var doc in (await docMsg).docs) {
         await doc.reference.update({'isRead': true});
       }
@@ -44,6 +49,4 @@ class MessageService {
       return false;
     }
   }
-
-  
 }

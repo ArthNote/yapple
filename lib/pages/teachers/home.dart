@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/models/staticData.dart';
-import 'package:yapple/pages/navigation/hiba.dart';
-import 'package:yapple/pages/students/tasks.dart';
+import 'package:yapple/pages/global/feedbackPage.dart';
+import 'package:yapple/pages/global/tasks.dart';
 import 'package:yapple/pages/teachers/courseDetails.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
@@ -39,7 +39,8 @@ class Body extends StatelessWidget {
     {
       'title': 'Feedback',
       'icon': Icons.feedback_rounded,
-      'color': Color(0xff61bdfd)
+      'color': Color(0xff61bdfd),
+      'page': FeedbackPage(),
     },
   ];
 

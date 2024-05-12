@@ -54,6 +54,15 @@ class ChatService {
     }
   }
 
+  Future<String> getChatName(String id) async {
+    try {
+      final chatSnapshot = await db.collection("chats").doc(id).get();
+      return chatSnapshot.data()!['name'];
+    } catch (e) {
+      return '';
+    }
+  }
+
   Stream<QuerySnapshot> getTypedChats(
       String uid, BuildContext context, String type) {
     try {

@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +60,8 @@ class _StudentChatsPageState extends State<StudentChatsPage>
     super.dispose();
   }
 
+  String searchTerm = "";
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -85,16 +89,6 @@ class _StudentChatsPageState extends State<StudentChatsPage>
           body: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SearchField(
-                    onchanged: (value) {},
-                    myController: searchController,
-                    hintText: "Search",
-                    icon: Icons.search,
-                    bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-                  ),
-                ),
                 SizedBox(
                   height: 10,
                 ),

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
 import 'package:yapple/pages/navigation/teacherNav.dart';
 import 'package:yapple/widgets/DropdownList.dart';
@@ -270,6 +271,14 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return ResetPasswordPage(
+                                title: 'Forgot Password',
+                              );
+                            }));
+                          },
                           child: Text(
                             "Forgot password",
                             style: TextStyle(

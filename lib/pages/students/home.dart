@@ -8,8 +8,9 @@ import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/starredModel.dart';
+import 'package:yapple/pages/global/feedbackPage.dart';
 import 'package:yapple/pages/students/courseDetails.dart';
-import 'package:yapple/pages/students/tasks.dart';
+import 'package:yapple/pages/global/tasks.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class StudentHomePage extends StatelessWidget {
@@ -49,7 +50,8 @@ class _BodyState extends State<Body> {
     {
       'title': 'Feedback',
       'icon': Icons.feedback_rounded,
-      'color': Color(0xff61bdfd)
+      'color': Color(0xff61bdfd),
+      'page': FeedbackPage(),
     },
     {
       'title': 'Grades',

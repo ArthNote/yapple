@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:yapple/models/feedbackModel.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/teacherModel.dart';
 import 'package:yapple/models/userModel.dart';
@@ -96,6 +97,72 @@ class UserService {
     );
   }
 
+  Future<feedbackSenderModel> getFeedbackSenderData(
+      String id, BuildContext context) async {
+    try {
+      final docUser = db.collection('teachers').doc(id);
+      final snapshot = await docUser.get();
+      if (snapshot.exists) {
+        final teacher = teacherModel.fromJson(snapshot.data()!);
+        return feedbackSenderModel(
+          id: id,
+          name: teacher.name,
+          email: teacher.email,
+          profilePicUrl: teacher.profilePicUrl,
+          role: teacher.role,
+        );
+      } else {
+        final docUser1 = db.collection('students').doc(id);
+        final snapshot1 = await docUser1.get();
+        if (snapshot1.exists) {
+          final student = studentModel.fromJson(snapshot1.data()!);
+          return feedbackSenderModel(
+            id: id,
+            name: student.name,
+            email: student.email,
+            profilePicUrl: student.profilePicUrl,
+            role: student.role,
+          );
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+    }
+    return feedbackSenderModel(
+      id: "",
+      name: "",
+      email: "",
+      profilePicUrl: '',
+      role: '',
+    );
+  }
+
+  Future<String> getUserType(String id, BuildContext context) async {
+    try {
+      final docUser = db.collection("students").doc(id);
+      final snapShot = await docUser.get();
+      if (snapShot.exists) {
+        return 'students';
+      } else {
+        final docUser1 =
+            FirebaseFirestore.instance.collection("teachers").doc(id);
+        final snapShot1 = await docUser1.get();
+        if (snapShot1.exists) {
+          return 'teachers';
+        } else {
+          return 'null';
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
+      return "";
+    }
+  }
+
   Future<List<studentModel>> getCircleStudents(String id) async {
     try {
       final documents =
@@ -146,4 +213,14 @@ class UserService {
     }
   }
 
+  Future<bool> updateUserInfo(String id, String col, String name, String profilePicUrl) async {
+    try {
+      final docChat = db.collection(col).doc(id);
+      await docChat.update({"name": name, "profilePicUrl": profilePicUrl});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }
