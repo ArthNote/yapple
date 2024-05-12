@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:yapple/pages/global/starterScreen.dart';
 
-import 'pages/global/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -253,6 +253,7 @@ class _BodyState extends State<Body> {
                         padding: EdgeInsets.only(bottom: 8, top: 10),
                         reverse: true,
                         children: List.generate(messages.length, (index) {
+                          MessageService().markAsSeen(widget.chat!.id, uid);
                           var message = messages[index];
                           return ChatMessage(
                             message: message.message,
