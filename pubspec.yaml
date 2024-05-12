@@ -39,7 +39,7 @@ dependencies:
   flutter_iconpicker: ^3.4.4
   file_picker: ^5.3.1
   open_file: ^3.3.2
-
+  table_calendar:
   firebase_core:
   cloud_firestore:
   firebase_storage:
