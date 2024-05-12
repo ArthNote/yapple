@@ -40,7 +40,7 @@ class _BodyState extends State<Body> {
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
               _selectedDay = selectedDay;
-              _focusedDay = focusedDay;
+              _focusedDay = focusedDay;//toz
             });
           },
           calendarFormat: _calendarFormat, // Set calendar format
