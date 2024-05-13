@@ -8,6 +8,7 @@ import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/starredModel.dart';
+import 'package:yapple/pages/global/calendar.dart';
 import 'package:yapple/pages/global/feedbackPage.dart';
 import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/pages/global/tasks.dart';
@@ -39,7 +40,8 @@ class _BodyState extends State<Body> {
     {
       'title': 'Calendar',
       'icon': Icons.calendar_month_rounded,
-      'color': Color(0xffffcf2f)
+      'color': Color(0xffffcf2f),
+      'page': calendarPage(),
     },
     {
       'title': 'Tasks',
