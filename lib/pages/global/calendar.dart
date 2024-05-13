@@ -29,7 +29,7 @@ class _BodyState extends State<Body> {
 
   // Define events map
   final Map<DateTime, List<Event>> events = {
-    DateTime.utc(2022, 5, 12): [
+    DateTime.utc(2024, 5, 12): [
       Event('Meeting with John'),
       Event('Lunch with Sarah'),
     ],
@@ -43,7 +43,8 @@ class _BodyState extends State<Body> {
     return Column(
       children: [
         TableCalendar(
-          firstDay: DateTime.utc(2010, 10, 16), //  FORMAT: YYYY/MM/DD
+
+          firstDay: DateTime.utc(2010, 10, 16), // FORMAT: YYYY/MM/DD
           lastDay: DateTime.utc(2030, 3, 14),
           focusedDay: _focusedDay,
           selectedDayPredicate: (day) {
@@ -57,11 +58,25 @@ class _BodyState extends State<Body> {
             });
           },
           eventLoader: _getEventsForDay,
+          calendarStyle: CalendarStyle(
+            selectedDecoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            todayDecoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              shape: BoxShape.circle,
+            ),
+          ),
+          headerStyle: HeaderStyle(
+            titleCentered: true,
+            formatButtonVisible: false, // Disable the default format button
+          ),
         ),
         if (_selectedEvents.isNotEmpty) ...[
           SizedBox(height: 20),
           Column(
-            children: _selectedEvents.map((event) => Text(event.title)).toList(),
+            children: _selectedEvents.map((event) => EventCard(event: event)).toList(),
           ),
         ],
       ],
@@ -87,6 +102,33 @@ class Event {
   final String title;
 
   Event(this.title);
+}
+
+class EventCard extends StatelessWidget {
+  final Event event;
+
+  const EventCard({Key? key, required this.event}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      child: Card(
+        color: Theme.of(context).colorScheme.primary,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ListTile(
+          title: Text(
+            event.title,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onTap: () {
+            // Handle event tap
+          },
+        ),
+      ),
+    );
+  }
 }
 
 void main() {
