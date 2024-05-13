@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/FeedbackService.dart';
 import 'package:yapple/firebase/UserService.dart';
