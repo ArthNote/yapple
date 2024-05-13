@@ -222,12 +222,14 @@ class BodyCircle extends StatelessWidget {
                               name: student['name'].toString(),
                               email: student['email'].toString(),
                               role: "Student",
+                              profilePicUrl: 'null',
                             ),
                           );
                         },
                         child: StudentItem(
                           name: student['name'].toString(),
                           email: student['email'].toString(),
+                          profilePicUrl: 'null',
                         ),
                       ))
                   .toList(),

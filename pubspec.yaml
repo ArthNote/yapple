@@ -52,7 +52,6 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   searchfield: ^1.0.1
   dash_chat_2: ^0.0.20
-  image_downloader: ^0.31.0
   image_picker: ^1.0.8
 
 dev_dependencies:

@@ -37,7 +37,7 @@ class feedbackModel {
       id: document.id ?? '',
       title: data['title'] ?? '',
       content: data['content'] ?? '',
-      sender: feedbackSenderModel.fromSnapshot(document),
+      sender: feedbackSenderModel.fromJson(data['sender']),
     );
     //return something
   }

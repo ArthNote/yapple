@@ -14,7 +14,7 @@ class AuthService {
     try {
       UserCredential credential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-
+      
       return {'user': credential.user!.uid, 'success': true};
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {

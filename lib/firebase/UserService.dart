@@ -1,15 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:yapple/models/feedbackModel.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/teacherModel.dart';
-import 'package:yapple/models/userModel.dart';
 
 class UserService {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  //FirebaseStorage storage = FirebaseStorage.instance;
 
   Future<bool> userExists(
       String email, String password, String coll, BuildContext context) async {
@@ -214,6 +217,30 @@ class UserService {
   }
 
   Future<bool> updateUserInfo(String id, String col, String name, String profilePicUrl) async {
+    try {
+      final docChat = db.collection(col).doc(id);
+      await docChat.update({"name": name, "profilePicUrl": profilePicUrl});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // Future<String> uploadProfilePic(String uid, XFile image) async {
+  //   try {
+  //     final ref = storage.ref('profilePics/').child(uid);
+  //     await ref.putFile(File(image.path));
+  //     final url = await ref.getDownloadURL();
+  //     return url;
+  //   } catch (e) {
+  //     print(e);
+  //     return "";
+  //   }
+  // }
+
+  Future<bool> updateUserProfilePic(
+      String id, String col, String name, String profilePicUrl) async {
     try {
       final docChat = db.collection(col).doc(id);
       await docChat.update({"name": name, "profilePicUrl": profilePicUrl});

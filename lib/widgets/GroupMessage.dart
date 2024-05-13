@@ -39,13 +39,14 @@ class GroupMessage extends StatelessWidget {
                             name: sender.name,
                             email: sender.email,
                             role: sender.role,
+                            profilePicUrl: sender.profilePicUrl,
                             showButton: false,
                           ),
                         );
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
-                        child: CircleAvatar(
+                        child: sender.profilePicUrl== 'null' ? CircleAvatar(
                           radius: 17,
                           child: Text(
                             sender.name.substring(0, 1).toUpperCase(),
@@ -53,7 +54,10 @@ class GroupMessage extends StatelessWidget {
                           ),
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
-                        ),
+                        ) : CircleAvatar(
+                          radius: 17,
+                          backgroundImage: NetworkImage(sender.profilePicUrl),
+                        )
                       ),
                     )
                   : SizedBox(),

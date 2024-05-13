@@ -90,6 +90,9 @@ class _BodyState extends State<Body> {
                 String chatName = chat.members[0].id == uid
                     ? chat.members[1].name
                     : chat.members[0].name;
+                String profilePic = chat.members[0].id == uid
+                    ? chat.members[1].profilePicUrl
+                    : chat.members[0].profilePicUrl;
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -100,6 +103,7 @@ class _BodyState extends State<Body> {
                           isGroup: false,
                           chat: chat,
                           type: 'teacher',
+                          profilePic: profilePic,
                         ),
                       ),
                     );
@@ -111,6 +115,7 @@ class _BodyState extends State<Body> {
                         : chat.lastMessage,
                     time_sent: DateFormat.jm().format(chat.timeSent!),
                     runread_msg: chat.unreadMessages,
+                    profilePicUrl: profilePic,
                   ),
                 );
               }),

@@ -193,6 +193,9 @@ class _StudentSectionState extends State<StudentSection> {
                       String chatName = chat.members[0].id == widget.uid
                           ? chat.members[1].name
                           : chat.members[0].name;
+                      String profilePic = chat.members[0].id == widget.uid
+                          ? chat.members[1].profilePicUrl
+                          : chat.members[0].profilePicUrl;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -202,6 +205,7 @@ class _StudentSectionState extends State<StudentSection> {
                                 chatName: chatName,
                                 isGroup: chat.type == "group" ? true : false,
                                 chat: chat,
+                                profilePic: profilePic,
                                 type: 'student',
                               ),
                             ),
@@ -214,6 +218,7 @@ class _StudentSectionState extends State<StudentSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: profilePic,
                         ),
                       );
                     }),
@@ -285,6 +290,9 @@ class _TeacherSectionState extends State<TeacherSection> {
                       String chatName = chat.members[0].id == widget.uid
                           ? chat.members[1].name
                           : chat.members[0].name;
+                      String profilePic = chat.members[0].id == widget.uid
+                          ? chat.members[1].profilePicUrl
+                          : chat.members[0].profilePicUrl;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -295,6 +303,7 @@ class _TeacherSectionState extends State<TeacherSection> {
                                 isGroup: chat.type == "group" ? true : false,
                                 chat: chat,
                                 type: 'student',
+                                profilePic: profilePic,
                               ),
                             ),
                           );
@@ -306,6 +315,7 @@ class _TeacherSectionState extends State<TeacherSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: profilePic,
                         ),
                       );
                     }),
@@ -385,6 +395,7 @@ class _GroupSectionState extends State<GroupSection> {
                                 isGroup: true,
                                 chat: chat,
                                 type: 'student',
+                                profilePic: 'null',
                               ),
                             ),
                           );
@@ -396,6 +407,7 @@ class _GroupSectionState extends State<GroupSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: 'null',
                         ),
                       );
                     }),

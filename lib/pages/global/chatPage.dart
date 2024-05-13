@@ -24,11 +24,13 @@ class ChatPage extends StatefulWidget {
       required this.chatName,
       required this.isGroup,
       this.chat,
-      required this.type});
+      required this.type,
+      required this.profilePic});
   final String chatName;
   final bool isGroup;
   final chatModel? chat;
   final String type;
+  final String profilePic;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -76,6 +78,8 @@ class _ChatPageState extends State<ChatPage> {
                         email: widget.chat!.members[index].email,
                         role: widget.chat!.members[index].role,
                         showButton: false,
+                        profilePicUrl:
+                            widget.chat!.members[index].profilePicUrl,
                       ),
                     );
             },
@@ -87,16 +91,21 @@ class _ChatPageState extends State<ChatPage> {
                       widget.chatName.substring(1),
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
-            leading: CircleAvatar(
-              radius: 20,
-              child: Text(
-                widget.isGroup
-                    ? chatN.substring(0, 1).toUpperCase()
-                    : widget.chatName.substring(0, 1).toUpperCase(),
-                style: TextStyle(fontSize: 18),
-              ),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            )),
+            leading: widget.profilePic == 'null'
+                ? CircleAvatar(
+                    radius: 20,
+                    child: Text(
+                      widget.isGroup
+                          ? chatN.substring(0, 1).toUpperCase()
+                          : widget.chatName.substring(0, 1).toUpperCase(),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(widget.profilePic),
+                  )),
         actions: [
           widget.isGroup
               ? PopupMenuButton(
