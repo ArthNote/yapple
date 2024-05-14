@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +60,8 @@ class _StudentChatsPageState extends State<StudentChatsPage>
     super.dispose();
   }
 
+  String searchTerm = "";
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -85,16 +89,6 @@ class _StudentChatsPageState extends State<StudentChatsPage>
           body: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SearchField(
-                    onchanged: (value) {},
-                    myController: searchController,
-                    hintText: "Search",
-                    icon: Icons.search,
-                    bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-                  ),
-                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -199,6 +193,9 @@ class _StudentSectionState extends State<StudentSection> {
                       String chatName = chat.members[0].id == widget.uid
                           ? chat.members[1].name
                           : chat.members[0].name;
+                      String profilePic = chat.members[0].id == widget.uid
+                          ? chat.members[1].profilePicUrl
+                          : chat.members[0].profilePicUrl;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -208,6 +205,7 @@ class _StudentSectionState extends State<StudentSection> {
                                 chatName: chatName,
                                 isGroup: chat.type == "group" ? true : false,
                                 chat: chat,
+                                profilePic: profilePic,
                                 type: 'student',
                               ),
                             ),
@@ -220,6 +218,7 @@ class _StudentSectionState extends State<StudentSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: profilePic,
                         ),
                       );
                     }),
@@ -291,6 +290,9 @@ class _TeacherSectionState extends State<TeacherSection> {
                       String chatName = chat.members[0].id == widget.uid
                           ? chat.members[1].name
                           : chat.members[0].name;
+                      String profilePic = chat.members[0].id == widget.uid
+                          ? chat.members[1].profilePicUrl
+                          : chat.members[0].profilePicUrl;
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -301,6 +303,7 @@ class _TeacherSectionState extends State<TeacherSection> {
                                 isGroup: chat.type == "group" ? true : false,
                                 chat: chat,
                                 type: 'student',
+                                profilePic: profilePic,
                               ),
                             ),
                           );
@@ -312,6 +315,7 @@ class _TeacherSectionState extends State<TeacherSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: profilePic,
                         ),
                       );
                     }),
@@ -391,6 +395,7 @@ class _GroupSectionState extends State<GroupSection> {
                                 isGroup: true,
                                 chat: chat,
                                 type: 'student',
+                                profilePic: 'null',
                               ),
                             ),
                           );
@@ -402,6 +407,7 @@ class _GroupSectionState extends State<GroupSection> {
                               : chat.lastMessage,
                           time_sent: DateFormat.jm().format(chat.timeSent!),
                           runread_msg: chat.unreadMessages,
+                          profilePicUrl: 'null',
                         ),
                       );
                     }),

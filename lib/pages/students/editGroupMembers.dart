@@ -106,7 +106,7 @@ class _BodyState extends State<Body> {
           content: Text("Group Chat Updated", textAlign: TextAlign.center),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ));
-        Navigator.pop(context);
+        //Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content:

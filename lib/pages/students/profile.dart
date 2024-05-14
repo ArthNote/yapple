@@ -6,7 +6,9 @@ import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/userModel.dart';
+import 'package:yapple/pages/global/editProfilePage.dart';
 import 'package:yapple/pages/global/login.dart';
+import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 
 class StudentProfile extends StatelessWidget {
@@ -50,16 +52,15 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        //profile image
-        FutureBuilder(
-            future: userService.getStudentData(uid, context),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                studentModel user = snapshot.data as studentModel;
-                return Column(
+    return FutureBuilder(
+        future: userService.getStudentData(uid, context),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            studentModel user = snapshot.data as studentModel;
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 0),
@@ -69,11 +70,17 @@ class _BodyState extends State<Body> {
                         child: Center(
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            child: CircleAvatar(
-                              radius: 100,
-                              child: Icon(Icons.person),
-                              backgroundColor: Colors.blue,
-                            ),
+                            child: user.profilePicUrl == 'null'
+                                ? CircleAvatar(
+                                    radius: 100,
+                                    child: Icon(Icons.person),
+                                    backgroundColor: Colors.blue,
+                                  )
+                                : CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        NetworkImage(user.profilePicUrl),
+                                  ),
                           ),
                         ),
                       ),
@@ -104,67 +111,83 @@ class _BodyState extends State<Body> {
                       ]),
                     )),
                   ],
-                );
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Error${snapshot.error}"));
-              }
-              return Center(child: CircularProgressIndicator());
-            }),
-
-        //column of btns
-        Container(
-          padding: EdgeInsets.only(bottom: 30),
-          decoration: BoxDecoration(
-              //give it a box shadow
-              boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 5),
-              ],
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40), topRight: Radius.circular(40))),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(17, 24, 13, 0),
-            child: Column(children: [
-              MenuItem(
-                  title: "Edit Details",
-                  onTap: () => {},
-                  icon: Icons.person_outline),
-              SizedBox(height: 10),
-              MenuItem(
-                  title: "Settings",
-                  onTap: () {},
-                  icon: Icons.settings_outlined),
-              SizedBox(height: 10),
-              MenuItem(
-                  title: "Change Password",
-                  onTap: () => {},
-                  icon: Icons.lock_outline),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.fromLTRB(17, 24, 13, 0),
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    AuthService().logout(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    side: BorderSide(
-                      width: 1.0,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  child: Text("Log out"),
                 ),
-              )
-              //edit personal details
-            ]),
-          ),
-        )
-      ],
-    );
+                Container(
+                  padding: EdgeInsets.only(bottom: 30),
+                  decoration: BoxDecoration(
+                      //give it a box shadow
+                      boxShadow: [
+                        BoxShadow(color: Colors.black12, blurRadius: 5),
+                      ],
+                      color: Theme.of(context).appBarTheme.backgroundColor,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40))),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(17, 24, 13, 0),
+                    child: Column(children: [
+                      MenuItem(
+                          title: "Edit Details",
+                          onTap: () => {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return EditProfilePage(
+                                    uid: uid,
+                                    name: user.name,
+                                    profilePicUrl: user.profilePicUrl,
+                                    role: 'students',
+                                  );
+                                }))
+                              },
+                          icon: Icons.person_outline),
+                      SizedBox(height: 10),
+                      MenuItem(
+                          title: "Settings",
+                          onTap: () {},
+                          icon: Icons.settings_outlined),
+                      SizedBox(height: 10),
+                      MenuItem(
+                          title: "Change Password",
+                          onTap: () => {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ResetPasswordPage(
+                                    title: 'Change Password',
+                                  );
+                                }))
+                              },
+                          icon: Icons.lock_outline),
+                      SizedBox(height: 10),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(17, 24, 13, 0),
+                        width: double.infinity,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            AuthService().logout(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            side: BorderSide(
+                              width: 1.0,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          child: Text("Log out"),
+                        ),
+                      )
+                      //edit personal details
+                    ]),
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error${snapshot.error}"));
+          }
+          return Center(child: CircularProgressIndicator());
+        });
   }
 }

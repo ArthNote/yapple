@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,16 +22,6 @@ class TeachersChatsPage extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SearchField(
-                  myController: searchController,
-                  hintText: "Search",
-                  icon: Icons.search,
-                  bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-                  onchanged: (value) {},
-                ),
-              ),
               SizedBox(
                 height: 10,
               ),
@@ -100,6 +90,9 @@ class _BodyState extends State<Body> {
                 String chatName = chat.members[0].id == uid
                     ? chat.members[1].name
                     : chat.members[0].name;
+                String profilePic = chat.members[0].id == uid
+                    ? chat.members[1].profilePicUrl
+                    : chat.members[0].profilePicUrl;
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -110,6 +103,7 @@ class _BodyState extends State<Body> {
                           isGroup: false,
                           chat: chat,
                           type: 'teacher',
+                          profilePic: profilePic,
                         ),
                       ),
                     );
@@ -121,6 +115,7 @@ class _BodyState extends State<Body> {
                         : chat.lastMessage,
                     time_sent: DateFormat.jm().format(chat.timeSent!),
                     runread_msg: chat.unreadMessages,
+                    profilePicUrl: profilePic,
                   ),
                 );
               }),

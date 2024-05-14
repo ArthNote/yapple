@@ -38,10 +38,10 @@ class chatParticipantModel {
     final data = document.data()!;
     return chatParticipantModel(
       id: data['id'] ?? document.id,
-      name: data['name'] ?? '',
-      email: data['email'] ?? '',
-      profilePicUrl: data['profilePicUrl'] ?? '',
-      role: data['role'] ?? '',
+      name: data['name'] ?? 'n',
+      email: data['email'] ?? 'n',
+      profilePicUrl: data['profilePicUrl'] ?? 'n',
+      role: data['role'] ?? 'n',
     );
     //return something
   }

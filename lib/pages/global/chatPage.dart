@@ -18,17 +18,43 @@ import 'package:yapple/widgets/ChatMessage.dart';
 import 'package:yapple/widgets/GroupMessage.dart';
 import 'package:yapple/widgets/ProfileDialog.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   ChatPage(
       {super.key,
       required this.chatName,
       required this.isGroup,
       this.chat,
-      required this.type});
+      required this.type,
+      required this.profilePic});
   final String chatName;
   final bool isGroup;
   final chatModel? chat;
   final String type;
+  final String profilePic;
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final currentUser = FirebaseAuth.instance.currentUser;
+  String uid = "";
+  String chatN = 'Group';
+  @override
+  void initState() {
+    super.initState();
+    if (currentUser != null) {
+      uid = currentUser!.uid;
+    }
+    getName();
+  }
+
+  void getName() async {
+    String r = await ChatService().getChatName(widget.chat!.id);
+    setState(() {
+      chatN = r;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,37 +63,51 @@ class ChatPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
+        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
         leadingWidth: 40,
         title: ListTile(
             onTap: () {
-              int index = chat!.members[0].name == chatName ? 0 : 1;
-              isGroup
+              int index =
+                  widget.chat!.members[0].name == widget.chatName ? 0 : 1;
+              widget.isGroup
                   ? null
                   : showDialog(
                       context: context,
                       builder: (context) => ProfileDialog(
-                        name: chatName,
-                        email: chat!.members[index].email,
-                        role: chat!.members[index].role,
+                        name: widget.chatName,
+                        email: widget.chat!.members[index].email,
+                        role: widget.chat!.members[index].role,
                         showButton: false,
+                        profilePicUrl:
+                            widget.chat!.members[index].profilePicUrl,
                       ),
                     );
             },
             contentPadding: EdgeInsets.all(0),
             title: Text(
-              chatName.substring(0, 1).toUpperCase() + chatName.substring(1),
+              widget.isGroup
+                  ? chatN
+                  : widget.chatName.substring(0, 1).toUpperCase() +
+                      widget.chatName.substring(1),
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
             ),
-            leading: CircleAvatar(
-              radius: 20,
-              child: Text(
-                chatName.substring(0, 1).toUpperCase(),
-                style: TextStyle(fontSize: 18),
-              ),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            )),
+            leading: widget.profilePic == 'null'
+                ? CircleAvatar(
+                    radius: 20,
+                    child: Text(
+                      widget.isGroup
+                          ? chatN.substring(0, 1).toUpperCase()
+                          : widget.chatName.substring(0, 1).toUpperCase(),
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                  )
+                : CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(widget.profilePic),
+                  )),
         actions: [
-          isGroup
+          widget.isGroup
               ? PopupMenuButton(
                   color: Theme.of(context).appBarTheme.backgroundColor,
                   surfaceTintColor:
@@ -82,7 +122,7 @@ class ChatPage extends StatelessWidget {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return EditGroupMembers(
-                              initialChat: chat!,
+                              initialChat: widget.chat!,
                             );
                           }));
                         },
@@ -94,9 +134,9 @@ class ChatPage extends StatelessWidget {
         ],
       ),
       body: Body(
-        isGroup: isGroup,
-        chat: chat,
-        type: type,
+        isGroup: widget.isGroup,
+        chat: widget.chat,
+        type: widget.type,
       ),
     );
   }
@@ -149,6 +189,7 @@ class _BodyState extends State<Body> {
     if (controller.text.isNotEmpty) {
       String message = controller.text.trim();
       DateTime timeSent = DateTime.now();
+      FieldValue timeSents = FieldValue.serverTimestamp();
       var msg = chatMessageModel(
         id: '',
         message: message,
@@ -206,16 +247,23 @@ class _BodyState extends State<Body> {
                       }).toList();
                       return ListView(
                         padding: EdgeInsets.only(bottom: 8, top: 10),
-                        reverse: true,
+                        reverse: false,
                         children: List.generate(messages.length, (index) {
                           var message = messages[index];
+                          bool show = index > 0
+                              ? message.sender.id ==
+                                      messages[index - 1].sender.id
+                                  ? false
+                                  : true
+                              : true;
                           return GroupMessage(
                             sender: message.sender,
-                            message: message.message,
+                            message: message.message + " index $index",
                             byMe: message.sender.id == uid,
                             time_sent:
                                 DateFormat.jm().format(message.timeSent!),
                             isRead: message.isRead,
+                            show: show,
                           );
                         }),
                       );
@@ -251,10 +299,11 @@ class _BodyState extends State<Body> {
                       }).toList();
                       return ListView(
                         padding: EdgeInsets.only(bottom: 8, top: 10),
-                        reverse: true,
+                        reverse: false,
                         children: List.generate(messages.length, (index) {
                           MessageService().markAsSeen(widget.chat!.id, uid);
                           var message = messages[index];
+
                           return ChatMessage(
                             message: message.message,
                             byMe: message.sender.id == uid,

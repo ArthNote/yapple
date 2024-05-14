@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_const_constructors
+// ignore_for_file: use_build_context_synchronously, prefer_const_constructors, dead_code_catch_following_catch
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +14,7 @@ class AuthService {
     try {
       UserCredential credential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-
+      
       return {'user': credential.user!.uid, 'success': true};
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
@@ -86,5 +86,31 @@ class AuthService {
     FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
+  Future<void> changePassword(String email, BuildContext context) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Password reset email sent. Please check your email.", textAlign: TextAlign.center),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString(), textAlign: TextAlign.center),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString(), textAlign: TextAlign.center),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    }
   }
 }

@@ -8,12 +8,14 @@ class ChatItem extends StatefulWidget {
       required this.chatName,
       required this.last_msg,
       required this.time_sent,
-      required this.runread_msg});
+      required this.runread_msg,
+      required this.profilePicUrl});
 
   final String chatName;
   final String last_msg;
   final String time_sent;
   final int runread_msg;
+  final String profilePicUrl;
 
   @override
   State<ChatItem> createState() => _ChatItemState();
@@ -33,11 +35,16 @@ class _ChatItemState extends State<ChatItem> {
         )),
         padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
         child: Row(children: [
-          CircleAvatar(
-            radius: 30,
-            child: Icon(Icons.person),
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-          ),
+          widget.profilePicUrl == 'null'
+              ? CircleAvatar(
+                  radius: 30,
+                  child: Icon(Icons.person),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                )
+              : CircleAvatar(
+                  radius: 30,
+                  backgroundImage: NetworkImage(widget.profilePicUrl),
+                ),
           SizedBox(
             width: 20,
           ),

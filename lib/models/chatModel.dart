@@ -10,7 +10,7 @@ class chatModel {
   String type;
   List<chatParticipantModel> members;
   String? singleChatId;
-  List<String> membersId = [];
+  List<dynamic> membersId = [];
 
   chatModel({
     required this.id,
@@ -60,8 +60,8 @@ class chatModel {
       DocumentSnapshot<Map<String, dynamic>> document) {
     final data = document.data()!;
     List<chatParticipantModel> members = [];
-    for (var member in data['members']) {
-      members.add(chatParticipantModel.fromSnapshot(document));
+    for (Map<String, dynamic> member in data['members']) {
+      members.add(chatParticipantModel.fromJson(member));
     }
     return chatModel(
       id: document.id ?? '',

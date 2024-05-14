@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -8,7 +10,17 @@ class calendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "Calendar",
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
       body: Body(),
     );
   }
@@ -43,7 +55,6 @@ class _BodyState extends State<Body> {
     return Column(
       children: [
         TableCalendar(
-
           firstDay: DateTime.utc(2010, 10, 16), // FORMAT: YYYY/MM/DD
           lastDay: DateTime.utc(2030, 3, 14),
           focusedDay: _focusedDay,
@@ -69,14 +80,17 @@ class _BodyState extends State<Body> {
             ),
           ),
           headerStyle: HeaderStyle(
-            titleCentered: true,
-            formatButtonVisible: false, // Disable the default format button
-          ),
+              titleCentered: false,
+              formatButtonVisible: true,
+              formatButtonShowsNext: false),
         ),
         if (_selectedEvents.isNotEmpty) ...[
           SizedBox(height: 20),
-          Column(
-            children: _selectedEvents.map((event) => EventCard(event: event)).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: _selectedEvents.map((event) => EventCard()).toList(),
+            ),
           ),
         ],
       ],
@@ -88,7 +102,8 @@ class _BodyState extends State<Body> {
       setState(() {
         _focusedDay = focusedDay;
         _selectedDay = selectedDay;
-        _selectedEvents = _getEventsForDay(selectedDay); // Update selected events
+        _selectedEvents =
+            _getEventsForDay(selectedDay); // Update selected events
       });
     }
   }
@@ -105,34 +120,77 @@ class Event {
 }
 
 class EventCard extends StatelessWidget {
-  final Event event;
-
-  const EventCard({Key? key, required this.event}) : super(key: key);
+  const EventCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(16),
       margin: EdgeInsets.only(bottom: 12),
-      child: Card(
-        color: Theme.of(context).colorScheme.primary,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: ListTile(
-          title: Text(
-            event.title,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          onTap: () {
-            // Handle event tap
-          },
-        ),
+      //  width: SizeConfig.screenWidth * 0.78,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).colorScheme.secondary,
       ),
+      child: Row(children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Event Title',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.tertiary),
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.access_time_rounded,
+                    color: Theme.of(context).colorScheme.tertiary,
+                    size: 18,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    '11:26 AM' + " - " + '12:26 PM',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Event Note',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: Theme.of(context).colorScheme.tertiary),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          height: 60,
+          width: 1,
+          color: Colors.grey[200]!.withOpacity(0.7),
+        ),
+        RotatedBox(
+          quarterTurns: 3,
+          child: Text(
+            'SESSION',
+            style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.tertiary),
+          ),
+        ),
+      ]),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: calendarPage(),
-  ));
 }

@@ -164,6 +164,7 @@ class BodyDetails extends StatelessWidget {
                       isGroup: false,
                       type: 'student',
                       chat: chat,
+                      profilePic: module.teacher.profilePicUrl,
                     )));
       } else {
         var teacher = chatParticipantModel(
@@ -258,6 +259,7 @@ class BodyDetails extends StatelessWidget {
                   name: module.teacher.name,
                   email: module.teacher.email,
                   role: module.teacher.role,
+                  profilePicUrl: module.teacher.profilePicUrl,
                   onPressed: () => startChat(context),
                 ),
               );
@@ -402,6 +404,7 @@ class _BodyCircleState extends State<BodyCircle> {
                         chatName: studentt.name,
                         isGroup: false,
                         type: 'student',
+                        profilePic: studentt.profilePicUrl,
                         chat: chat,
                       )));
         } else {
@@ -487,6 +490,7 @@ class _BodyCircleState extends State<BodyCircle> {
                                       builder: (context) => ProfileDialog(
                                         name: student.name,
                                         email: student.email,
+                                        profilePicUrl: student.profilePicUrl,
                                         role: "Student",
                                         onPressed: () =>
                                             startChat(context, student),
@@ -496,6 +500,7 @@ class _BodyCircleState extends State<BodyCircle> {
                                   child: StudentItem(
                                     name: student.name,
                                     email: student.email,
+                                    profilePicUrl: student.profilePicUrl,
                                   ),
                                 ))
                             .toList(),

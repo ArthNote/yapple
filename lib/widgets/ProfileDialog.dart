@@ -10,10 +10,12 @@ class ProfileDialog extends StatelessWidget {
       required this.email,
       required this.role,
       this.onPressed,
-      this.showButton});
+      this.showButton,
+      required this.profilePicUrl});
   final String name;
   final String email;
   final String role;
+  final String profilePicUrl;
   final void Function()? onPressed;
   final bool? showButton;
   @override
@@ -36,11 +38,16 @@ class ProfileDialog extends StatelessWidget {
                 child: Center(
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: CircleAvatar(
-                      radius: 100,
-                      child: Icon(Icons.person),
-                      backgroundColor: Colors.blue,
-                    ),
+                    child: profilePicUrl == 'null'
+                        ? CircleAvatar(
+                            radius: 100,
+                            child: Icon(Icons.person),
+                            backgroundColor: Colors.blue,
+                          )
+                        : CircleAvatar(
+                            radius: 100,
+                            backgroundImage: NetworkImage(profilePicUrl),
+                          ),
                   ),
                 ),
               ),

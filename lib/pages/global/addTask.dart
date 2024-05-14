@@ -1,12 +1,18 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:yapple/firebase/TaskService.dart';
+import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/taskModel.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 class AddTaskPage extends StatelessWidget {
-  const AddTaskPage({super.key});
+  AddTaskPage({super.key, required this.uid, required this.role});
+  final String uid;
+  final String role;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +28,18 @@ class AddTaskPage extends StatelessWidget {
           style: TextStyle(fontSize: 18),
         ),
       ),
-      body: Body(),
+      body: Body(
+        uid: uid,
+        role: role,
+      ),
     );
   }
 }
 
 class Body extends StatefulWidget {
-  Body({super.key});
+  Body({super.key, required this.uid, required this.role});
+  final String uid;
+  final String role;
 
   @override
   State<Body> createState() => _BodyState();
@@ -48,10 +59,44 @@ class _BodyState extends State<Body> {
     Color(0xff6fe08d),
     Color(0xff61bdfd),
     Color(0xfffc7f7f),
-    Color.fromARGB(255, 176, 87, 231),
+    Color.fromARGB(255, 191, 109, 242),
   ];
 
   int selectedColor = 0;
+
+  TimeOfDay startTime = TimeOfDay.now();
+  TimeOfDay endTime = TimeOfDay.now();
+
+  void createTask() async {
+    if (titleController.text.isNotEmpty &&
+        noteController.text.isNotEmpty &&
+        startTimeController.text.isNotEmpty &&
+        endTimeController.text.isNotEmpty) {
+      var newTask = taskModel(
+        title: titleController.text,
+        note: noteController.text,
+        startTime: startTime.format(context),
+        endTime: endTime.format(context),
+        color: colors[selectedColor],
+        isCompleted: false,
+        id: '',
+        date: DateTime.now(),
+      );
+      bool isCreated = await TaskService()
+          .createTask(newTask, context, widget.role, widget.uid);
+      if (isCreated) {
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Failed to create task"),
+        ));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Please fill all the fields"),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +138,12 @@ class _BodyState extends State<Body> {
                       keyboardType: TextInputType.datetime,
                       suffixIcon: IconButton(
                         onPressed: () {
-                          var startTime = showTimePicker(
+                          var startTimePicked = showTimePicker(
                             initialEntryMode: TimePickerEntryMode.input,
                             context: context,
                             initialTime: TimeOfDay.now(),
                           );
-                          startTime.then((selectedTime) {
+                          startTimePicked.then((selectedTime) {
                             if (selectedTime != null) {
                               String format = DateFormat.Hm().format(DateTime(
                                 DateTime.now().year,
@@ -109,6 +154,7 @@ class _BodyState extends State<Body> {
                               ));
                               setState(() {
                                 startTimeController.text = format;
+                                startTime = selectedTime;
                               });
                             }
                           });
@@ -133,12 +179,12 @@ class _BodyState extends State<Body> {
                       keyboardType: TextInputType.datetime,
                       suffixIcon: IconButton(
                         onPressed: () {
-                          var endTime = showTimePicker(
+                          var endTimePicked = showTimePicker(
                             initialEntryMode: TimePickerEntryMode.input,
                             context: context,
                             initialTime: TimeOfDay.now(),
                           );
-                          endTime.then((selectedTime) {
+                          endTimePicked.then((selectedTime) {
                             if (selectedTime != null) {
                               String format = DateFormat.Hm().format(DateTime(
                                 DateTime.now().year,
@@ -149,6 +195,7 @@ class _BodyState extends State<Body> {
                               ));
                               setState(() {
                                 endTimeController.text = format;
+                                endTime = selectedTime;
                               });
                             }
                           });
@@ -216,7 +263,7 @@ class _BodyState extends State<Body> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
               label: "Add Task",
-              onPressed: () {},
+              onPressed: () => createTask(),
             ),
           ],
         ),

@@ -1,11 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:yapple/firebase/ChatService.dart';
+import 'package:yapple/firebase/FeedbackService.dart';
 import 'package:yapple/firebase/UserService.dart';
-import 'package:yapple/utils/imagePicker.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
@@ -64,43 +62,44 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController picUrlController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     nameController.text = widget.name;
+    picUrlController.text = widget.profilePicUrl;
   }
 
-  Uint8List? image;
-
-  void selectImage() async {
-    Uint8List img = await pickImage(ImageSource.gallery);
-    setState(() {
-      image = img;
-    });
-  }
+  // void uploadProfilePic() async {
+  //   final image = await ImagePicker()
+  //       .pickImage(source: ImageSource.gallery, imageQuality: 70);
+  //   if (image != null) {
+  //     String imageUrl = await UserService().uploadProfilePic(widget.uid, image);
+  //     setState(() {
+  //       newImageUrl = imageUrl;
+  //     });
+  //   }
+  // }
 
   void updateProfile() async {
-    if (nameController.text.isEmpty) {
+    if (nameController.text.isEmpty || picUrlController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Name cannot be empty', textAlign: TextAlign.center),
+        content: Text('All fiels must be filled', textAlign: TextAlign.center),
         backgroundColor: Theme.of(context).colorScheme.error,
       ));
     } else {
       String name = nameController.text;
-      String profilePicUrl = widget.profilePicUrl;
+      String profilePicUrl = picUrlController.text;
       bool isUpdated = await UserService()
           .updateUserInfo(widget.uid, widget.role, name, profilePicUrl);
 
       if (isUpdated) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            'Profile Updated',
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ));
-        Navigator.pop(context);
+        await ChatService()
+            .updateChatProfile(widget.uid, profilePicUrl, context, name);
+        await FeedbackService()
+            .updateFeedbackSender(widget.uid, profilePicUrl, context, name);
+        print('dasdasdasd');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content:
@@ -127,22 +126,23 @@ class _BodyState extends State<Body> {
                       width: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
-                        child: image != null
+                        child: widget.profilePicUrl == "null"
                             ? CircleAvatar(
-                                radius: 100,
-                                backgroundImage: MemoryImage(image!),
-                              )
-                            : CircleAvatar(
                                 radius: 100,
                                 child: Icon(Icons.person),
                                 backgroundColor: Colors.blue,
+                              )
+                            : CircleAvatar(
+                                radius: 100,
+                                backgroundImage:
+                                    NetworkImage(widget.profilePicUrl),
                               ),
                       )),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () => selectImage(),
+                      onTap: () {},
                       child: Container(
                         height: 35,
                         width: 35,
@@ -168,6 +168,13 @@ class _BodyState extends State<Body> {
             isPass: false,
             hintText: 'Name',
             keyboardType: TextInputType.text,
+          ),
+          SizedBox(height: 20),
+          MyTextField(
+            myController: picUrlController,
+            isPass: false,
+            hintText: 'Profile Picture URL',
+            keyboardType: TextInputType.url,
           ),
           SizedBox(height: 20),
           MyButton(
