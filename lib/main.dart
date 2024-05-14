@@ -7,6 +7,15 @@ import 'package:yapple/pages/global/starterScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyCgz5Tvjy5MITCuDMWzP9QckIT_CItW7XQ",
+        appId: "1:212222952999:android:a98dcdef7975a849353002",
+        messagingSenderId: "212222952999",
+        projectId: "yapple-1bc28",
+        storageBucket: "gs://yapple-1bc28.appspot.com"),
+  );
+
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
@@ -15,14 +24,6 @@ void main() async {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
 
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyCgz5Tvjy5MITCuDMWzP9QckIT_CItW7XQ",
-      appId: "1:212222952999:android:a98dcdef7975a849353002",
-      messagingSenderId: "212222952999",
-      projectId: "yapple-1bc28",
-    ),
-  );
   runApp(const MyApp());
 }
 
