@@ -44,7 +44,6 @@ dependencies:
   cloud_firestore:
   firebase_storage:
   firebase_auth:
-  fluttertoast:
   intl:
   date_picker_timeline: ^1.2.5
   flutter_local_notifications: ^17.1.1
