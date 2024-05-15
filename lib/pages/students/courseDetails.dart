@@ -1,12 +1,18 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last, must_be_immutable, prefer_const_constructors_in_immutables, use_build_context_synchronously
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
+import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/chatModel.dart';
 import 'package:yapple/models/chatParticipantModel.dart';
+import 'package:yapple/models/materialModel.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/models/studentModel.dart';
@@ -91,7 +97,9 @@ class _StudentCourseDetailsPageState extends State<StudentCourseDetailsPage> {
                       user: user,
                     ),
                   ),
-                  BodyResources(),
+                  BodyResources(
+                    module: widget.module,
+                  ),
                   BodyCircle(
                     module: widget.module,
                     uid: uid,
@@ -353,7 +361,9 @@ class _BodyCircleState extends State<BodyCircle> {
 
   void startChat(BuildContext context, studentModel student) async {
     try {
-      String uniqueID = widget.uid + "_" + student.id;
+      List<String> ids = [student.id, widget.uid];
+      ids.sort();
+      String uniqueID = ids.join('_');
       if (widget.uid == student.id) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
@@ -425,7 +435,7 @@ class _BodyCircleState extends State<BodyCircle> {
           final newChat = chatModel(
               id: '',
               lastMessage: '',
-              timeSent: null,
+              timeSent: DateTime.now(),
               unreadMessages: 0,
               type: 'student',
               members: [me, studentt],
@@ -522,7 +532,8 @@ class _BodyCircleState extends State<BodyCircle> {
 }
 
 class BodyResources extends StatefulWidget {
-  const BodyResources({super.key});
+  final moduleModel module;
+  BodyResources({super.key, required this.module});
 
   @override
   State<BodyResources> createState() => _BodyResourcesState();
@@ -530,6 +541,26 @@ class BodyResources extends StatefulWidget {
 
 class _BodyResourcesState extends State<BodyResources> {
   bool customIcon = false;
+
+  void downloadFile(materialModel material) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String materialName = material.name;
+    final File file = File('${directory.path}/$materialName');
+    final response = await http.get(Uri.parse(material.url));
+
+    if (response.statusCode == 200) {
+      await file.writeAsBytes(response.bodyBytes);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("File downloaded successfully"),
+      ));
+      print('file downloaded to ' + file.path);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to download file"),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -537,89 +568,122 @@ class _BodyResourcesState extends State<BodyResources> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            ExpansionTile(
-              initiallyExpanded: true,
-              title: Text(
-                "Content Material",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map((student) => ContentMaterialItem(
-                        name: "Introduction to Flutter",
+            FutureBuilder<List<materialModel>>(
+              future: ModuleService()
+                  .getModuleMaterials(widget.module.classID, widget.module.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<materialModel> materials =
+                      snapshot.data as List<materialModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Content Material",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(materials.length, (index) {
+                      var material = materials[index];
+                      return ContentMaterialItem(
+                        name: material.name,
                         icon: Icons.download_rounded,
-                        onPressed: () {},
-                      ))
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                        onPressed: () => downloadFile(material),
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
             SizedBox(
               height: 30,
             ),
-            ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Assigments",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map(
-                    (student) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => StudentAssignmentPage(
-                                      name: "PRAC1",
-                                    )));
-                      },
-                      child: AssigmentItem(
-                        name: "PRAC1",
-                      ),
+            FutureBuilder<List<assignmentModel>>(
+              future: AssignmentService()
+                  .getModuleAssignment(widget.module.classID, widget.module.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<assignmentModel> assignments =
+                      snapshot.data as List<assignmentModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Assigments",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
-                  )
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(assignments.length, (index) {
+                      var assignment = assignments[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StudentAssignmentPage(
+                                        assignment: assignment,
+                                        classID: widget.module.classID,
+                                        moduleID: widget.module.id,
+                                      )));
+                        },
+                        child: AssigmentItem(
+                          name: assignment.title,
+                        ),
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
+             
             SizedBox(
               height: 30,
             ),

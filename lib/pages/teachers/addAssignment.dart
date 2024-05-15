@@ -1,14 +1,22 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:yapple/firebase/AssignmentService.dart';
+import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/models/assignmentModel.dart';
+import 'package:yapple/models/materialModel.dart';
+import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
-import 'package:yapple/widgets/UploadedAssigmentItem.dart';
 
 class AddAssignmentPage extends StatelessWidget {
-  const AddAssignmentPage({super.key});
+  final moduleModel module;
+  AddAssignmentPage({super.key, required this.module});
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +30,17 @@ class AddAssignmentPage extends StatelessWidget {
           style: TextStyle(fontSize: 17),
         ),
       ),
-      body: SingleChildScrollView(child: Body()),
+      body: SingleChildScrollView(
+          child: Body(
+        module: module,
+      )),
     );
   }
 }
 
 class Body extends StatefulWidget {
-  Body({super.key});
+  final moduleModel module;
+  Body({super.key, required this.module});
 
   @override
   State<Body> createState() => _BodyState();
@@ -40,6 +52,11 @@ class _BodyState extends State<Body> {
   TextEditingController timeController = TextEditingController();
   TextEditingController dateController = TextEditingController();
 
+  bool customIcon = false;
+
+  DateTime date = DateTime.now();
+  TimeOfDay time = TimeOfDay.now();
+
   Future<void> selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
@@ -49,12 +66,119 @@ class _BodyState extends State<Body> {
     if (_picked != null) {
       setState(() {
         dateController.text = _picked.toString().split(" ")[0];
+        date = _picked;
       });
     }
   }
 
-  static const files = [];
-  bool customIcon = false;
+  List<File> files = [];
+
+  void addAssignment() async {
+    if (titleController.text.isEmpty ||
+        aboutController.text.isEmpty ||
+        timeController.text.isEmpty ||
+        dateController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please fill all the fields',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } else {
+      String title = titleController.text;
+      String about = aboutController.text;
+      DateTime dueDate = DateTime(
+        date.year,
+        date.month,
+        date.day,
+        time.hour,
+        time.minute,
+      );
+      var assignment = assignmentModel(
+        id: '',
+        title: title,
+        description: about,
+        dueDate: dueDate,
+      );
+      Map<String, dynamic> result = await AssignmentService().addAssignment(
+          assignment, context, widget.module.classID, widget.module.id);
+      if (result['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Assignment added successfully'),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        );
+        for (var file in files) {
+          String fileName = file.path!.split('/').last;
+          String fileExtension = fileName.split('.').last;
+          String uniqueName =
+              '${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+
+          var material = materialModel(
+            id: uniqueName,
+            name: fileName.split('.').first,
+            url: "",
+          );
+          bool uploaded = await ModuleService().uploadAssignmentMaterial(
+              file,
+              widget.module.classID,
+              widget.module.id,
+              material,
+              result['id'] as String);
+          if (uploaded == true) {
+            Navigator.pop(context);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Failed to upload file"),
+            ));
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add assignment'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  void uploadFiles() async {
+    await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'ppt',
+        'pptx',
+        'xls',
+        'xlsx',
+        'txt',
+        'zip',
+        'rar',
+        '7z',
+        'jpg',
+        'jpeg',
+        'png'
+      ],
+    ).then((value) async {
+      if (value != null) {
+        for (var file in value.files) {
+          File mfile = File(file.path!);
+          setState(() {
+            files.add(mfile);
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +224,7 @@ class _BodyState extends State<Body> {
                     ));
                     setState(() {
                       timeController.text = format;
+                      time = selectedTime;
                     });
                   }
                 });
@@ -154,9 +279,13 @@ class _BodyState extends State<Body> {
                       )),
                   children: List.generate(files.length, (index) {
                     return ContentMaterialItem(
-                      name: files[index],
+                      name: files[index].path!.split('/').last,
                       icon: Icons.delete,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          files.removeAt(index);
+                        });
+                      },
                     );
                   }),
                   onExpansionChanged: (bool expanded) {
@@ -171,19 +300,9 @@ class _BodyState extends State<Body> {
             label: files.isNotEmpty ? 'Add assignment' : 'Upload',
             onPressed: () {
               if (files.isNotEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Assignment added successfully'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                  ),
-                );
+                addAssignment();
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Assignment uploaded successfully'),
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                  ),
-                );
+                uploadFiles();
               }
             },
           ),
