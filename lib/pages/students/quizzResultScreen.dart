@@ -1,15 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:yapple/models/staticData.dart';
-import 'package:yapple/widgets/MyButton.dart';
 
 class QuizzResultScreen extends StatelessWidget {
   const QuizzResultScreen({
     super.key,
     required this.score,
+    required this.length,
   });
 
+  final int length;
   final int score;
 
   @override
@@ -43,7 +43,7 @@ class QuizzResultScreen extends StatelessWidget {
                 width: 250,
                 child: CircularProgressIndicator(
                   strokeWidth: 10,
-                  value: score / 9,
+                  value: score / length,
                   color: Theme.of(context).colorScheme.primary,
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                 ),
@@ -56,7 +56,7 @@ class QuizzResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '${(score / questions.length * 100).round()}%',
+                    '${(score / length * 100).round()}%',
                     style: const TextStyle(fontSize: 25),
                   )
                 ],

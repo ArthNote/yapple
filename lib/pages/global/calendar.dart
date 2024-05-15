@@ -36,12 +36,12 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
+  CalendarFormat _calendarFormat = CalendarFormat.week;
   List<Event> _selectedEvents = []; // Initialize selected events list
 
   // Define events map
   final Map<DateTime, List<Event>> events = {
-    DateTime.utc(2024, 5, 12): [
+    DateTime.utc(2024, 5, 15): [
       Event('Meeting with John'),
       Event('Lunch with Sarah'),
     ],
@@ -70,6 +70,14 @@ class _BodyState extends State<Body> {
           },
           eventLoader: _getEventsForDay,
           calendarStyle: CalendarStyle(
+            markersMaxCount: 1,
+            markerDecoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.tertiary,
+              shape: BoxShape.circle,
+            ),
+            weekendTextStyle: TextStyle(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
             selectedDecoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
@@ -80,9 +88,18 @@ class _BodyState extends State<Body> {
             ),
           ),
           headerStyle: HeaderStyle(
-              titleCentered: false,
-              formatButtonVisible: true,
-              formatButtonShowsNext: false),
+            titleCentered: false,
+            formatButtonVisible: true,
+            formatButtonShowsNext: false,
+            formatButtonDecoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            headerMargin: EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).appBarTheme.backgroundColor,
+            ),
+          ),
         ),
         if (_selectedEvents.isNotEmpty) ...[
           SizedBox(height: 20),

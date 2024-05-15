@@ -6,8 +6,9 @@ import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 class AssigmentGrading extends StatelessWidget {
-  AssigmentGrading({super.key, required this.controller});
+  AssigmentGrading({super.key, required this.controller, required this.onPressed});
   final TextEditingController controller;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class AssigmentGrading extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
               label: 'Submit Grade',
-              onPressed: () {},
+              onPressed: onPressed,
             ),
           ],
         ),
