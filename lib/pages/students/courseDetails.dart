@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/chatModel.dart';
 import 'package:yapple/models/chatParticipantModel.dart';
 import 'package:yapple/models/materialModel.dart';
@@ -621,51 +622,68 @@ class _BodyResourcesState extends State<BodyResources> {
             SizedBox(
               height: 30,
             ),
-            ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Assigments",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map(
-                    (student) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => StudentAssignmentPage(
-                                      name: "PRAC1",
-                                    )));
-                      },
-                      child: AssigmentItem(
-                        name: "PRAC1",
-                      ),
+            FutureBuilder<List<assignmentModel>>(
+              future: AssignmentService()
+                  .getModuleAssignment(widget.module.classID, widget.module.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<assignmentModel> assignments =
+                      snapshot.data as List<assignmentModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Assigments",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
-                  )
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(assignments.length, (index) {
+                      var assignment = assignments[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => StudentAssignmentPage(
+                                        assignment: assignment,
+                                        classID: widget.module.classID,
+                                        moduleID: widget.module.id,
+                                      )));
+                        },
+                        child: AssigmentItem(
+                          name: assignment.title,
+                        ),
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
+             
             SizedBox(
               height: 30,
             ),

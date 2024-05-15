@@ -1,17 +1,29 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
-import 'package:yapple/models/staticData.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:yapple/firebase/AssignmentService.dart';
+import 'package:yapple/models/assignmentModel.dart';
+import 'package:yapple/models/materialModel.dart';
+import 'package:http/http.dart' as http;
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/SubmissionStatusBox.dart';
 import 'package:yapple/widgets/UploadedAssigmentItem.dart';
 
 class StudentAssignmentPage extends StatelessWidget {
-  StudentAssignmentPage({super.key, required this.name});
-  final String name;
+  StudentAssignmentPage(
+      {super.key,
+      required this.assignment,
+      required this.classID,
+      required this.moduleID});
+  final assignmentModel assignment;
+  final String classID;
+  final String moduleID;
 
   @override
   Widget build(BuildContext context) {
@@ -21,17 +33,28 @@ class StudentAssignmentPage extends StatelessWidget {
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
         title: Text(
-          name,
+          assignment.title,
           style: TextStyle(fontSize: 17),
         ),
       ),
-      body: Body(),
+      body: Body(
+        assignment: assignment,
+        classID: classID,
+        moduleID: moduleID,
+      ),
     );
   }
 }
 
 class Body extends StatefulWidget {
-  const Body({super.key});
+  final assignmentModel assignment;
+  final String classID;
+  final String moduleID;
+  const Body(
+      {super.key,
+      required this.assignment,
+      required this.classID,
+      required this.moduleID});
 
   @override
   State<Body> createState() => _BodyState();
@@ -40,6 +63,26 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   bool customIcon = false;
   List<PlatformFile> files = [];
+
+  void downloadFile(materialModel material) async {
+    final directory = await getApplicationDocumentsDirectory();
+    String materialName = material.name;
+    final File file = File('${directory.path}/$materialName');
+    final response = await http.get(Uri.parse(material.url));
+
+    if (response.statusCode == 200) {
+      await file.writeAsBytes(response.bodyBytes);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("File downloaded"),
+      ));
+      print('file downloaded to ' + file.path);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to download file"),
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -74,7 +117,7 @@ class _BodyState extends State<Body> {
                   )),
               children: [
                 Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec semper quam. Integer suscipit efficitur est, ac consectetur diam blandit ut. In hac habitasse platea dictumst. Aliquam erat volutpat. Vestibulum vitae consectetur justo. Suspendisse potenti. Quisque ultricies rutrum bibendum.",
+                  widget.assignment.description,
                   textAlign: TextAlign.justify,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.tertiary),
@@ -97,7 +140,8 @@ class _BodyState extends State<Body> {
                     color: Theme.of(context).colorScheme.tertiary),
               ),
               subtitle: Text(
-                'Sun 21 april 2024, 04:00 PM',
+                DateFormat('EEE d MMMM yyyy, hh:mm a')
+                    .format(widget.assignment.dueDate),
                 style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
               ),
             ),
@@ -113,8 +157,9 @@ class _BodyState extends State<Body> {
               subtitle: Row(
                 children: [
                   SubmissionStatusBox(
-                    name: "Submitted",
-                    color: Colors.green.shade400,
+                    name: "Not Submitted",
+                    color: Colors.red.shade400,
+                    //Colors.green.shade400
                   ),
                   SizedBox(width: 10),
                   SubmissionStatusBox(
@@ -127,39 +172,55 @@ class _BodyState extends State<Body> {
             SizedBox(
               height: 15,
             ),
-            ExpansionTile(
-              initiallyExpanded: true,
-              title: Text(
-                "Content Material",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map((student) => ContentMaterialItem(
-                        name: "Introduction to Flutter",
+            FutureBuilder<List<materialModel>>(
+              future: AssignmentService().getAssignmentMaterials(
+                  widget.classID, widget.moduleID, widget.assignment.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<materialModel> materials =
+                      snapshot.data as List<materialModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Content Material",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(materials.length, (index) {
+                      var material = materials[index];
+                      return ContentMaterialItem(
+                        name: material.name,
                         icon: Icons.download_rounded,
-                        onPressed: () {},
-                      ))
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                        onPressed: () => downloadFile(material),
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
             SizedBox(
