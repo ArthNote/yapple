@@ -7,9 +7,16 @@ import 'package:yapple/models/materialModel.dart';
 class AssignmentService {
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  Future<Map<String, dynamic>> addAssignment(assignmentModel assigment, BuildContext context, String classID, String moduleID) async {
+  Future<Map<String, dynamic>> addAssignment(assignmentModel assigment,
+      BuildContext context, String classID, String moduleID) async {
     try {
-      final docAss = db.collection("classes").doc(classID).collection("modules").doc(moduleID).collection("assignments").doc();
+      final docAss = db
+          .collection("classes")
+          .doc(classID)
+          .collection("modules")
+          .doc(moduleID)
+          .collection("assignments")
+          .doc();
       String aid = docAss.id;
       assigment.id = aid;
       await docAss.set(assigment.toJson());
@@ -32,7 +39,9 @@ class AssignmentService {
           .doc(moduleID)
           .collection('assignments')
           .get();
-      return documents.docs.map((e) => assignmentModel.fromSnapshot(e)).toList();
+      return documents.docs
+          .map((e) => assignmentModel.fromSnapshot(e))
+          .toList();
     } catch (e) {
       print(e);
       return [];
@@ -48,7 +57,8 @@ class AssignmentService {
           .collection('modules')
           .doc(moduleID)
           .collection('assignments')
-          .doc(assigmentID).collection('materials')
+          .doc(assigmentID)
+          .collection('materials')
           .get();
       return documents.docs.map((e) => materialModel.fromSnapshot(e)).toList();
     } catch (e) {
@@ -57,8 +67,8 @@ class AssignmentService {
     }
   }
 
-  Future<bool> deleteModuleMaterial(
-      String classID, String moduleID, String materialID, String assigmentID) async {
+  Future<bool> deleteModuleMaterial(String classID, String moduleID,
+      String materialID, String assigmentID) async {
     try {
       final document = await FirebaseFirestore.instance
           .collection("classes")
@@ -71,7 +81,8 @@ class AssignmentService {
           .doc(materialID);
       await document.delete();
       final ref = FirebaseStorage.instance
-          .ref('classes/$classID/modules/$moduleID/assignments/')
+          .ref(
+              'classes/$classID/modules/$moduleID/assignments/$assigmentID/materials/')
           .child(materialID);
       await ref.delete();
       return true;

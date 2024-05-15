@@ -3,13 +3,17 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
+import 'package:yapple/firebase/SubmissionService.dart';
+import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/materialModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:yapple/models/submissionModel.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/SubmissionStatusBox.dart';
@@ -62,7 +66,27 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   bool customIcon = false;
-  List<PlatformFile> files = [];
+  List<File> files = [];
+
+  final currentUser = FirebaseAuth.instance.currentUser;
+  String uid = "";
+  String studentName = "";
+
+  @override
+  void initState() {
+    super.initState();
+    if (currentUser != null) {
+      uid = currentUser!.uid;
+    }
+    getStudentName();
+  }
+
+  void getStudentName() async {
+    String r = await UserService().getStudentName(uid, context);
+    setState(() {
+      studentName = r;
+    });
+  }
 
   void downloadFile(materialModel material) async {
     final directory = await getApplicationDocumentsDirectory();
@@ -80,6 +104,99 @@ class _BodyState extends State<Body> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to download file"),
       ));
+    }
+  }
+
+  void uploadFiles() async {
+    await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: [
+        'pdf',
+        'doc',
+        'docx',
+        'ppt',
+        'pptx',
+        'xls',
+        'xlsx',
+        'txt',
+        'zip',
+        'rar',
+        '7z',
+        'jpg',
+        'jpeg',
+        'png'
+      ],
+    ).then((value) async {
+      if (value != null) {
+        for (var file in value.files) {
+          File mfile = File(file.path!);
+          setState(() {
+            files.add(mfile);
+          });
+        }
+      }
+    });
+  }
+
+  void submitAssignment() async {
+    if (files.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Please upload a file"),
+      ));
+    } else {
+      var submission = submissionModel(
+        id: '',
+        studentName: studentName,
+        studentID: uid,
+        isGraded: false,
+        submissionDate: DateTime.now(),
+        comment: '',
+        grade: 0,
+      );
+      Map<String, dynamic> result = await SubmissionService().addSubmission(
+          submission,
+          context,
+          widget.classID,
+          widget.moduleID,
+          widget.assignment.id);
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Assignment submitted"),
+        ));
+        for (var file in files) {
+          String fileName = file.path!.split('/').last;
+          String fileExtension = fileName.split('.').last;
+          String uniqueName =
+              '${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+
+          var material = materialModel(
+            id: uniqueName,
+            name: fileName.split('.').first,
+            url: "",
+          );
+          bool uploaded = await SubmissionService().uploadSubmissionFiles(
+              file,
+              widget.classID,
+              widget.moduleID,
+              material,
+              widget.assignment.id,
+              result['id'] as String);
+          if (uploaded == true) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("File uploaded"),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Failed to upload file"),
+            ));
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Failed to submit assignment"),
+        ));
+      }
     }
   }
 
@@ -253,16 +370,16 @@ class _BodyState extends State<Body> {
                           color: Theme.of(context).colorScheme.secondary,
                           width: 1,
                         )),
-                    children: files
-                        .map((file) => UploadedAssigmentItem(
-                              name: file.name,
-                              onPressed: () {
-                                setState(() {
-                                  files.remove(file);
-                                });
-                              },
-                            ))
-                        .toList(),
+                    children: List.generate(files.length, (index) {
+                      return UploadedAssigmentItem(
+                        name: files[index].path!.split('/').last,
+                        onPressed: () {
+                          setState(() {
+                            files.removeAt(index);
+                          });
+                        },
+                      );
+                    }),
                     onExpansionChanged: (bool expanded) {
                       setState(() => customIcon = expanded);
                     },
@@ -277,14 +394,10 @@ class _BodyState extends State<Body> {
               label: files.isEmpty ? "Upload" : "Submit",
               onPressed: () async {
                 if (files.isEmpty) {
-                  var result =
-                      await FilePicker.platform.pickFiles(allowMultiple: true);
-                  if (result == null) return;
-                  setState(() {
-                    files = result.files.map((file) => file).toList();
-                  });
+                  uploadFiles();
+                  setState(() {});
                 } else {
-                  return;
+                  submitAssignment();
                 }
                 //OpenFile.open(file.path);
               },

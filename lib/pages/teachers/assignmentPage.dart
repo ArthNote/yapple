@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
-import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/materialModel.dart';
 import 'package:yapple/models/staticData.dart';

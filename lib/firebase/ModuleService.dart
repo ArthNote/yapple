@@ -190,7 +190,7 @@ class ModuleService {
     try {
       UploadTask? task;
       final ref = FirebaseStorage.instance
-          .ref('classes/$classID/modules/$moduleID/assignments/')
+          .ref('classes/$classID/modules/$moduleID/assignments/$assignmentID/materials/')
           .child(material.id);
       task = ref.putFile(file);
       final snapshot = await task.whenComplete(() {});
