@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/studentModel.dart';
 
@@ -5,38 +6,22 @@ class classModel {
   String id;
   String name;
   String major;
-  String year;
-  List<studentModel> students;
-  List<moduleModel> modules;
+  int year;
 
   classModel({
     required this.id,
     required this.name,
     required this.major,
     required this.year,
-    required this.students,
-    required this.modules,
   });
 
   factory classModel.fromJson(Map<String, dynamic> json) {
-    List<studentModel> students = [];
-    List<moduleModel> modules = [];
-
-    for (var student in json['students']) {
-      students.add(studentModel.fromJson(student));
-    }
-
-    for (var module in json['modules']) {
-      modules.add(moduleModel.fromJson(module));
-    }
 
     return classModel(
       id: json['id'],
       name: json['name'],
       major: json['major'],
       year: json['year'],
-      students: students,
-      modules: modules,
     );
   }
 
@@ -45,7 +30,17 @@ class classModel {
         'name': name,
         'major': major,
         'year': year,
-        'students': students.map((student) => student.toJson()).toList(),
-        'modules': modules.map((module) => module.toJson()).toList(),
       };
+
+      factory classModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data()!;
+    return classModel(
+      id: document.id ?? '',
+      name: data['name'] ?? '',
+      major: data['major'] ?? '',
+      year: data['year'] ?? '',
+    );
+    //return something
+  }
 }

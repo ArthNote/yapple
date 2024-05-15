@@ -69,11 +69,17 @@ class _BodyState extends State<Body> {
                         child: Center(
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            child: CircleAvatar(
-                              radius: 100,
-                              child: Icon(Icons.person),
-                              backgroundColor: Colors.blue,
-                            ),
+                            child: user.profilePicUrl == 'null'
+                                ? CircleAvatar(
+                                    radius: 100,
+                                    child: Icon(Icons.person),
+                                    backgroundColor: Colors.blue,
+                                  )
+                                : CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        NetworkImage(user.profilePicUrl),
+                                  ),
                           ),
                         ),
                       ),
@@ -142,13 +148,13 @@ class _BodyState extends State<Body> {
                       MenuItem(
                           title: "Change Password",
                           onTap: () => {
-                             Navigator.push(context,
+                                Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
                                   return ResetPasswordPage(
                                     title: 'Change Password',
                                   );
                                 }))
-                          },
+                              },
                           icon: Icons.lock_outline),
                       SizedBox(height: 10),
                       Container(

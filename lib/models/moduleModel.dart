@@ -12,6 +12,7 @@ class moduleModel {
   teacherModel teacher;
   String about;
   String classID;
+  String teacherID;
 
   moduleModel({
     required this.id,
@@ -23,6 +24,7 @@ class moduleModel {
     required this.teacher,
     required this.about,
     required this.classID,
+    required this.teacherID,
   });
 
   factory moduleModel.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class moduleModel {
       teacher: teacherModel.fromJson(json['teacher']),
       about: json['about'],
       classID: json['classID'],
+      teacherID: json['teacherID'],
     );
   }
 
@@ -49,6 +52,7 @@ class moduleModel {
         'teacher': teacher.toJson(),
         'about': about,
         'classID': classID,
+        'teacherID': teacherID,
       };
 
   factory moduleModel.fromSnapshot(
@@ -65,6 +69,7 @@ class moduleModel {
       teacher: teacherModel.fromJson(data['teacher']),
       about: data['about'] ?? '',
       classID: data['classID'] ?? '',
+      teacherID: data['teacherID'] ?? '',
     );
     //return something
   }

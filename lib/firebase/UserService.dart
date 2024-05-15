@@ -216,7 +216,8 @@ class UserService {
     }
   }
 
-  Future<bool> updateUserInfo(String id, String col, String name, String profilePicUrl) async {
+  Future<bool> updateUserInfo(
+      String id, String col, String name, String profilePicUrl) async {
     try {
       final docChat = db.collection(col).doc(id);
       await docChat.update({"name": name, "profilePicUrl": profilePicUrl});
