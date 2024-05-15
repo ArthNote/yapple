@@ -8,13 +8,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/QuizzService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/chatModel.dart';
 import 'package:yapple/models/chatParticipantModel.dart';
 import 'package:yapple/models/materialModel.dart';
 import 'package:yapple/models/moduleModel.dart';
-import 'package:yapple/models/staticData.dart';
+import 'package:yapple/models/quizzModel.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/pages/global/chatPage.dart';
 import 'package:yapple/pages/students/assigmentPage.dart';
@@ -278,16 +279,25 @@ class BodyDetails extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             leading: Container(
-              width: 55,
-              height: 55,
+              width: 58,
+              height: 58,
               decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.circular(5)),
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
+                color: Colors.blue,
+                // Add this to make the container rectangular
+                borderRadius: BorderRadius.all(Radius.circular(8)),
               ),
+              child: module.teacher.profilePicUrl != 'null'
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        module.teacher.profilePicUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    ),
             ),
             title: Text(
               module.teacher.name,
@@ -683,53 +693,67 @@ class _BodyResourcesState extends State<BodyResources> {
                 return Center(child: CircularProgressIndicator());
               },
             ),
-             
             SizedBox(
               height: 30,
             ),
-            ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Quizzes",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map(
-                    (student) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => QuizzPage(
-                                      name: "Simple quizz",
-                                    )));
-                      },
-                      child: QuizzItem(
-                        name: "Simple quizz",
-                      ),
+            FutureBuilder<List<quizzModel>>(
+              future: QuizzService()
+                  .getQuizzes(context, widget.module.classID, widget.module.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<quizzModel> quizzes = snapshot.data as List<quizzModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Quizzes",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
-                  )
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(quizzes.length, (index) {
+                      var quizz = quizzes[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => QuizzPage(
+                                        quizz: quizz,
+                                        classID: widget.module.classID,
+                                        moduleID: widget.module.id,
+                                      )));
+                        },
+                        child: QuizzItem(
+                          name: quizz.title,
+                        ),
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
           ],

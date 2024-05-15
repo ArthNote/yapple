@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings, avoid_print
+
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,6 +83,228 @@ class SubmissionService {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<List<submissionModel>> getAssignmentSubmissions(String classID, String moduleID, String assignmentID) async {
+    try {
+      final documents = await FirebaseFirestore.instance
+          .collection("classes")
+          .doc(classID)
+          .collection('modules').doc(moduleID).collection('assignments').doc(assignmentID).collection('submissions').get();
+      return documents.docs.map((e) => submissionModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<bool> checkSubmission(
+    String uid,
+    String classID,
+    String moduleID,
+    String assignmentID,
+  ) async {
+    try {
+      final subSnapshot = await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .where("studentID", isEqualTo: uid)
+          .get();
+
+      if (subSnapshot.docs.isEmpty) {
+        return false;
+      } else {
+        return true;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<String> getSubmissionID(
+    String uid,
+    String classID,
+    String moduleID,
+    String assignmentID,
+  ) async {
+    try {
+      final subSnapshot = await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .where("studentID", isEqualTo: uid)
+          .get();
+
+      if (subSnapshot.docs.isEmpty) {
+        return '';
+      } else {
+        return subSnapshot.docs[0].id;
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<int> getSubmissionGrade(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+  ) async {
+    try {
+      final subSnapshot = await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID)
+          .get();
+
+      if (subSnapshot.exists) {
+        print('db grade is ' + subSnapshot.get('grade').toString());
+        return subSnapshot.get('grade');
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<bool> getSubmissionGradeStatus(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+  ) async {
+    try {
+      final subSnapshot = await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID)
+          .get();
+
+      if (subSnapshot.exists) {
+        return subSnapshot.get('isGraded');
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<String> getSubmissionComment(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+  ) async {
+    try {
+      final subSnapshot = await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID)
+          .get();
+
+      if (subSnapshot.exists) {
+        return subSnapshot.get('comment');
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<bool> gradeSubmission(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+    int grade,
+  ) async {
+    try {
+      await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID).update({'isGraded': true, 'grade': grade});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> commentSubmission(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+    String comment,
+  ) async {
+    try {
+      await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID)
+          .update({'comment': comment});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<List<materialModel>> getSubmissionFiles(String uid, String classID,
+      String moduleID, String assignmentID, String submissionID) async {
+    try {
+      final documents = await FirebaseFirestore.instance
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .collection('submissions')
+          .doc(submissionID)
+          .collection('files')
+          .get();
+      return documents.docs.map((e) => materialModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
     }
   }
 }

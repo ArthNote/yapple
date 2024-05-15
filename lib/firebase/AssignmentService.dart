@@ -91,4 +91,85 @@ class AssignmentService {
       return false;
     }
   }
+
+  Future<bool> editAssignmentAbout(
+    String submissionID,
+    String classID,
+    String moduleID,
+    String assignmentID,
+    String about,
+  ) async {
+    try {
+      await db
+          .collection('classes')
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID)
+          .collection('assignments')
+          .doc(assignmentID)
+          .update({'description': about});
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> updateStudentInfo(
+      String uid, String newPic, BuildContext context, String name) async {
+    try {
+      final documents = await db.collection("classes").get();
+      for (var Class in documents.docs) {
+        var modulesDocs = await db
+            .collection("classes")
+            .doc(Class.id)
+            .collection('modules')
+            .get();
+        for (var module in modulesDocs.docs) {
+          var assignmentsDocs = await db
+              .collection("classes")
+              .doc(Class.id)
+              .collection('modules')
+              .doc(module.id)
+              .collection('assignments')
+              .get();
+          if (assignmentsDocs.docs.isEmpty) {
+            print('No assignments');
+          } else {
+            for (var assignment in assignmentsDocs.docs) {
+              var submissionsDocs = await db
+                  .collection("classes")
+                  .doc(Class.id)
+                  .collection('modules')
+                  .doc(module.id)
+                  .collection('assignments')
+                  .doc(assignment.id)
+                  .collection('submissions')
+                  .where('studentID', isEqualTo: uid)
+                  .get();
+              if (submissionsDocs.docs.isEmpty) {
+                print('No submissions');
+              } else {
+                for (var submission in submissionsDocs.docs) {
+                  await db
+                      .collection("classes")
+                      .doc(Class.id)
+                      .collection('modules')
+                      .doc(module.id)
+                      .collection('assignments')
+                      .doc(assignment.id)
+                      .collection('submissions')
+                      .doc(submission.id)
+                      .update({
+                    'studentName': name,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

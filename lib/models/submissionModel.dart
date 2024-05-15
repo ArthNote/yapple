@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:yapple/models/materialModel.dart';
 
 class submissionModel {
   String id;
