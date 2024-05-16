@@ -6,9 +6,10 @@ import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 class AssigmentComment extends StatelessWidget {
-  AssigmentComment({super.key, required this.controller, required this.isEdit});
+  AssigmentComment({super.key, required this.controller, required this.isEdit, required this.onPressed});
   final TextEditingController controller;
   final bool isEdit;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class AssigmentComment extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
               label:'Submit Comment',
-              onPressed: () {},
+              onPressed: onPressed,
             ),
           ],
         ),

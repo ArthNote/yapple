@@ -191,7 +191,8 @@ class ModuleService {
     try {
       UploadTask? task;
       final ref = FirebaseStorage.instance
-          .ref('classes/$classID/modules/$moduleID/assignments/$assignmentID/materials/')
+          .ref(
+              'classes/$classID/modules/$moduleID/assignments/$assignmentID/materials/')
           .child(material.id);
       task = ref.putFile(file);
       final snapshot = await task.whenComplete(() {});
@@ -250,36 +251,40 @@ class ModuleService {
 
   Future<void> updateTeacherInfo(
       String uid, String newPic, BuildContext context, String name) async {
-        try {
-          List<moduleModel> modules = [];
-          List<classModel> classes = [];
-          final documents = await db.collection("classes").get();
-          for (var Class in documents.docs) {
-            var modulesDocs = await db
+    try {
+      List<moduleModel> modules = [];
+      List<classModel> classes = [];
+      final documents = await db.collection("classes").get();
+      for (var Class in documents.docs) {
+        var modulesDocs = await db
             .collection("classes")
             .doc(Class.id)
             .collection('modules')
             .where('teacherID', isEqualTo: uid)
             .get();
-            for (var module in modulesDocs.docs) {
-                modules.add(moduleModel.fromSnapshot(module));
-            }
-          }
-
-          for (var module in modules) {
-            var newMe = teacherModel(
-                id: module.teacher.id,
-                name: name,
-                profilePicUrl: newPic, email: module.teacher.email, password: module.teacher.password, role: module.teacher.role,
-              );
-              var moduleDoc = await db
-              .collection("classes")
-              .doc(module.classID)
-              .collection('modules')
-              .doc(module.id).update({"teacher": newMe.toJson()});
-          }
-        } catch (e) {
-          print(e);
+        for (var module in modulesDocs.docs) {
+          modules.add(moduleModel.fromSnapshot(module));
         }
+      }
+
+      for (var module in modules) {
+        var newMe = teacherModel(
+          id: module.teacher.id,
+          name: name,
+          profilePicUrl: newPic,
+          email: module.teacher.email,
+          password: module.teacher.password,
+          role: module.teacher.role,
+        );
+        var moduleDoc = await db
+            .collection("classes")
+            .doc(module.classID)
+            .collection('modules')
+            .doc(module.id)
+            .update({"teacher": newMe.toJson()});
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

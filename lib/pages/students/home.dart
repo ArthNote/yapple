@@ -12,6 +12,7 @@ import 'package:yapple/pages/global/calendar.dart';
 import 'package:yapple/pages/global/feedbackPage.dart';
 import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/pages/global/tasks.dart';
+import 'package:yapple/pages/students/gradesPage.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class StudentHomePage extends StatelessWidget {
@@ -36,7 +37,21 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  List items = [
+
+  ModuleService moduleService = ModuleService();
+  final currentUser = FirebaseAuth.instance.currentUser;
+  String classID = '';
+  String uid = "";
+  Set<String> starredModulesIds = Set<String>();
+
+  Future<void> loadStarredModules() async {
+    List<starredModel> stares =
+        await moduleService.getStarredModules(uid, 'students');
+    setState(() {
+      starredModulesIds = Set<String>.from(stares.map((star) => star.id));
+    });
+  }
+    List items = [
     {
       'title': 'Calendar',
       'icon': Icons.calendar_month_rounded,
@@ -58,23 +73,11 @@ class _BodyState extends State<Body> {
     {
       'title': 'Grades',
       'icon': Icons.grading_rounded,
-      'color': Color(0xfffc7f7f)
+      'color': Color(0xfffc7f7f),
+      'page': GradesPage(),
     }
   ];
 
-  ModuleService moduleService = ModuleService();
-  final currentUser = FirebaseAuth.instance.currentUser;
-  String classID = '';
-  String uid = "";
-  Set<String> starredModulesIds = Set<String>();
-
-  Future<void> loadStarredModules() async {
-    List<starredModel> stares =
-        await moduleService.getStarredModules(uid, 'students');
-    setState(() {
-      starredModulesIds = Set<String>.from(stares.map((star) => star.id));
-    });
-  }
 
   @override
   void initState() {

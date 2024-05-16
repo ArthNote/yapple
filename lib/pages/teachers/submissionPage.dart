@@ -192,7 +192,7 @@ class _SubmissionPageState extends State<SubmissionPage> {
             child: Icon(Icons.comment),
             label: "Comment on Assignment",
             onTap: () {
-              if ((widget.submission.comment).isNotEmpty) {
+              if ((comment).isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -211,36 +211,47 @@ class _SubmissionPageState extends State<SubmissionPage> {
                     return AssigmentComment(
                       controller: commentController,
                       isEdit: false,
-                    );
-                  },
-                );
-              }
-            },
-          ),
-          SpeedDialChild(
-            shape: CircleBorder(),
-            child: Icon(Icons.edit),
-            label: "Edit comment",
-            onTap: () {
-              if ((widget.submission.comment).isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'There is no comment to edit',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    duration: Duration(seconds: 2),
-                    backgroundColor: Colors.red.shade400,
-                  ),
-                );
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AssigmentComment(
-                      controller: commentController,
-                      isEdit: true,
+                      onPressed: () async {
+                        bool r = await SubmissionService().commentSubmission(
+                          widget.submission.id,
+                          widget.classID,
+                          widget.moduleID,
+                          widget.assignmentID,
+                          commentController.text.toString(),
+                        );
+
+                        if (r) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Assignment commented successfully',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.green.shade400,
+                            ),
+                          );
+                          Navigator.pop(context);
+                          setState(() {
+                            getSubmissionGrade();
+                            getSubmissionGradingStatus();
+                            getSubmissionComment();
+                          });
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Failed to comment assignment',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.red.shade400,
+                            ),
+                          );
+                        }
+                      },
                     );
                   },
                 );

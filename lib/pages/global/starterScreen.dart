@@ -86,7 +86,7 @@ class StarterScreen extends StatelessWidget {
                           color: Theme.of(context).colorScheme.tertiary,
                         )),
                   ),
-                  SizedBox(height: 50),
+                  SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: MyButton(
