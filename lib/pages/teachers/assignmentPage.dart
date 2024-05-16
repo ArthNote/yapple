@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
-import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/SubmissionService.dart';
 import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/materialModel.dart';
 import 'package:yapple/models/staticData.dart';
+import 'package:yapple/models/submissionModel.dart';
 import 'package:yapple/pages/teachers/submissionPage.dart';
 import 'package:yapple/widgets/AssigmentAbout.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
@@ -41,38 +42,6 @@ class TeacherAssignmentPage extends StatelessWidget {
         assignment: assignment,
         classID: classID,
         moduleID: moduleID,
-      ),
-      floatingActionButton: SpeedDial(
-        foregroundColor: Colors.white,
-        spacing: 20,
-        spaceBetweenChildren: 10,
-        animatedIcon: AnimatedIcons.menu_close,
-        children: [
-          SpeedDialChild(
-            shape: CircleBorder(),
-            child: Icon(Icons.file_present_rounded),
-            label: "Add content",
-            onTap: () async {
-              var result =
-                  await FilePicker.platform.pickFiles(allowMultiple: true);
-            },
-          ),
-          SpeedDialChild(
-            shape: CircleBorder(),
-            child: Icon(Icons.edit),
-            label: "Edit About Section",
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AssigmentAbout(
-                    controller: aboutController,
-                  );
-                },
-              );
-            },
-          ),
-        ],
       ),
     );
   }
@@ -228,8 +197,14 @@ class _BodyState extends State<Body> {
             SizedBox(
               height: 15,
             ),
-            submissions.isNotEmpty
-                ? ExpansionTile(
+            FutureBuilder<List<submissionModel>>(
+              future: SubmissionService().getAssignmentSubmissions(
+                  widget.classID, widget.moduleID, widget.assignment.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<submissionModel> submissions =
+                      snapshot.data as List<submissionModel>;
+                  return ExpansionTile(
                     initiallyExpanded: true,
                     title: Text(
                       "Submissions",
@@ -255,28 +230,35 @@ class _BodyState extends State<Body> {
                           color: Theme.of(context).colorScheme.secondary,
                           width: 1,
                         )),
-                    children: submissions
-                        .map((submission) => GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SubmissionPage(
-                                            submission: submission,
-                                          )),
-                                );
-                              },
-                              child: SubmissionItem(
-                                name: submission['name'] as String,
-                                isGraded: submission['graded'] as bool,
-                              ),
-                            ))
-                        .toList(),
+                    children: List.generate(submissions.length, (index) {
+                      var submission = submissions[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return SubmissionPage(
+                                submission: submission,
+                                classID: widget.classID,
+                                moduleID: widget.moduleID,
+                                assignmentID: widget.assignment.id);
+                          }));
+                        },
+                        child: SubmissionItem(
+                          name: submission.studentName,
+                          isGraded: submission.isGraded,
+                        ),
+                      );
+                    }),
                     onExpansionChanged: (bool expanded) {
                       setState(() => customIcon = expanded);
                     },
-                  )
-                : SizedBox(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
+              },
+            ),
             SizedBox(
               height: 50,
             ),

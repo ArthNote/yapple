@@ -1,12 +1,16 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_interpolation_to_compose_strings, prefer_const_constructors_in_immutables, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:yapple/firebase/QuizzService.dart';
+import 'package:yapple/models/quizzModel.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
 
 class AddQuizzPage extends StatelessWidget {
-  const AddQuizzPage({super.key});
+  AddQuizzPage({super.key, required this.classID, required this.moduleID});
+  final String classID;
+  final String moduleID;
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +24,18 @@ class AddQuizzPage extends StatelessWidget {
           style: TextStyle(fontSize: 17),
         ),
       ),
-      body: Body(),
+      body: Body(
+        classID: classID,
+        moduleID: moduleID,
+      ),
     );
   }
 }
 
 class Body extends StatefulWidget {
-  Body({super.key});
+  Body({super.key, required this.classID, required this.moduleID});
+  final String classID;
+  final String moduleID;
 
   @override
   State<Body> createState() => _BodyState();
@@ -38,6 +47,76 @@ class _BodyState extends State<Body> {
   List<Widget> questionsWidgets = [];
   List<Map<String, Object>> questions = [];
   List<int> isInside = [];
+
+  void createQuizz() async {
+    if (titleController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please enter a title for the quizz',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).appBarTheme.backgroundColor!,
+            ),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } else {
+      List<quizzQuestion> quizzQuestions = [];
+      for (var qs in questions) {
+        var quizzQs = quizzQuestion(
+          question: qs['question'].toString(),
+          answers: (qs['options'] as List<dynamic>).map((e) => e).toList(),
+          correctAnswerIndex: qs['correctAnswerIndex'] as int,
+        );
+        quizzQuestions.add(quizzQs);
+      }
+      String quizzName = titleController.text;
+      var quizz = quizzModel(
+        id: '',
+        title: quizzName,
+        questions: quizzQuestions,
+      );
+      bool created = await QuizzService().createQuizz(
+        quizz,
+        context,
+        widget.classID,
+        widget.moduleID,
+      );
+      if (created) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Quizz created successfully',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).appBarTheme.backgroundColor!,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to create quizz',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).appBarTheme.backgroundColor!,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +158,7 @@ class _BodyState extends State<Body> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).appBarTheme.backgroundColor!,
             label: 'Add Quizz',
-            onPressed: () {},
+            onPressed: () => createQuizz(),
           ),
           SizedBox(height: 30),
           Expanded(

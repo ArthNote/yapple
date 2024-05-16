@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/FeedbackService.dart';
+import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/QuizzService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -99,7 +102,18 @@ class _BodyState extends State<Body> {
             .updateChatProfile(widget.uid, profilePicUrl, context, name);
         await FeedbackService()
             .updateFeedbackSender(widget.uid, profilePicUrl, context, name);
+        if (widget.role == 'students') {
+          await QuizzService()
+              .updateStudentInfo(widget.uid, profilePicUrl, context, name);
+          await AssignmentService()
+              .updateStudentInfo(widget.uid, profilePicUrl, context, name);
+        }
+        if (widget.role == 'teachers') {
+          await ModuleService()
+              .updateTeacherInfo(widget.uid, profilePicUrl, context, name);
+        }
         print('dasdasdasd');
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content:

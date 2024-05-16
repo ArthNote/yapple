@@ -129,13 +129,12 @@ class _BodyState extends State<Body> {
               widget.module.id,
               material,
               result['id'] as String);
-          if (uploaded == true) {
-            Navigator.pop(context);
-          } else {
+          if (!uploaded) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text("Failed to upload file"),
             ));
           }
+          Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -9,12 +9,14 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/QuizzService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/assignmentModel.dart';
 import 'package:yapple/models/chatModel.dart';
 import 'package:yapple/models/chatParticipantModel.dart';
 import 'package:yapple/models/materialModel.dart';
 import 'package:yapple/models/moduleModel.dart';
+import 'package:yapple/models/quizzModel.dart';
 import 'package:yapple/models/staticData.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/teacherModel.dart';
@@ -23,6 +25,7 @@ import 'package:yapple/pages/students/quizzPage.dart';
 import 'package:yapple/pages/teachers/addAssignment.dart';
 import 'package:yapple/pages/teachers/addQuizz.dart';
 import 'package:yapple/pages/teachers/assignmentPage.dart';
+import 'package:yapple/pages/teachers/quizzResults.dart';
 import 'package:yapple/widgets/AssigmentItem.dart';
 import 'package:yapple/widgets/ContentMaterialItem.dart';
 import 'package:yapple/widgets/ProfileDialog.dart';
@@ -207,7 +210,10 @@ class _TeacherCourseDetailsPageState extends State<TeacherCourseDetailsPage>
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AddQuizzPage()));
+                            builder: (context) => AddQuizzPage(
+                                  moduleID: widget.module.id,
+                                  classID: widget.module.classID,
+                                )));
                   },
                 ),
               ],
@@ -630,56 +636,73 @@ class _BodyResourcesState extends State<BodyResources> {
             SizedBox(
               height: 30,
             ),
-            ExpansionTile(
-              initiallyExpanded: false,
-              title: Text(
-                "Quizzes",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              childrenPadding: EdgeInsets.fromLTRB(20, 0, 20, 15),
-              expandedAlignment: Alignment.centerLeft,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              collapsedBackgroundColor:
-                  Theme.of(context).appBarTheme.backgroundColor,
-              //add a collapsed shape
-              collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 1,
-                  )),
-              children: students
-                  .map(
-                    (student) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+            FutureBuilder<List<quizzModel>>(
+              future: QuizzService()
+                  .getQuizzes(context, widget.module.classID, widget.module.id),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<quizzModel> quizzes = snapshot.data as List<quizzModel>;
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Quizzes",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    childrenPadding: EdgeInsets.fromLTRB(20, 0, 12, 15),
+                    expandedAlignment: Alignment.centerLeft,
+                    backgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    collapsedBackgroundColor:
+                        Theme.of(context).appBarTheme.backgroundColor,
+                    //add a collapsed shape
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 1,
+                        )),
+                    children: List.generate(quizzes.length, (index) {
+                      var quizz = quizzes[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => QuizzPage(
-                                      name: "Simple quizz",
-                                    )));
-                      },
-                      child: QuizzItem(
-                        name: "Simple quizz",
-                        iconButton: IconButton(
-                          color: Theme.of(context).colorScheme.primary,
-                          icon: Icon(
-                            Icons.delete_rounded,
+                              builder: (context) => TeacherQuizzResults(
+                                quizz: quizz,
+                                classID: widget.module.classID,
+                                moduleID: widget.module.id,
+                              ),
+                            ),
+                          );
+                        },
+                        child: QuizzItem(
+                          name: quizz.title,
+                          iconButton: IconButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            icon: Icon(
+                              Icons.delete_rounded,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
                         ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onExpansionChanged: (bool expanded) {
-                setState(() => customIcon = expanded);
+                      );
+                    }),
+                    onExpansionChanged: (bool expanded) {
+                      setState(() => customIcon = expanded);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error${snapshot.error}"));
+                }
+                return Center(child: CircularProgressIndicator());
               },
             ),
           ],
