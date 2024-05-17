@@ -60,6 +60,7 @@ dependencies:
   pdf: ^3.10.8
   excel: ^4.0.2
   csv: ^5.1.1
+  local_auth: ^2.2.0
 
 dev_dependencies:
   flutter_test:

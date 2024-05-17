@@ -27,8 +27,8 @@ class GroupChatStudentItem extends StatelessWidget {
   }
 }
 
-class GroupChatSelectedItem extends StatelessWidget {
-  GroupChatSelectedItem(
+class SearchSelectedItem extends StatelessWidget {
+  SearchSelectedItem(
       {super.key,
       required this.name,
       required this.icon,
@@ -58,6 +58,34 @@ class GroupChatSelectedItem extends StatelessWidget {
             color: Theme.of(context).appBarTheme.backgroundColor,
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+class SearchClassItem extends StatelessWidget {
+  SearchClassItem({super.key, required this.name, required this.icon});
+  final String name;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        Icons.class_rounded,
+        size: 28,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      title: Text(
+        name,
+        style: TextStyle(
+            fontSize: 17, color: Theme.of(context).colorScheme.tertiary),
+      ),
+      trailing: Icon(
+        icon,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }

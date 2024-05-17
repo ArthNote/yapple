@@ -1,34 +1,55 @@
+import 'package:flutter/material.dart';
 
-// import 'package:file_picker/file_picker.dart';
-// import 'package:excel/excel.dart';
+class ButtonWidget extends StatelessWidget {
+  final String text;
+  final VoidCallback onClicked;
 
-// Future<List<Map<String, dynamic>>> uploadAndConvertExcel() async {
-//   List<Map<String, dynamic>> mapList = [];
+  const ButtonWidget({
+    Key? key,
+    required this.text,
+    required this.onClicked,
+  }) : super(key: key);
 
-//   // Pick the Excel file
-//   FilePickerResult result = await FilePicker.platform
-//       .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'xls']);
+  @override
+  Widget build(BuildContext context) => ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size.fromHeight(40),
+        ),
+        child: FittedBox(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 20, color: Colors.white),
+          ),
+        ),
+        onPressed: onClicked,
+      );
+}
 
-//   if (result != null) {
-//     var bytes = result.files.single.bytes;
-//     var excel = Excel.decodeBytes(bytes);
 
-//     // Get the first sheet
-//     var sheet = excel.tables.values.first;
+class TitleWidget extends StatelessWidget {
+  final IconData icon;
+  final String text;
 
-//     // Get the column names
-//     List<String> columnNames =
-//         sheet.rows[0].map((cell) => cell.value.toString()).toList();
+  const TitleWidget({
+    Key? key,
+    required this.icon,
+    required this.text,
+  }) : super(key: key);
 
-//     // Convert each row to a map
-//     for (var row in sheet.rows.skip(1)) {
-//       Map<String, dynamic> rowMap = {};
-//       for (var i = 0; i < row.length; i++) {
-//         rowMap[columnNames[i]] = row[i].value;
-//       }
-//       mapList.add(rowMap);
-//     }
-//   }
-
-//   return mapList;
-// }
+  @override
+  Widget build(BuildContext context) => Column(
+        children: [
+          Icon(icon, size: 100, color: Colors.white),
+          const SizedBox(height: 16),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 42,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+}

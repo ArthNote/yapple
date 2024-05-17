@@ -1,20 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_file_saver/flutter_file_saver.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/pages/global/editProfilePage.dart';
-import 'package:pdf/pdf.dart';
-import 'package:flutter_file_saver/flutter_file_saver.dart';
-import 'package:pdf/widgets.dart' as pw;
+
 import 'package:yapple/pages/global/resetPassword.dart';
+import 'package:yapple/utils/page.dart';
 import 'package:yapple/utils/pdf_api.dart';
+
 import 'package:yapple/widgets/MenuItem.dart';
 
 class StudentProfile extends StatelessWidget {
@@ -160,9 +156,19 @@ class _BodyState extends State<Body> {
                           icon: Icons.lock_outline),
                       SizedBox(height: 10),
                       MenuItem(
-                          title: "Coming soon",
-                          onTap: () {},
-                          icon: Icons.watch_later_outlined),
+                          title: "Download Student Card",
+                          onTap: () async {
+                            final pdfFile = await PdfAPI.generate(
+                              user.profilePicUrl,
+                              user.name,
+                              "st" + user.id.substring(0, 6),
+                              user.email,
+                              user.major,
+                            );
+
+                            PdfAPI.openFile(pdfFile);
+                          },
+                          icon: Icons.card_membership),
                       SizedBox(height: 10),
                       Container(
                         padding: EdgeInsets.fromLTRB(17, 24, 13, 0),

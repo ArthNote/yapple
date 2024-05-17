@@ -34,6 +34,7 @@ class UserService {
       return false;
     }
   }
+  
 
   Future<String> getType(
       String email, String password, BuildContext context) async {
@@ -245,6 +246,19 @@ class UserService {
     try {
       final docChat = db.collection(col).doc(id);
       await docChat.update({"name": name, "profilePicUrl": profilePicUrl});
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> createStudentRecord(studentModel student) async {
+    try {
+      final doc = await db.collection("temporary").doc();
+      String sid = doc.id;
+      student.id = sid;
+      await doc.set(student.toJson());
       return true;
     } catch (e) {
       print(e);
