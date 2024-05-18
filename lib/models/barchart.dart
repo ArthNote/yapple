@@ -11,6 +11,7 @@ class BarChartWidget extends StatefulWidget {
 
 class _BarChartWidgetState extends State<BarChartWidget> {
   late Future<List<BarChartGroupData>> _dataFuture;
+  Map<String, int> majorCounts = {};  // Add a member variable to hold major counts
 
   @override
   void initState() {
@@ -21,21 +22,32 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   Future<List<BarChartGroupData>> fetchChartData() async {
     List<BarChartGroupData> barGroups = [];
     try {
-      // Replace 'collectionName' and 'fieldY' with your Firestore collection and fields
-      var snapshot = await FirebaseFirestore.instance.collection('teachers').get();
-      int index = 0;
+      var snapshot = await FirebaseFirestore.instance.collection('students').get();
+
       for (var doc in snapshot.docs) {
-        barGroups.add(BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(
-              toY: 10.01, // Replace with your field name
-              color: Colors.blue,
-            ),
-          ],
-        ));
-        index++;
+        String major = doc['major'];
+        if (majorCounts.containsKey(major)) {
+          majorCounts[major] = majorCounts[major]! + 1;
+        } else {
+          majorCounts[major] = 9;
+        }
       }
+
+      int index = 0;
+      majorCounts.forEach((major, count) {
+        barGroups.add(
+          BarChartGroupData(
+            x: index,
+            barRods: [
+              BarChartRodData(
+                toY: count.toDouble(),
+                color: Colors.blue,
+              ),
+            ],
+          ),
+        );
+        index++;
+      });
     } catch (e) {
       print('Error fetching data: $e');
     }
@@ -47,7 +59,6 @@ class _BarChartWidgetState extends State<BarChartWidget> {
     return FutureBuilder<List<BarChartGroupData>>(
       future: _dataFuture,
       builder: (context, snapshot) {
-        List<BarChartGroupData> datas = snapshot.data as List<BarChartGroupData>;
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
@@ -55,44 +66,55 @@ class _BarChartWidgetState extends State<BarChartWidget> {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Text('No data available');
         } else {
-          return _buildChart(datas);
+          return _buildChart(snapshot.data!);
         }
       },
     );
   }
 
   Widget _buildChart(List<BarChartGroupData> data) {
-    // Adjust the height of the BarChart by wrapping it with SizedBox
+    List<String> majors = majorCounts.keys.toList();  // Extract major names for labels
     return SizedBox(
-      height: 300, // Set the desired height here
+      height: 400,
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
           barGroups: data,
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
-              // Set the AxisTitle for the left axis to null
-              sideTitles: SideTitles(showTitles: true),// Hide left axis titles
+              sideTitles: SideTitles(showTitles: true),
             ),
             rightTitles: AxisTitles(
-              // Set the AxisTitle for the left axis to null
-              sideTitles: SideTitles(showTitles: false),// Hide left axis titles
+              sideTitles: SideTitles(showTitles: false),
             ),
             bottomTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
+              sideTitles: SideTitles(
+                showTitles: true,
+                getTitlesWidget: (double value, TitleMeta meta) {
+                  const style = TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  );
+                  if (value.toInt() < 0 || value.toInt() >= majors.length) {
+                    return SizedBox.shrink();  // Return an empty widget if the index is out of bounds
+                  }
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    child: Text(majors[value.toInt()], style: style),
+                  );
+                },
+              ),
             ),
           ),
           borderData: FlBorderData(
-            show: false, // Set to false to hide the axis lines
+            show: true,
           ),
           gridData: FlGridData(
-            show: false, // Set to false to hide the grid lines
+            show: false,
           ),
         ),
       ),
     );
   }
-
-
-
 }

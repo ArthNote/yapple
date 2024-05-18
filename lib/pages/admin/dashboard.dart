@@ -1,11 +1,12 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 import 'package:carousel_slider/carousel_slider.dart';
 import '../../models/barchart.dart';
-
+import 'package:d_chart/d_chart.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -17,11 +18,13 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   final myAnnouncements = [
-    Image.asset('assets/testforcarousel.png'),
-    Image.asset('assets/yapple.png'),
-    Image.asset('assets/yapple.png'),
+    'assets/ann_gaming.png',
+    'assets/test.png',
+    'assets/ann_marketing.png',
   ];
   int myCurrentIndex = 0;
+
+  late Stream<QuerySnapshot<Map<String, dynamic>>> streamChart;
 
   @override
   void initState() {
@@ -30,6 +33,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
+    streamChart = FirebaseFirestore.instance
+        .collection('classes')
+        .snapshots(includeMetadataChanges: true);
   }
 
   @override
@@ -52,38 +58,89 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SingleChildScrollView(
-            child: CarouselSlider(
-              options: CarouselOptions(
-                autoPlay: true,
-                height: 200,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    myCurrentIndex = index;
-                  });
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CarouselSlider(
+                options: CarouselOptions(
+                  autoPlay: true,
+                  height: 200,
+                  viewportFraction: 0.8, // Increase the fraction to zoom in
+                  enlargeCenterPage: true, // This will enlarge the center item
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      myCurrentIndex = index;
+                    });
+                  },
+                ),
+                items: myAnnouncements.map((item) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust the horizontal padding for spacing
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.asset(
+                        item,
+                        fit: BoxFit.cover, // Ensures the image covers the space
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            SizedBox(
+              height: 400, // Set a specific height for the RadialAnimatedMenu
+              child: Center(
+                child: RadialAnimatedMenu(controller: controller),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SizedBox(
+                height: 300, // Set a specific height for the BarChart
+                child: BarChartWidget(),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: StreamBuilder(
+                stream: streamChart,
+                builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                  if (snapshot.hasData) {
+                    return AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: DChartBarO(
+                        groupList: _buildOrdinalGroupList(snapshot),
+                      ),
+                    );
+                  } else {
+                    return CircularProgressIndicator(); // Or any other loading indicator
+                  }
                 },
               ),
-              items: myAnnouncements,
             ),
-          ),
-          Expanded(
-            child: Center(
-              child: RadialAnimatedMenu(controller: controller),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: BarChartWidget(),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  List<OrdinalGroup> _buildOrdinalGroupList(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+    List<OrdinalData> ordinalList = snapshot.data!.docs.map((e) {
+      return OrdinalData(
+        domain: e.data()['major'] ?? '', // Change 'date' to the field name in your Firebase document
+        measure: e.data()['year'] ?? 0, // Change 'income' to the field name in your Firebase document
+      );
+    }).toList();
+
+    final ordinalGroup = [
+      OrdinalGroup(
+        id: '1',
+        data: ordinalList,
+      ),
+    ];
+
+    return ordinalGroup;
   }
 }
 
