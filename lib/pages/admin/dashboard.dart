@@ -18,8 +18,8 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTickerProviderStateMixin {
   late AnimationController controller;
   final myAnnouncements = [
-    'assets/ann_gaming.png',
-    'assets/test.png',
+    'assets/ann_marketing.png',
+    'assets/ann_marketing.png',
     'assets/ann_marketing.png',
   ];
   int myCurrentIndex = 0;
@@ -36,6 +36,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
     streamChart = FirebaseFirestore.instance
         .collection('classes')
         .snapshots(includeMetadataChanges: true);
+
+    // Add a listener to the controller to rebuild the widget when the animation status changes
+    controller.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -48,51 +53,118 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () => AuthService().logout(context),
-          ),
-        ],
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      ),
       body: SingleChildScrollView(
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            CarouselSlider(
-                options: CarouselOptions(
-                  autoPlay: true,
-                  height: 200,
-                  viewportFraction: 0.8, // Increase the fraction to zoom in
-                  enlargeCenterPage: true, // This will enlarge the center item
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      myCurrentIndex = index;
-                    });
-                  },
-                ),
-                items: myAnnouncements.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust the horizontal padding for spacing
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.asset(
-                        item,
-                        fit: BoxFit.cover, // Ensures the image covers the space
-                      ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  )),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            height: 50,
+                            child: Image.asset(
+                              'assets/yapple.png',
+                              color: Theme.of(context).appBarTheme.backgroundColor,
+                            ),
+                          ),
+                          Icon(
+                            Icons.notifications,
+                            size: 30,
+                            color: Theme.of(context).appBarTheme.backgroundColor,
+                          )
+                        ]),
+                    SizedBox(
+                      height: 20,
                     ),
-                  );
-                }).toList(),
+                    Text(
+                      'Hi, Admin!',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                        wordSpacing: 2,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                      ),
+                    )
+                  ],
+                ),
               ),
+            ),
             SizedBox(
-              height: 400, // Set a specific height for the RadialAnimatedMenu
-              child: Center(
-                child: RadialAnimatedMenu(controller: controller),
+              height: 25,
+            ),
+            CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: true,
+                height: 200,
+                viewportFraction: 0.9, // Increase the fraction to zoom in
+                enlargeCenterPage: true, // This will enlarge the center item
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    myCurrentIndex = index;
+                  });
+                },
               ),
+              items: myAnnouncements.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1.0), // Adjust the horizontal padding for spacing
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: Image.asset(
+                      item,
+                      fit: BoxFit.fill, // Ensures the image covers the space
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            SizedBox(
+              height: 20, // Space between carousel and menu
+            ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  height: 400, // Set a specific height for the RadialAnimatedMenu
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 400),
+                        top: controller.status == AnimationStatus.dismissed ? 80 : 200, // Adjust this value to animate the text
+                        child: Visibility(
+                          visible: controller.status == AnimationStatus.dismissed,
+                          child: Text(
+                            "Menu",
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: RadialAnimatedMenu(controller: controller),
+                      ),
+                    ],
+                  ),
+                ),
+
+
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
