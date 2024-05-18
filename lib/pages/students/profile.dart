@@ -8,7 +8,6 @@ import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/pages/global/editProfilePage.dart';
 
 import 'package:yapple/pages/global/resetPassword.dart';
-import 'package:yapple/utils/page.dart';
 import 'package:yapple/utils/pdf_api.dart';
 
 import 'package:yapple/widgets/MenuItem.dart';
