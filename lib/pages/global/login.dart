@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_iconpicker/extensions/string_extensions.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/pages/global/resetPassword.dart';
@@ -109,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  "No user found with the provided email and password",
+                  "No user found",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -596,49 +597,53 @@ class _LoginPageState extends State<LoginPage> {
                           )
                         : SizedBox(),
                     isSupported
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: OutlinedButton(
-                              onPressed: () => authenticate(),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.fingerprint,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 30,
+                        ? secureEmail.isNotEmpty
+                            ? SizedBox(
+                                width: double.infinity,
+                                height: 60,
+                                child: OutlinedButton(
+                                  onPressed: () => authenticate(),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.fingerprint,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        size: 30,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Log in with fingerprint",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "Log in with fingerprint",
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16,
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                      BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                     ),
                                   ),
-                                ],
-                              ),
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
                                 ),
-                                side: MaterialStateProperty.all(
-                                  BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                              ),
-                            ),
-                          )
+                              )
+                            : SizedBox()
                         : SizedBox(),
                     SizedBox(
                       height: 30,

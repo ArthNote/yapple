@@ -34,4 +34,12 @@ class UserSecureStorage {
     final value = await storage.read(key: keyType);
     return value != null ? value : null;
   }
+
+  static Future<void> clear() async {
+    await storage.delete(key: keyEmail);
+    await storage.delete(key: keyPassword
+    );
+    await storage.delete(key: keyType);
+  }
+
 }
