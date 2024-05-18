@@ -92,7 +92,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
                       height: 20,
                     ),
                     Text(
-                      'Hi, Admin!',
+                      'Hi, Administration!',
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
