@@ -2,24 +2,26 @@
 
 import 'package:flutter/material.dart';
 
-class SearchField extends StatefulWidget {
-  SearchField(
+class MySearchField extends StatefulWidget {
+  MySearchField(
       {super.key,
       required this.myController,
       required this.hintText,
       required this.icon,
-      required this.bgColor, required this.onchanged});
+      required this.bgColor, required this.onchanged, this.onCancelled
+      });
   final TextEditingController myController;
   final String hintText;
   final IconData icon;
   final Color bgColor;
   final Function(String) onchanged;
+  final void Function()? onCancelled;
 
   @override
-  State<SearchField> createState() => _SearchFieldState();
+  State<MySearchField> createState() => _MySearchFieldState();
 }
 
-class _SearchFieldState extends State<SearchField> {
+class _MySearchFieldState extends State<MySearchField> {
   bool isTyping = false;
 
   @override
@@ -49,6 +51,7 @@ class _SearchFieldState extends State<SearchField> {
             suffixIcon: isTyping
                 ? IconButton(
                     onPressed: () {
+                      widget.onCancelled != null ? widget.onCancelled!() : () {};
                       widget.myController.clear();
                       FocusScope.of(context).unfocus();
                       setState(() {

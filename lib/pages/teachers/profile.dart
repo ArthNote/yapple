@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/teacherModel.dart';
+import 'package:yapple/pages/admin/createStudentExcel.dart';
 import 'package:yapple/pages/global/editProfilePage.dart';
-import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/widgets/MenuItem.dart';
 
@@ -141,11 +141,6 @@ class _BodyState extends State<Body> {
                           icon: Icons.person_outline),
                       SizedBox(height: 10),
                       MenuItem(
-                          title: "Settings",
-                          onTap: () {},
-                          icon: Icons.settings_outlined),
-                      SizedBox(height: 10),
-                      MenuItem(
                           title: "Change Password",
                           onTap: () => {
                                 Navigator.push(context,
@@ -156,6 +151,17 @@ class _BodyState extends State<Body> {
                                 }))
                               },
                           icon: Icons.lock_outline),
+                      SizedBox(height: 10),
+                      MenuItem(
+                          title: "Coming soon",
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CreateStudentsExcel()));
+                          },
+                          icon: Icons.watch_later_outlined),
                       SizedBox(height: 10),
                       Container(
                         padding: EdgeInsets.fromLTRB(17, 24, 13, 0),

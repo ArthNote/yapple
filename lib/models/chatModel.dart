@@ -65,7 +65,7 @@ class chatModel {
     }
     return chatModel(
       id: document.id ?? '',
-      name: data['name'] ?? '',
+      name: data['name'] ??'',
       lastMessage: data['lastMessage'] ?? '',
       timeSent: data['timeSent'] != null
           ? (data['timeSent'] as Timestamp).toDate()

@@ -479,7 +479,7 @@ class _BodyCircleState extends State<BodyCircle> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Column(
         children: [
-          SearchField(
+          MySearchField(
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,

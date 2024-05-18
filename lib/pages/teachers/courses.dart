@@ -179,7 +179,7 @@ class _BodyState extends State<Body> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SearchField(
+          child: MySearchField(
             myController: searchController,
             hintText: "Search",
             icon: Icons.search,

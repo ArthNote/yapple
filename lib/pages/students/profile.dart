@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/studentModel.dart';
-import 'package:yapple/models/userModel.dart';
 import 'package:yapple/pages/global/editProfilePage.dart';
-import 'package:yapple/pages/global/login.dart';
+
 import 'package:yapple/pages/global/resetPassword.dart';
+import 'package:yapple/utils/pdf_api.dart';
+
 import 'package:yapple/widgets/MenuItem.dart';
 
 class StudentProfile extends StatelessWidget {
@@ -142,11 +143,6 @@ class _BodyState extends State<Body> {
                           icon: Icons.person_outline),
                       SizedBox(height: 10),
                       MenuItem(
-                          title: "Settings",
-                          onTap: () {},
-                          icon: Icons.settings_outlined),
-                      SizedBox(height: 10),
-                      MenuItem(
                           title: "Change Password",
                           onTap: () => {
                                 Navigator.push(context,
@@ -157,6 +153,21 @@ class _BodyState extends State<Body> {
                                 }))
                               },
                           icon: Icons.lock_outline),
+                      SizedBox(height: 10),
+                      MenuItem(
+                          title: "Download Student Card",
+                          onTap: () async {
+                            final pdfFile = await PdfAPI.generate(
+                              user.profilePicUrl,
+                              user.name,
+                              "st" + user.id.substring(0, 6),
+                              user.email,
+                              user.major,
+                            );
+
+                            PdfAPI.openFile(pdfFile);
+                          },
+                          icon: Icons.card_membership),
                       SizedBox(height: 10),
                       Container(
                         padding: EdgeInsets.fromLTRB(17, 24, 13, 0),
