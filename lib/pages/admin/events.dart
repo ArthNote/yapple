@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
+import 'package:yapple/pages/admin/createEvent.dart';
 
 class AdminEventsPage extends StatelessWidget {
   const AdminEventsPage({super.key});
@@ -11,7 +12,7 @@ class AdminEventsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-         actions: [
+        actions: [
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () => AuthService().logout(context),
@@ -22,6 +23,12 @@ class AdminEventsPage extends StatelessWidget {
         title: Text('Events'),
       ),
       body: Body(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateEvent()));
+          },
+          child: Icon(Icons.add)),
     );
   }
 }

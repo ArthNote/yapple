@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,8 @@ class BarChartWidget extends StatefulWidget {
 
 class _BarChartWidgetState extends State<BarChartWidget> {
   late Future<List<BarChartGroupData>> _dataFuture;
-  Map<String, int> majorCounts = {};  // Add a member variable to hold major counts
+  Map<String, int> majorCounts =
+      {}; // Add a member variable to hold major counts
 
   @override
   void initState() {
@@ -22,7 +25,8 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   Future<List<BarChartGroupData>> fetchChartData() async {
     List<BarChartGroupData> barGroups = [];
     try {
-      var snapshot = await FirebaseFirestore.instance.collection('students').get();
+      var snapshot =
+          await FirebaseFirestore.instance.collection('students').get();
 
       for (var doc in snapshot.docs) {
         String major = doc['major'];
@@ -73,7 +77,8 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   }
 
   Widget _buildChart(List<BarChartGroupData> data) {
-    List<String> majors = majorCounts.keys.toList();  // Extract major names for labels
+    List<String> majors =
+        majorCounts.keys.toList(); // Extract major names for labels
     return SizedBox(
       height: 400,
       child: BarChart(
@@ -91,13 +96,14 @@ class _BarChartWidgetState extends State<BarChartWidget> {
               sideTitles: SideTitles(
                 showTitles: true,
                 getTitlesWidget: (double value, TitleMeta meta) {
-                  const style = TextStyle(
-                    color: Colors.black,
+                  var style = TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   );
                   if (value.toInt() < 0 || value.toInt() >= majors.length) {
-                    return SizedBox.shrink();  // Return an empty widget if the index is out of bounds
+                    return SizedBox
+                        .shrink(); // Return an empty widget if the index is out of bounds
                   }
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
