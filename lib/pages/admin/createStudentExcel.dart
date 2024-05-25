@@ -10,7 +10,6 @@ import 'package:yapple/firebase/ClassService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/classModel.dart';
 import 'package:yapple/models/studentModel.dart';
-import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/GroupChatStudentItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -370,6 +369,26 @@ class _BodyState extends State<FromExcel> {
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
+          students.isEmpty
+              ? Text(
+                  'Upload a .CSV file with the following format:',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 15,
+                  ),
+                )
+              : SizedBox(),
+          students.isEmpty ? SizedBox(height: 10) : SizedBox(),
+          students.isEmpty
+              ? Text(
+                  'full name, email, password, major',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 15,
+                  ),
+                )
+              : SizedBox(),
+          students.isEmpty ? SizedBox(height: 20) : SizedBox(),
           MyButton(
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).appBarTheme.backgroundColor!,

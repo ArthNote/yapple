@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:yapple/pages/admin/createStudentExcel.dart';
 import '../../models/barchart.dart';
 import 'package:d_chart/d_chart.dart';
 
@@ -17,7 +18,8 @@ class AdminDashboardPage extends StatefulWidget {
   State<AdminDashboardPage> createState() => _AdminDashboardPageState();
 }
 
-class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTickerProviderStateMixin {
+class _AdminDashboardPageState extends State<AdminDashboardPage>
+    with SingleTickerProviderStateMixin {
   late AnimationController controller;
   final myAnnouncements = [
     'assets/ann_marketing.png',
@@ -56,7 +58,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,14 +82,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
                             height: 50,
                             child: Image.asset(
                               'assets/yapple.png',
-                              color: Theme.of(context).appBarTheme.backgroundColor,
+                              color:
+                                  Theme.of(context).appBarTheme.backgroundColor,
                             ),
                           ),
-                          Icon(
-                            Icons.notifications,
-                            size: 30,
-                            color: Theme.of(context).appBarTheme.backgroundColor,
-                          )
+                          IconButton(
+                            icon: Icon(Icons.logout),
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
+                            iconSize: 30,
+                            onPressed: () => AuthService().logout(context),
+                          ),
                         ]),
                     SizedBox(
                       height: 20,
@@ -124,7 +128,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
               ),
               items: myAnnouncements.map((item) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 1.0), // Adjust the horizontal padding for spacing
+                  padding: const EdgeInsets.symmetric(
+                      horizontal:
+                          1.0), // Adjust the horizontal padding for spacing
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image.asset(
@@ -142,18 +148,23 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
               alignment: Alignment.center,
               children: [
                 SizedBox(
-                  height: 400, // Set a specific height for the RadialAnimatedMenu
+                  height:
+                      400, // Set a specific height for the RadialAnimatedMenu
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       AnimatedPositioned(
                         duration: const Duration(milliseconds: 400),
-                        top: controller.status == AnimationStatus.dismissed ? 80 : 200, // Adjust this value to animate the text
+                        top: controller.status == AnimationStatus.dismissed
+                            ? 80
+                            : 200, // Adjust this value to animate the text
                         child: Visibility(
-                          visible: controller.status == AnimationStatus.dismissed,
+                          visible:
+                              controller.status == AnimationStatus.dismissed,
                           child: Text(
                             "Menu",
-                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -164,8 +175,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
                     ],
                   ),
                 ),
-
-
               ],
             ),
             Padding(
@@ -179,7 +188,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
               padding: const EdgeInsets.all(16.0),
               child: StreamBuilder(
                 stream: streamChart,
-                builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                builder: (context,
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (snapshot.hasData) {
                     return AspectRatio(
                       aspectRatio: 16 / 9,
@@ -199,11 +210,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> with SingleTick
     );
   }
 
-  List<OrdinalGroup> _buildOrdinalGroupList(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+  List<OrdinalGroup> _buildOrdinalGroupList(
+      AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
     List<OrdinalData> ordinalList = snapshot.data!.docs.map((e) {
       return OrdinalData(
-        domain: e.data()['major'] ?? '', // Change 'date' to the field name in your Firebase document
-        measure: e.data()['year'] ?? 0, // Change 'income' to the field name in your Firebase document
+        domain: e.data()['major'] ??
+            '', // Change 'date' to the field name in your Firebase document
+        measure: e.data()['year'] ??
+            0, // Change 'income' to the field name in your Firebase document
       );
     }).toList();
 
@@ -227,8 +241,8 @@ class RadialAnimatedMenu extends StatelessWidget {
 
   RadialAnimatedMenu({super.key, required this.controller})
       : scale = Tween<double>(begin: 2, end: 0.0).animate(
-    CurvedAnimation(parent: controller, curve: Curves.linear),
-  ),
+          CurvedAnimation(parent: controller, curve: Curves.linear),
+        ),
         translate = Tween<double>(begin: 0.0, end: 120.0).animate(
           CurvedAnimation(parent: controller, curve: Curves.slowMiddle),
         ),
@@ -249,11 +263,18 @@ class RadialAnimatedMenu extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              itemsButton(-45, color: Color(0xfff83f3f), icon: Icons.face),
-              itemsButton(30, color: Color(0xfff83f3f), icon: Icons.class_),
-              itemsButton(100, color: Color(0xfff83f3f), icon: Icons.family_restroom),
-              itemsButton(-115, color: Color(0xfff83f3f), icon: Icons.school),
-              itemsButton(-185, color: Color(0xfff83f3f), icon: Icons.badge),
+              GestureDetector(
+                  child: itemsButton(-45, context,
+                      color: Color(0xfff83f3f), icon: Icons.face),
+                  onTap: () {}),
+              itemsButton(30, context,
+                  color: Color(0xfff83f3f), icon: Icons.class_),
+              itemsButton(100, context,
+                  color: Color(0xfff83f3f), icon: Icons.family_restroom),
+              itemsButton(-115, context,
+                  color: Color(0xfff83f3f), icon: Icons.school),
+              itemsButton(-185, context,
+                  color: Color(0xfff83f3f), icon: Icons.badge),
               Transform.scale(
                 scale: scale.value - 1.3,
                 child: FloatingActionButton(
@@ -267,7 +288,8 @@ class RadialAnimatedMenu extends StatelessWidget {
                 child: FloatingActionButton(
                   onPressed: open,
                   backgroundColor: Color(0xfffed3d3),
-                  child: const Icon(Icons.add, size: 40, color: Color(0xfff83f3f)),
+                  child:
+                      const Icon(Icons.add, size: 40, color: Color(0xfff83f3f)),
                 ),
               ),
             ],
@@ -277,7 +299,8 @@ class RadialAnimatedMenu extends StatelessWidget {
     );
   }
 
-  Widget itemsButton(double angle, {required Color color, required IconData icon}) {
+  Widget itemsButton(double angle, BuildContext context,
+      {required Color color, required IconData icon}) {
     final double rad = radians(angle);
     return Transform(
       transform: Matrix4.identity()
@@ -288,7 +311,11 @@ class RadialAnimatedMenu extends StatelessWidget {
       child: Transform.scale(
         scale: itemScale.value,
         child: FloatingActionButton(
-          onPressed: close,
+          onPressed: () {
+            print('clicked');
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateStudentsExcel()));
+          },
           backgroundColor: color,
           child: Icon(icon),
         ),

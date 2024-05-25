@@ -10,13 +10,15 @@ class ModuleCardMD extends StatefulWidget {
       required this.moduleName,
       required this.color,
       required this.icon,
-      required this.onPressed});
+      required this.onPressed,
+      this.deleteIcon});
   bool isStarred;
   final Color color;
   final String moduleCategory;
   final String moduleName;
   final IconData icon;
   final void Function() onPressed;
+  final IconData? deleteIcon;
 
   @override
   State<ModuleCardMD> createState() => _ModuleCardMDState();
@@ -36,6 +38,7 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
@@ -49,7 +52,8 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
                 GestureDetector(
                   onTap: widget.onPressed,
                   child: Icon(
-                    widget.isStarred ? Icons.star : Icons.star_outline,
+                    widget.deleteIcon ??
+                        (widget.isStarred ? Icons.star : Icons.star_outline),
                     color: Colors.yellow.shade700,
                     size: 30,
                     shadows: [

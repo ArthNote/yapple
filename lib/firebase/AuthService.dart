@@ -14,7 +14,7 @@ class AuthService {
     try {
       UserCredential credential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      
+
       return {'user': credential.user!.uid, 'success': true};
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
@@ -74,7 +74,7 @@ class AuthService {
       final collection = db.collection(name);
 
       await collection.doc(newId).set(oldDocument.data()!);
-
+      await collection.doc(newId).update({'id': newId});
       await temporaryCollection.doc(oldId).delete();
       return true;
     } on FirebaseAuthException catch (e) {
@@ -93,7 +93,8 @@ class AuthService {
       await auth.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Password reset email sent. Please check your email.", textAlign: TextAlign.center),
+          content: Text("Password reset email sent. Please check your email.",
+              textAlign: TextAlign.center),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );

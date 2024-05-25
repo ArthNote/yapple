@@ -104,9 +104,9 @@ class _BodyState extends State<Body> {
             .updateFeedbackSender(widget.uid, profilePicUrl, context, name);
         if (widget.role == 'students') {
           await QuizzService()
-              .updateStudentInfo(widget.uid, profilePicUrl, context, name);
+              .updateStudentInfo(widget.uid, context, name);
           await AssignmentService()
-              .updateStudentInfo(widget.uid, profilePicUrl, context, name);
+              .updateStudentInfo(widget.uid, context, name);
         }
         if (widget.role == 'teachers') {
           await ModuleService()

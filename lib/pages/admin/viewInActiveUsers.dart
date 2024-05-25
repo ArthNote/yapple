@@ -1,24 +1,19 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/parentModel.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/teacherModel.dart';
-import 'package:yapple/pages/admin/addParent.dart';
-import 'package:yapple/pages/admin/addTeacher.dart';
-import 'package:yapple/pages/admin/createStudentExcel.dart';
 import 'package:yapple/pages/admin/editParent.dart';
 import 'package:yapple/pages/admin/editStudent.dart';
 import 'package:yapple/pages/admin/editTeacher.dart';
-import 'package:yapple/pages/admin/viewInActiveUsers.dart';
 import 'package:yapple/widgets/ProfileDialog.dart';
 import 'package:yapple/widgets/SearchField.dart';
 import 'package:yapple/widgets/StudentItem.dart';
 
-class AdminUsersPage extends StatelessWidget {
-  const AdminUsersPage({super.key});
+class ViewInActiveUsers extends StatelessWidget {
+  const ViewInActiveUsers({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,72 +22,9 @@ class AdminUsersPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-            actions: [
-              PopupMenuButton(
-                color: Theme.of(context).appBarTheme.backgroundColor,
-                surfaceTintColor: Theme.of(context).appBarTheme.backgroundColor,
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text("View inActive Users"),
-                      leading: Icon(Icons.group),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ViewInActiveUsers()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text("Add Student"),
-                      leading: Icon(Icons.face),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateStudentsExcel()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text("Add Teacher"),
-                      leading: Icon(Icons.badge),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddTeacher()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text("Add Parent"),
-                      leading: Icon(Icons.family_restroom),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddParent()));
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: ListTile(
-                      title: Text("Logout"),
-                      leading: Icon(Icons.logout),
-                      onTap: () => AuthService().logout(context),
-                    ),
-                  ),
-                ],
-              )
-            ],
-            automaticallyImplyLeading: false,
+            automaticallyImplyLeading: true,
             backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-            title: Text('Users'),
+            title: Text('InActive Users'),
             centerTitle: true,
             bottom: TabBar(
               indicatorSize: TabBarIndicatorSize.label,
@@ -147,7 +79,7 @@ class _StudentsSideState extends State<StudentsSide> {
 
   Future<List<studentModel>> runFilter(String enteredKeyword) async {
     this.searchTerm = enteredKeyword;
-    final students = await userService.getAllActiveStudents();
+    final students = await userService.getInActiveStudents();
     List<studentModel> results = [];
     if (enteredKeyword.isEmpty) {
       return results = students;
@@ -232,7 +164,7 @@ class _StudentsSideState extends State<StudentsSide> {
                                                       builder: (context) =>
                                                           EditStudent(
                                                             student: student,
-                                                            col: 'students',
+                                                            col: 'temporary',
                                                           )));
                                             },
                                           ),
@@ -319,7 +251,7 @@ class _TeachersSideState extends State<TeachersSide> {
 
   Future<List<teacherModel>> runFilter(String enteredKeyword) async {
     this.searchTerm = enteredKeyword;
-    final teachers = await userService.getAllActiveTeachers();
+    final teachers = await userService.getInActiveTeachers();
     List<teacherModel> results = [];
     if (enteredKeyword.isEmpty) {
       return results = teachers;
@@ -399,7 +331,7 @@ class _TeachersSideState extends State<TeachersSide> {
                                                       builder: (context) =>
                                                           EditTeacher(
                                                             teacher: teacher,
-                                                            col: 'teachers',
+                                                            col: 'temporary',
                                                           )));
                                             },
                                           ),
@@ -435,7 +367,7 @@ class _TeachersSideState extends State<TeachersSide> {
                                                       onPressed: () async {
                                                         await userService
                                                             .deleteUser(
-                                                                'teachers',
+                                                                'temporary',
                                                                 teacher.id);
                                                         Navigator.pop(context);
                                                       },
@@ -486,7 +418,7 @@ class _ParentsSideState extends State<ParentsSide> {
 
   Future<List<parentModel>> runFilter(String enteredKeyword) async {
     this.searchTerm = enteredKeyword;
-    final parents = await userService.getAllActiveParents();
+    final parents = await userService.getInActiveParents();
     List<parentModel> results = [];
     if (enteredKeyword.isEmpty) {
       return results = parents;
@@ -548,82 +480,80 @@ class _ParentsSideState extends State<ParentsSide> {
                                     );
                                   },
                                   child: StudentItem(
-                                      name: parent.name,
-                                      email: parent.email,
-                                      profilePicUrl: parent.profilePicUrl,
-                                      showArrow: false,
-                                      btn: PopupMenuButton(
-                                        color: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor,
-                                        surfaceTintColor: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor,
-                                        itemBuilder: (context) => [
-                                          PopupMenuItem(
-                                            child: ListTile(
-                                              title: Text("Edit Record"),
-                                              leading: Icon(Icons.edit),
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditParent(
-                                                              parent: parent,
-                                                              col: 'parents',
-                                                            )));
-                                              },
-                                            ),
+                                    name: parent.name,
+                                    email: parent.email,
+                                    profilePicUrl: parent.profilePicUrl,
+                                    showArrow: false,
+                                    btn: PopupMenuButton(
+                                      color: Theme.of(context)
+                                          .appBarTheme
+                                          .backgroundColor,
+                                      surfaceTintColor: Theme.of(context)
+                                          .appBarTheme
+                                          .backgroundColor,
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          child: ListTile(
+                                            title: Text("Edit Record"),
+                                            leading: Icon(Icons.edit),
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditParent(
+                                                            parent: parent,
+                                                            col: 'temporary',
+                                                          )));
+                                            },
                                           ),
-                                          PopupMenuItem(
-                                            child: ListTile(
-                                              title: Text("Delete Record"),
-                                              leading: Icon(Icons.delete),
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .appBarTheme
-                                                            .backgroundColor,
-                                                    surfaceTintColor:
-                                                        Theme.of(context)
-                                                            .appBarTheme
-                                                            .backgroundColor,
-                                                    title:
-                                                        Text("Delete Record"),
-                                                    content: Text(
-                                                        "Are you sure you want to delete this record?"),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text("Cancel"),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          await userService
-                                                              .deleteUser(
-                                                                  'parents',
-                                                                  parent.id);
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text("Delete"),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
+                                        ),
+                                        PopupMenuItem(
+                                          child: ListTile(
+                                            title: Text("Delete Record"),
+                                            leading: Icon(Icons.delete),
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .appBarTheme
+                                                          .backgroundColor,
+                                                  surfaceTintColor:
+                                                      Theme.of(context)
+                                                          .appBarTheme
+                                                          .backgroundColor,
+                                                  title: Text("Delete Record"),
+                                                  content: Text(
+                                                      "Are you sure you want to delete this record?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Cancel"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await userService
+                                                            .deleteUser(
+                                                                'temporary',
+                                                                parent.id);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text("Delete"),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
                                           ),
-                                        ],
-                                      )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ))
                             .toList(),
                       ),

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_iconpicker/extensions/string_extensions.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/pages/admin/addParent.dart';
 import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/pages/navigation/adminNav.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
@@ -197,7 +198,21 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) => AdminNavbar(),
               ),
             );
-          } else {
+          } else{
+            bool parentExists = await UserService().userExists(
+                emailController.text,
+                passwordController.text,
+                'parents',
+                context);
+            if (parentExists) {
+              await UserSecureStorage.setType('Parent');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddParent(),
+                ),
+              );
+            } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -208,6 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
+          }
           }
         }
       }
@@ -255,7 +271,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentNavbar(),
+                builder: (context) => AddParent(),
               ),
             );
           } else {
@@ -333,16 +349,31 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "No user found with the provided email and password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+            bool parentExists = await UserService().userExists(
+                emailController.text,
+                passwordController.text,
+                'parents',
+                context);
+            if (parentExists) {
+              await UserSecureStorage.setType('Parent');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddParent(),
                 ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "No user found with the provided email and password",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            }
           }
         }
       }
@@ -386,7 +417,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentNavbar(),
+                builder: (context) => AddParent(),
               ),
             );
           } else {

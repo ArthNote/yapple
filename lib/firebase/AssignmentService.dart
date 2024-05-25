@@ -115,7 +115,7 @@ class AssignmentService {
   }
 
   Future<void> updateStudentInfo(
-      String uid, String newPic, BuildContext context, String name) async {
+      String uid, BuildContext context, String name) async {
     try {
       final documents = await db.collection("classes").get();
       for (var Class in documents.docs) {

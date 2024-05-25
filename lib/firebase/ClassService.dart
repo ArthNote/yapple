@@ -15,4 +15,26 @@ class ClassService {
       return [];
     }
   }
+
+  //delete class
+  Future<void> deleteClass(String id) async {
+    try {
+      await db.collection('classes').doc(id).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  //add class
+  Future<bool> addClass(classModel newClass) async {
+    try {
+      final doc = await db.collection('classes').doc();
+      newClass.id = doc.id;
+      await doc.set(newClass.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }
