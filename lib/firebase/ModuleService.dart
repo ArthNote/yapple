@@ -26,6 +26,22 @@ class ModuleService {
     }
   }
 
+  //delete module
+  Future<bool> deleteModule(String classID, String moduleID) async {
+    try {
+      final document = await FirebaseFirestore.instance
+          .collection("classes")
+          .doc(classID)
+          .collection('modules')
+          .doc(moduleID);
+      await document.delete();
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<List<materialModel>> getModuleMaterials(
       String classID, String moduleID) async {
     try {
@@ -141,6 +157,34 @@ class ModuleService {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.toString()),
       ));
+      return false;
+    }
+  }
+
+  Future<bool> addModule(moduleModel module) async {
+    try {
+      final docS =
+          db.collection('classes').doc(module.classID).collection('modules').doc();
+      module.id = docS.id;
+      await docS.set(module.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> editModule(moduleModel module) async {
+    try {
+      final docS = db
+          .collection('classes')
+          .doc(module.classID)
+          .collection('modules')
+          .doc(module.id);
+      await docS.update(module.toJson());
+      return true;
+    } catch (e) {
+      print(e);
       return false;
     }
   }
@@ -285,6 +329,62 @@ class ModuleService {
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+
+  Future<void> updateTeacher(teacherModel teacher, BuildContext context) async {
+    try {
+      List<moduleModel> modules = [];
+      List<classModel> classes = [];
+      final documents = await db.collection("classes").get();
+      for (var Class in documents.docs) {
+        var modulesDocs = await db
+            .collection("classes")
+            .doc(Class.id)
+            .collection('modules')
+            .where('teacherID', isEqualTo: teacher.id)
+            .get();
+        for (var module in modulesDocs.docs) {
+          modules.add(moduleModel.fromSnapshot(module));
+        }
+      }
+
+      for (var module in modules) {
+        var moduleDoc = await db
+            .collection("classes")
+            .doc(module.classID)
+            .collection('modules')
+            .doc(module.id)
+            .update({"teacher": teacher.toJson()});
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+   Future<int> getModulesCount() async {
+    try {
+      int count = 0;
+      final snapshot = await db.collection('classes').get();
+      for (var doc in snapshot.docs) {
+        final modules = await db
+            .collection('classes')
+            .doc(doc.id)
+            .collection('modules')
+            .get();
+        if (modules.docs.isNotEmpty) {
+          for (var doc in modules.docs) {
+            count += 1;
+          }
+        } else {
+          continue;
+        }
+      }
+      return count;
+    } catch (e) {
+      print(e);
+      return 0;
     }
   }
 }

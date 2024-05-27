@@ -71,10 +71,12 @@ class Body extends StatelessWidget {
   void sendFeedback(BuildContext context) async {
     if (titleController.text.isNotEmpty && contentController.text.isNotEmpty) {
       feedbackModel feedback = feedbackModel(
-          id: "",
-          title: titleController.text,
-          content: contentController.text,
-          sender: user);
+        id: "",
+        title: titleController.text,
+        content: contentController.text,
+        sender: user,
+        createdAt: DateTime.now(),
+      );
       bool isSent = await FeedbackService().sendFeedback(feedback, context);
       if (isSent) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

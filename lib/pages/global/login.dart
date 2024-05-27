@@ -3,12 +3,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_iconpicker/extensions/string_extensions.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:yapple/firebase/UserService.dart';
+import 'package:yapple/pages/admin/addParent.dart';
 import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/pages/navigation/adminNav.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
 import 'package:yapple/pages/navigation/teacherNav.dart';
+import 'package:yapple/pages/parents/dashboard.dart';
 import 'package:yapple/utils/UserSecureStorage.dart';
 import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -105,11 +108,18 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) => AdminNavbar(),
               ),
             );
+          } else if (secureType == "Parent") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ParentDashboard(),
+              ),
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  "No user found with the provided email and password",
+                  "No user found",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -197,16 +207,31 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "No user found with the provided email and password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+            bool parentExists = await UserService().userExists(
+                emailController.text,
+                passwordController.text,
+                'parents',
+                context);
+            if (parentExists) {
+              await UserSecureStorage.setType('Parent');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ParentDashboard(),
                 ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "No user found with the provided email and password",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            }
           }
         }
       }
@@ -254,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentNavbar(),
+                builder: (context) => ParentDashboard(),
               ),
             );
           } else {
@@ -332,16 +357,31 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "No user found with the provided email and password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+            bool parentExists = await UserService().userExists(
+                emailController.text,
+                passwordController.text,
+                'parents',
+                context);
+            if (parentExists) {
+              await UserSecureStorage.setType('Parent');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ParentDashboard(),
                 ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "No user found with the provided email and password",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            }
           }
         }
       }
@@ -385,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => StudentNavbar(),
+                builder: (context) => ParentDashboard(),
               ),
             );
           } else {
@@ -596,49 +636,53 @@ class _LoginPageState extends State<LoginPage> {
                           )
                         : SizedBox(),
                     isSupported
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: 60,
-                            child: OutlinedButton(
-                              onPressed: () => authenticate(),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.fingerprint,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 30,
+                        ? secureEmail.isNotEmpty
+                            ? SizedBox(
+                                width: double.infinity,
+                                height: 60,
+                                child: OutlinedButton(
+                                  onPressed: () => authenticate(),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.fingerprint,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        size: 30,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        "Log in with fingerprint",
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "Log in with fingerprint",
-                                    style: TextStyle(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16,
+                                  style: ButtonStyle(
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                      BorderSide(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                     ),
                                   ),
-                                ],
-                              ),
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
                                 ),
-                                side: MaterialStateProperty.all(
-                                  BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                              ),
-                            ),
-                          )
+                              )
+                            : SizedBox()
                         : SizedBox(),
                     SizedBox(
                       height: 30,

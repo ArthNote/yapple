@@ -3,7 +3,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:yapple/pages/global/login.dart';
 import 'package:yapple/pages/global/starterScreen.dart';
+import 'package:yapple/utils/UserSecureStorage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +19,8 @@ void main() async {
         storageBucket: "gs://yapple-1bc28.appspot.com"),
   );
 
+
+
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
@@ -27,14 +32,42 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String secureEmail = '';
+  String securePassword = '';
+  String secureType = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getCredentials();
+  }
+
+  void getCredentials() async {
+    final email = await UserSecureStorage.getEmail();
+    final password = await UserSecureStorage.getPassword();
+    final type = await UserSecureStorage.getType();
+    if (email != null && password != null) {
+      setState(() {
+        secureEmail = email;
+        securePassword = password;
+        secureType = type!;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'YAPPLE',
+      title: 'yapple',
       themeMode: ThemeMode.system,
       darkTheme: ThemeData(
         brightness: Brightness.dark,
@@ -67,7 +100,7 @@ class MyApp extends StatelessWidget {
           tertiary: Color.fromRGBO(21, 21, 21, 1),
         ),
       ),
-      home: StarterScreen(),
+      home: secureEmail.isNotEmpty ? LoginPage() : StarterScreen(),
     );
   }
 }

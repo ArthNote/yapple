@@ -10,7 +10,6 @@ import 'package:yapple/firebase/ClassService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/classModel.dart';
 import 'package:yapple/models/studentModel.dart';
-import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/GroupChatStudentItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -113,6 +112,8 @@ class _ManuallyState extends State<Manually> {
           passwordController.clear();
           searchController.clear();
           selectedMajor = "";
+          isSelected = true;
+          selectedClass = null;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -149,20 +150,6 @@ class _ManuallyState extends State<Manually> {
               isPass: false,
               hintText: 'Enter student name',
               keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: emailController,
-              isPass: false,
-              hintText: 'Enter student email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: passwordController,
-              isPass: true,
-              hintText: 'Enter student password',
-              keyboardType: TextInputType.visiblePassword,
             ),
             SizedBox(height: 20),
             FutureBuilder<List<classModel>>(
@@ -248,6 +235,20 @@ class _ManuallyState extends State<Manually> {
                   }
                 }),
             SizedBox(height: 20),
+            MyTextField(
+              myController: emailController,
+              isPass: false,
+              hintText: 'Enter student email',
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: 20),
+            MyTextField(
+              myController: passwordController,
+              isPass: true,
+              hintText: 'Enter student password',
+              keyboardType: TextInputType.visiblePassword,
+            ),
+            SizedBox(height: 20),
             MyButton(
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
@@ -293,12 +294,12 @@ class _BodyState extends State<FromExcel> {
     for (var i = 1; i < fields.length; i++) {
       var student = studentModel(
         id: '',
-        name: fields[i][1].toString(),
-        email: fields[i][2].toString(),
-        password: fields[i][3].toString(),
+        name: fields[i][0].toString(),
+        email: fields[i][1].toString(),
+        password: fields[i][2].toString(),
         profilePicUrl: 'null',
         role: 'Student',
-        major: fields[i][4].toString().isEmpty ? '' : fields[i][4].toString(),
+        major: fields[i][3].toString().isEmpty ? '' : fields[i][3].toString(),
         classID: '',
       );
       setState(() {
@@ -370,6 +371,26 @@ class _BodyState extends State<FromExcel> {
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
+          students.isEmpty
+              ? Text(
+                  'Upload a .CSV file with the following format:',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 15,
+                  ),
+                )
+              : SizedBox(),
+          students.isEmpty ? SizedBox(height: 10) : SizedBox(),
+          students.isEmpty
+              ? Text(
+                  'full name, email, password, major',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    fontSize: 15,
+                  ),
+                )
+              : SizedBox(),
+          students.isEmpty ? SizedBox(height: 20) : SizedBox(),
           MyButton(
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).appBarTheme.backgroundColor!,

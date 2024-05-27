@@ -66,9 +66,8 @@ class ChatService {
       return '';
     }
   }
-
   Future<void> updateChatProfile(
-      String uid, String newPic, BuildContext context, String name) async {
+      String uid, String newPic, String name) async {
     try {
       List<chatModel> chats = [];
       final documents = await db
@@ -115,9 +114,59 @@ class ChatService {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
+      print(e.toString());
+    }
+  }
+
+
+  Future<void> updateChatProfileInfo(
+      String uid, String email, String name) async {
+    try {
+      List<chatModel> chats = [];
+      final documents = await db
+          .collection("chats")
+          .where('membersId', arrayContains: uid)
+          .get();
+      for (var element in documents.docs) {
+        chats.add(chatModel.fromSnapshot(element));
+      }
+      for (chatModel chat in chats) {
+        List<chatParticipantModel> oldMembers = chat.members;
+        String chatID = chat.id;
+        var oldMe = oldMembers.singleWhere((element) => element.id == uid);
+        var newMe = chatParticipantModel(
+          id: oldMe.id,
+          name: name,
+          email: email,
+          profilePicUrl: oldMe.profilePicUrl,
+          role: oldMe.role,
+        );
+        oldMembers.remove(oldMe);
+        oldMembers.add(newMe);
+        var docChat = db.collection("chats").doc(chatID);
+        await docChat
+            .update({"members": oldMembers.map((e) => e.toJson()).toList()});
+        List<chatMessageModel> messages = [];
+        final docMSGS = await db
+            .collection("chats")
+            .doc(chatID)
+            .collection('messages')
+            .where('senderID', isEqualTo: uid)
+            .get();
+        for (var element in docMSGS.docs) {
+          messages.add(chatMessageModel.fromSnapshot(element));
+        }
+        for (chatMessageModel message in messages) {
+          String messageID = message.id;
+          var docMSG = db
+              .collection("chats")
+              .doc(chatID)
+              .collection('messages')
+              .doc(messageID);
+          await docMSG.update({"sender": newMe.toJson()});
+        }
+      }
+    } catch (e) {
       print(e.toString());
     }
   }

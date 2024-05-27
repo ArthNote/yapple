@@ -2,32 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class eventModel {
   String id;
-  String title;
-  String note;
-  String startTime;
-  String endTime;
-  String type;
+  String imageUrl;
   DateTime date;
 
   eventModel({
     required this.id,
-    required this.title,
-    required this.note,
-    required this.startTime,
-    required this.endTime,
-    required this.type,
+    required this.imageUrl,
     required this.date,
   });
 
   factory eventModel.fromJson(Map<String, dynamic> json) {
     return eventModel(
       id: json['id'] ?? '',
-      title: json['title'] ?? '',
-      note: json['note'] ?? '',
-      startTime: json['startTime'],
-      endTime: json['endTime'],
-      type: json['type'],
-      date: (json['date'] as Timestamp).toDate(),
+      imageUrl: json['image'] ?? '',
+      date: (json['uploadedDate'] as Timestamp).toDate(),
     );
   }
 
@@ -36,12 +24,8 @@ class eventModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
-      'note': note,
-      'startTime': startTime,
-      'endTime': endTime,
-      'type': type,
-      'date': Timestamp.fromDate(date),
+      'image': imageUrl,
+      'uploadedDate': Timestamp.fromDate(date),
     };
   }
 
@@ -50,12 +34,8 @@ class eventModel {
     final data = document.data()!;
     return eventModel(
       id: document.id,
-      title: data['title'] ?? '',
-      note: data['note'] ?? '',
-      startTime: data['startTime'],
-      endTime: data['endTime'],
-      type: data['type'],
-      date: (data['date'] as Timestamp).toDate(),
+      imageUrl: data['image'] ?? '',
+      date: (data['uploadedDate'] as Timestamp).toDate(),
     );
     //return something
   }

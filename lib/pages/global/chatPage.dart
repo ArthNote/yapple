@@ -307,8 +307,9 @@ class _BodyState extends State<Body> {
                           return ChatMessage(
                             message: message.message,
                             byMe: message.sender.id == uid,
-                            time_sent:
-                                DateFormat.jm().format(message.timeSent!),
+                            time_sent: message.timeSent != null
+                                ? DateFormat.jm().format(message.timeSent!)
+                                : 'Time not available',
                             isRead: message.isRead,
                           );
                         }),

@@ -154,13 +154,7 @@ class _BodyState extends State<Body> {
                       SizedBox(height: 10),
                       MenuItem(
                           title: "Coming soon",
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CreateStudentsExcel()));
-                          },
+                          onTap: () {},
                           icon: Icons.watch_later_outlined),
                       SizedBox(height: 10),
                       Container(

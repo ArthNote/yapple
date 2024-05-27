@@ -14,7 +14,7 @@ class AuthService {
     try {
       UserCredential credential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      
+
       return {'user': credential.user!.uid, 'success': true};
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
@@ -65,6 +65,7 @@ class AuthService {
     }
   }
 
+
   Future<bool> changeDocumentId(String oldId, String newId, String name) async {
     try {
       final temporaryCollection = db.collection('temporary');
@@ -74,7 +75,35 @@ class AuthService {
       final collection = db.collection(name);
 
       await collection.doc(newId).set(oldDocument.data()!);
+      await collection.doc(newId).update({'id': newId});
+      if (name == 'parents') {
+        final children =
+            await temporaryCollection.doc(oldId).collection('payments').get();
+        for (var child in children.docs) {
+          await collection
+              .doc(newId)
+              .collection('payments')
+              .doc(child.id)
+              .set(child.data());
+        }
+      }
+      await temporaryCollection.doc(oldId).delete();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      return false;
+    }
+  }
 
+  Future<bool> changeParentDocumentId(String oldId, String newId) async {
+    try {
+      final temporaryCollection = db.collection('parents');
+
+      final oldDocument = await temporaryCollection.doc(oldId).get();
+
+      final collection = db.collection('parents');
+
+      await collection.doc(newId).set(oldDocument.data()!);
+      await collection.doc(newId).update({'id': newId});
       await temporaryCollection.doc(oldId).delete();
       return true;
     } on FirebaseAuthException catch (e) {
@@ -93,7 +122,8 @@ class AuthService {
       await auth.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Password reset email sent. Please check your email.", textAlign: TextAlign.center),
+          content: Text("Password reset email sent. Please check your email.",
+              textAlign: TextAlign.center),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );

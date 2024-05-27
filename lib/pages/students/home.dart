@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last, use_build_context_synchronously
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,12 @@ import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/starredModel.dart';
-import 'package:yapple/pages/global/calendar.dart';
+import 'package:yapple/pages/students/calendar.dart';
 import 'package:yapple/pages/global/feedbackPage.dart';
 import 'package:yapple/pages/students/courseDetails.dart';
 import 'package:yapple/pages/global/tasks.dart';
 import 'package:yapple/pages/students/gradesPage.dart';
+import 'package:yapple/widgets/Carousel.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class StudentHomePage extends StatelessWidget {
@@ -37,7 +39,6 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-
   ModuleService moduleService = ModuleService();
   final currentUser = FirebaseAuth.instance.currentUser;
   String classID = '';
@@ -51,33 +52,6 @@ class _BodyState extends State<Body> {
       starredModulesIds = Set<String>.from(stares.map((star) => star.id));
     });
   }
-    List items = [
-    {
-      'title': 'Calendar',
-      'icon': Icons.calendar_month_rounded,
-      'color': Color(0xffffcf2f),
-      'page': calendarPage(),
-    },
-    {
-      'title': 'Tasks',
-      'icon': Icons.task_rounded,
-      'color': Color(0xff6fe08d),
-      'page': TasksPage(),
-    },
-    {
-      'title': 'Feedback',
-      'icon': Icons.feedback_rounded,
-      'color': Color(0xff61bdfd),
-      'page': FeedbackPage(),
-    },
-    {
-      'title': 'Grades',
-      'icon': Icons.grading_rounded,
-      'color': Color(0xfffc7f7f),
-      'page': GradesPage(),
-    }
-  ];
-
 
   @override
   void initState() {
@@ -241,59 +215,47 @@ class _BodyState extends State<Body> {
             ),
           ),
         ),
-
+        SizedBox(
+          height: 25,
+        ),
+        Carousel(),
         SizedBox(
           height: 25,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: items
-                .map((item) => Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (item['page'] != null) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          item['page'] as Widget));
-                            }
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: item['color'] as Color,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                                child: Icon(
-                              item['icon'] as IconData,
-                              color:
-                                  Theme.of(context).appBarTheme.backgroundColor,
-                              size: 30,
-                            )),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(item['title'] as String,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ))
-                      ],
-                    ))
-                .toList(),
-          ),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            CircularItem(
+              page: calendarPage(
+                classID: classID,
+              ),
+              color: Color(0xffffcf2f),
+              icon: Icons.calendar_month_rounded,
+              title: 'Calendar',
+            ),
+            CircularItem(
+              page: TasksPage(),
+              color: Color(0xff6fe08d),
+              icon: Icons.task_rounded,
+              title: 'Tasks',
+            ),
+            CircularItem(
+              page: FeedbackPage(),
+              color: Color(0xff61bdfd),
+              icon: Icons.feedback_rounded,
+              title: 'Feedback',
+            ),
+            CircularItem(
+              page: GradesPage(),
+              color: Color(0xfffc7f7f),
+              icon: Icons.grading_rounded,
+              title: 'Grades',
+            ),
+          ]),
         ),
         SizedBox(
-          height: 25,
+          height: 18,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -307,7 +269,7 @@ class _BodyState extends State<Body> {
           ),
         ),
         SizedBox(
-          height: 15,
+          height: 10,
         ),
 
         //courses list
@@ -385,5 +347,57 @@ class _BodyState extends State<Body> {
             }),
       ],
     ));
+  }
+}
+
+
+class CircularItem extends StatelessWidget {
+  const CircularItem({
+    super.key,
+    required this.page,
+    required this.color,
+    required this.icon,
+    required this.title,
+  });
+  final Widget page;
+  final Color color;
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => page));
+          },
+          child: Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+                child: Icon(
+              icon,
+              color: Theme.of(context).appBarTheme.backgroundColor,
+              size: 30,
+            )),
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.tertiary,
+            ))
+      ],
+    );
   }
 }

@@ -6,7 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yapple/firebase/PaymentService.dart';
 import 'package:yapple/models/feedbackModel.dart';
+import 'package:yapple/models/parentModel.dart';
 import 'package:yapple/models/studentModel.dart';
 import 'package:yapple/models/teacherModel.dart';
 
@@ -34,7 +36,6 @@ class UserService {
       return false;
     }
   }
-  
 
   Future<String> getType(
       String email, String password, BuildContext context) async {
@@ -178,16 +179,112 @@ class UserService {
     }
   }
 
+  Future<List<studentModel>> getAllActiveStudents() async {
+    try {
+      final documents = await db.collection("students").get();
+      return documents.docs.map((e) => studentModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<studentModel>> getInActiveStudents() async {
+    try {
+      final documents = await db
+          .collection("temporary")
+          .where("role", isEqualTo: "Student")
+          .get();
+      return documents.docs.map((e) => studentModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<teacherModel>> getInActiveTeachers() async {
+    try {
+      final documents = await db
+          .collection("temporary")
+          .where("role", isEqualTo: "Teacher")
+          .get();
+      return documents.docs.map((e) => teacherModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<parentModel>> getInActiveParents() async {
+    try {
+      final documents = await db
+          .collection("temporary")
+          .where("role", isEqualTo: "Parent")
+          .get();
+      return documents.docs.map((e) => parentModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<teacherModel>> getAllActiveTeachers() async {
+    try {
+      final documents = await db.collection("teachers").get();
+      return documents.docs.map((e) => teacherModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
+  Future<List<parentModel>> getAllActiveParents() async {
+    try {
+      final documents = await db.collection("parents").get();
+      return documents.docs.map((e) => parentModel.fromSnapshot(e)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<String> getStudentClass(String id, BuildContext context) async {
     try {
       final docUser = FirebaseFirestore.instance.collection("students").doc(id);
       final snapShot = await docUser.get();
       return snapShot.get("classID");
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-      ));
+      print(e);
       return "";
+    }
+  }
+
+  Future<parentModel> getParent(String id, BuildContext context) async {
+    try {
+      final docUser = FirebaseFirestore.instance.collection("parents").doc(id);
+      final snapShot = await docUser.get();
+      return parentModel.fromSnapshot(snapShot);
+    } catch (e) {
+      print(e);
+      return parentModel(
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        profilePicUrl: "",
+        role: "",
+        student: studentModel(
+          id: "",
+          name: "",
+          email: "",
+          password: "",
+          profilePicUrl: "",
+          role: "",
+          major: "",
+          classID: "",
+        ),
+        studentId: '',
+      );
     }
   }
 
@@ -229,6 +326,50 @@ class UserService {
     }
   }
 
+  Future<bool> updateStudent(String col, studentModel student) async {
+    try {
+      final docChat = db.collection(col).doc(student.id);
+      await docChat.update(student.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateParent(String col, parentModel parent) async {
+    try {
+      final docChat = db.collection(col).doc(parent.id);
+      await docChat.update(parent.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateTeacher(String col, teacherModel teacher) async {
+    try {
+      final docChat = db.collection(col).doc(teacher.id);
+      await docChat.update(teacher.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> deleteUser(String col, String id) async {
+    try {
+      final docChat = db.collection(col).doc(id);
+      await docChat.delete();
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   // Future<String> uploadProfilePic(String uid, XFile image) async {
   //   try {
   //     final ref = storage.ref('profilePics/').child(uid);
@@ -263,6 +404,61 @@ class UserService {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> createParentRecord(parentModel parent) async {
+    try {
+      final doc = await db.collection("temporary").doc();
+      String sid = doc.id;
+      parent.id = sid;
+      await doc.set(parent.toJson());
+      return {"id": sid, "result": true};
+    } catch (e) {
+      print(e);
+      return {"id": "", "result": false};
+    }
+  }
+
+  Future<bool> createTeacherRecord(teacherModel teacher) async {
+    try {
+      final doc = await db.collection("temporary").doc();
+      String sid = doc.id;
+      teacher.id = sid;
+      await doc.set(teacher.toJson());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<void> updateParentStudent(studentModel student) async {
+    try {
+      List<parentModel> parents = [];
+      final documents = await db
+          .collection("parents")
+          .where('studentId', isEqualTo: student.id)
+          .get();
+      for (var element in documents.docs) {
+        parents.add(parentModel.fromSnapshot(element));
+      }
+      for (parentModel parent in parents) {
+        var newStudent = studentModel(
+          id: student.id,
+          name: student.name,
+          email: student.email,
+          password: student.password,
+          profilePicUrl: student.profilePicUrl,
+          role: student.role,
+          major: student.major,
+          classID: student.classID,
+        );
+        var docFeedback = db.collection("parents").doc(parent.id);
+        await docFeedback.update({"student": newStudent.toJson()});
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

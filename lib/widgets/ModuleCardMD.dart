@@ -10,13 +10,17 @@ class ModuleCardMD extends StatefulWidget {
       required this.moduleName,
       required this.color,
       required this.icon,
-      required this.onPressed});
+      required this.onPressed,
+      this.deleteIcon,
+      this.btn});
   bool isStarred;
   final Color color;
   final String moduleCategory;
   final String moduleName;
   final IconData icon;
   final void Function() onPressed;
+  final IconData? deleteIcon;
+  final Widget? btn;
 
   @override
   State<ModuleCardMD> createState() => _ModuleCardMDState();
@@ -36,6 +40,7 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
@@ -46,22 +51,23 @@ class _ModuleCardMDState extends State<ModuleCardMD> {
                   color: Theme.of(context).appBarTheme.backgroundColor,
                   size: 35,
                 ),
-                GestureDetector(
-                  onTap: widget.onPressed,
-                  child: Icon(
-                    widget.isStarred ? Icons.star : Icons.star_outline,
-                    color: Colors.yellow.shade700,
-                    size: 30,
-                    shadows: [
-                      Shadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .tertiary
-                              .withOpacity(0.5),
-                          blurRadius: 10)
-                    ],
-                  ),
-                ),
+                widget.btn ??
+                    GestureDetector(
+                      onTap: widget.onPressed,
+                      child: Icon(
+                        widget.isStarred ? Icons.star : Icons.star_outline,
+                        color: Colors.yellow.shade700,
+                        size: 30,
+                        shadows: [
+                          Shadow(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .tertiary
+                                  .withOpacity(0.5),
+                              blurRadius: 10)
+                        ],
+                      ),
+                    ),
               ],
             ),
             Column(
