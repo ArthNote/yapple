@@ -67,7 +67,7 @@ class ChatService {
     }
   }
   Future<void> updateChatProfile(
-      String uid, String newPic, BuildContext context, String name) async {
+      String uid, String newPic, String name) async {
     try {
       List<chatModel> chats = [];
       final documents = await db
@@ -114,16 +114,13 @@ class ChatService {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
       print(e.toString());
     }
   }
 
 
   Future<void> updateChatProfileInfo(
-      String uid, String email, BuildContext context, String name) async {
+      String uid, String email, String name) async {
     try {
       List<chatModel> chats = [];
       final documents = await db
@@ -170,9 +167,6 @@ class ChatService {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
       print(e.toString());
     }
   }

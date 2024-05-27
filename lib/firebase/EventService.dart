@@ -14,6 +14,21 @@ class EventService {
     }
   }
 
+  //get latest 5 added events by date
+  Future<List<eventModel>> getLatestEvents() async {
+    try {
+      final documents = await db
+          .collection('events')
+          .orderBy('uploadedDate', descending: true)
+          .limit(5)
+          .get();
+      return documents.docs.map((doc) => eventModel.fromSnapshot(doc)).toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
+  }
+
   Future<void> deleteEvent(String id) async {
     try {
       await db.collection('events').doc(id).delete();

@@ -65,6 +65,7 @@ class AuthService {
     }
   }
 
+
   Future<bool> changeDocumentId(String oldId, String newId, String name) async {
     try {
       final temporaryCollection = db.collection('temporary');
@@ -72,6 +73,34 @@ class AuthService {
       final oldDocument = await temporaryCollection.doc(oldId).get();
 
       final collection = db.collection(name);
+
+      await collection.doc(newId).set(oldDocument.data()!);
+      await collection.doc(newId).update({'id': newId});
+      if (name == 'parents') {
+        final children =
+            await temporaryCollection.doc(oldId).collection('payments').get();
+        for (var child in children.docs) {
+          await collection
+              .doc(newId)
+              .collection('payments')
+              .doc(child.id)
+              .set(child.data());
+        }
+      }
+      await temporaryCollection.doc(oldId).delete();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> changeParentDocumentId(String oldId, String newId) async {
+    try {
+      final temporaryCollection = db.collection('parents');
+
+      final oldDocument = await temporaryCollection.doc(oldId).get();
+
+      final collection = db.collection('parents');
 
       await collection.doc(newId).set(oldDocument.data()!);
       await collection.doc(newId).update({'id': newId});

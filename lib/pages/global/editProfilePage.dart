@@ -1,11 +1,17 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:yapple/firebase/AssignmentService.dart';
 import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/FeedbackService.dart';
 import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/firebase/QuizzService.dart';
+import 'package:yapple/firebase/SessionService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -74,52 +80,100 @@ class _BodyState extends State<Body> {
     picUrlController.text = widget.profilePicUrl;
   }
 
-  // void uploadProfilePic() async {
-  //   final image = await ImagePicker()
-  //       .pickImage(source: ImageSource.gallery, imageQuality: 70);
-  //   if (image != null) {
-  //     String imageUrl = await UserService().uploadProfilePic(widget.uid, image);
-  //     setState(() {
-  //       newImageUrl = imageUrl;
-  //     });
-  //   }
-  // }
+  File image = File('');
+
+  void uploadImage() async {
+    await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    ).then((value) async {
+      if (value != null) {
+        File croppedImage = await cropImage(File(value.files.single.path!));
+        setState(() {
+          image = croppedImage;
+        });
+      }
+    });
+  }
+
+  Future<File> cropImage(File image) async {
+    CroppedFile? croppedImage =
+        await ImageCropper().cropImage(sourcePath: image.path);
+    if (croppedImage == null) {
+      return File('');
+    }
+    return File(croppedImage.path);
+  }
 
   void updateProfile() async {
-    if (nameController.text.isEmpty || picUrlController.text.isEmpty) {
+    if (nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('All fiels must be filled', textAlign: TextAlign.center),
         backgroundColor: Theme.of(context).colorScheme.error,
       ));
     } else {
       String name = nameController.text;
-      String profilePicUrl = picUrlController.text;
-      bool isUpdated = await UserService()
-          .updateUserInfo(widget.uid, widget.role, name, profilePicUrl);
-
-      if (isUpdated) {
-        await ChatService()
-            .updateChatProfile(widget.uid, profilePicUrl, context, name);
-        await FeedbackService()
-            .updateFeedbackSender(widget.uid, profilePicUrl, context, name);
-        if (widget.role == 'students') {
-          await QuizzService()
-              .updateStudentInfo(widget.uid, context, name);
-          await AssignmentService()
-              .updateStudentInfo(widget.uid, context, name);
+      String profilePicUrl = widget.profilePicUrl;
+      if (image.path.isEmpty) {
+        bool isUpdated = await UserService()
+            .updateUserInfo(widget.uid, widget.role, name, profilePicUrl);
+        if (isUpdated) {
+          await ChatService()
+              .updateChatProfile(widget.uid, profilePicUrl, name);
+          await FeedbackService()
+              .updateFeedbackSender(widget.uid, profilePicUrl, name);
+          if (widget.role == 'students') {
+            await QuizzService().updateStudentInfo(widget.uid, name);
+            await AssignmentService().updateStudentInfo(widget.uid, name);
+            await SessionService()
+                .updateStudentInfo(widget.uid, name, profilePicUrl);
+          }
+          if (widget.role == 'teachers') {
+            await ModuleService()
+                .updateTeacherInfo(widget.uid, profilePicUrl, context, name);
+          }
+          print('dasdasdasd');
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('Failed to update profile', textAlign: TextAlign.center),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ));
         }
-        if (widget.role == 'teachers') {
-          await ModuleService()
-              .updateTeacherInfo(widget.uid, profilePicUrl, context, name);
-        }
-        print('dasdasdasd');
-        Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content:
-              Text('Failed to update profile', textAlign: TextAlign.center),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ));
+        UploadTask? task;
+        final ref =
+            FirebaseStorage.instance.ref('profilePics/').child(widget.uid);
+        task = ref.putFile(image);
+        final snapshot = await task.whenComplete(() {});
+        final urlDownload = await snapshot.ref.getDownloadURL();
+        bool isUpdated = await UserService()
+            .updateUserInfo(widget.uid, widget.role, name, urlDownload);
+        if (isUpdated) {
+          await ChatService().updateChatProfile(widget.uid, urlDownload, name);
+          await FeedbackService()
+              .updateFeedbackSender(widget.uid, urlDownload, name);
+          if (widget.role == 'students') {
+            await QuizzService().updateStudentInfo(widget.uid, name);
+            await AssignmentService().updateStudentInfo(widget.uid, name);
+            await SessionService()
+                .updateStudentInfo(widget.uid, name, urlDownload);
+          }
+          if (widget.role == 'teachers') {
+            await ModuleService()
+                .updateTeacherInfo(widget.uid, urlDownload, context, name);
+          }
+          print('dasdasdasd');
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('Failed to update profile', textAlign: TextAlign.center),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ));
+        }
       }
     }
   }
@@ -146,17 +200,22 @@ class _BodyState extends State<Body> {
                                 child: Icon(Icons.person),
                                 backgroundColor: Colors.blue,
                               )
-                            : CircleAvatar(
-                                radius: 100,
-                                backgroundImage:
-                                    NetworkImage(widget.profilePicUrl),
-                              ),
+                            : image.path.isEmpty
+                                ? CircleAvatar(
+                                    radius: 100,
+                                    backgroundImage:
+                                        NetworkImage(widget.profilePicUrl),
+                                  )
+                                : CircleAvatar(
+                                    radius: 100,
+                                    child: Image.file(image, fit: BoxFit.fill),
+                                  ),
                       )),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () => uploadImage(),
                       child: Container(
                         height: 35,
                         width: 35,
@@ -182,13 +241,6 @@ class _BodyState extends State<Body> {
             isPass: false,
             hintText: 'Name',
             keyboardType: TextInputType.text,
-          ),
-          SizedBox(height: 20),
-          MyTextField(
-            myController: picUrlController,
-            isPass: false,
-            hintText: 'Profile Picture URL',
-            keyboardType: TextInputType.url,
           ),
           SizedBox(height: 20),
           MyButton(

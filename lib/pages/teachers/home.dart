@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:yapple/firebase/ModuleService.dart';
 import 'package:yapple/models/moduleModel.dart';
 import 'package:yapple/models/starredModel.dart';
-import 'package:yapple/models/staticData.dart';
-import 'package:yapple/pages/global/calendar.dart';
 import 'package:yapple/pages/global/feedbackPage.dart';
 import 'package:yapple/pages/global/tasks.dart';
-import 'package:yapple/pages/students/courseDetails.dart';
+import 'package:yapple/pages/students/home.dart';
+import 'package:yapple/pages/teachers/calendar.dart';
 import 'package:yapple/pages/teachers/courseDetails.dart';
+import 'package:yapple/widgets/Carousel.dart';
 import 'package:yapple/widgets/ModuleCardSM.dart';
 
 class TeacherHomePage extends StatelessWidget {
@@ -35,27 +35,6 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  List items = [
-    {
-      'title': 'Calendar',
-      'icon': Icons.calendar_month_rounded,
-      'color': Color(0xffffcf2f),
-      'page': calendarPage(),
-    },
-    {
-      'title': 'Tasks',
-      'icon': Icons.task_rounded,
-      'color': Color(0xff6fe08d),
-      'page': TasksPage(),
-    },
-    {
-      'title': 'Feedback',
-      'icon': Icons.feedback_rounded,
-      'color': Color(0xff61bdfd),
-      'page': FeedbackPage(),
-    },
-  ];
-
   ModuleService moduleService = ModuleService();
   final currentUser = FirebaseAuth.instance.currentUser;
   String uid = "";
@@ -227,55 +206,38 @@ class _BodyState extends State<Body> {
         SizedBox(
           height: 25,
         ),
+        Carousel(),
+        SizedBox(
+          height: 20,
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: items
-                .map((item) => Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (item['page'] != null) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          item['page'] as Widget));
-                            }
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: item['color'] as Color,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                                child: Icon(
-                              item['icon'] as IconData,
-                              color:
-                                  Theme.of(context).appBarTheme.backgroundColor,
-                              size: 30,
-                            )),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(item['title'] as String,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ))
-                      ],
-                    ))
-                .toList(),
-          ),
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            CircularItem(
+              page: calendarPage(
+                uid: uid,
+              ),
+              color: Color(0xffffcf2f),
+              icon: Icons.calendar_month_rounded,
+              title: 'Calendar',
+            ),
+            CircularItem(
+              page: TasksPage(),
+              color: Color(0xff6fe08d),
+              icon: Icons.task_rounded,
+              title: 'Tasks',
+            ),
+            CircularItem(
+              page: FeedbackPage(),
+              color: Color(0xff61bdfd),
+              icon: Icons.feedback_rounded,
+              title: 'Feedback',
+            ),
+          ]),
         ),
         SizedBox(
-          height: 25,
+          height: 18,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -289,7 +251,7 @@ class _BodyState extends State<Body> {
           ),
         ),
         SizedBox(
-          height: 15,
+          height: 10,
         ),
         FutureBuilder<List<moduleModel>>(
             future: moduleService.getTeacherModules(uid),

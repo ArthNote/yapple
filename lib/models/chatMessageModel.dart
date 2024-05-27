@@ -38,7 +38,7 @@ class chatMessageModel {
       'message': message,
       'sender': sender.toJson(),
       'chatID': chatID,
-      'timeSent': timeSent != null ? Timestamp.fromDate(timeSent!) : null,
+      'timeSent': FieldValue.serverTimestamp(),
       'isRead': isRead,
       'senderID': senderID,
     };

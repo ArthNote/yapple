@@ -11,6 +11,7 @@ import 'package:yapple/pages/global/resetPassword.dart';
 import 'package:yapple/pages/navigation/adminNav.dart';
 import 'package:yapple/pages/navigation/studentNav.dart';
 import 'package:yapple/pages/navigation/teacherNav.dart';
+import 'package:yapple/pages/parents/dashboard.dart';
 import 'package:yapple/utils/UserSecureStorage.dart';
 import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -107,6 +108,13 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) => AdminNavbar(),
               ),
             );
+          } else if (secureType == "Parent") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ParentDashboard(),
+              ),
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -198,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                 builder: (context) => AdminNavbar(),
               ),
             );
-          } else{
+          } else {
             bool parentExists = await UserService().userExists(
                 emailController.text,
                 passwordController.text,
@@ -209,21 +217,21 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddParent(),
+                  builder: (context) => ParentDashboard(),
                 ),
               );
             } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "No user found with the provided email and password",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16),
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    "No user found with the provided email and password",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.error,
                 ),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
-          }
+              );
+            }
           }
         }
       }
@@ -271,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddParent(),
+                builder: (context) => ParentDashboard(),
               ),
             );
           } else {
@@ -359,7 +367,7 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => AddParent(),
+                  builder: (context) => ParentDashboard(),
                 ),
               );
             } else {
@@ -417,7 +425,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddParent(),
+                builder: (context) => ParentDashboard(),
               ),
             );
           } else {

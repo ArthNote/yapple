@@ -22,7 +22,7 @@ class FeedbackService {
   }
 
   Future<void> updateFeedbackSender(
-      String uid, String newPic, BuildContext context, String name) async {
+      String uid, String newPic, String name) async {
     try {
       List<feedbackModel> feedbacks = [];
       final documents = await db.collection("feedback").get();
@@ -47,16 +47,12 @@ class FeedbackService {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
       print(e.toString());
     }
   }
 
-
   Future<void> updateFeedbackSenderInfo(
-      String uid, BuildContext context, String name, String email) async {
+      String uid, String name, String email) async {
     try {
       List<feedbackModel> feedbacks = [];
       final documents = await db.collection("feedback").get();
@@ -81,11 +77,21 @@ class FeedbackService {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
+      print(e);
       print(e.toString());
     }
   }
 
+  //get all feedback
+  Future<List<feedbackModel>> getAllFeedback() async {
+    try {
+      final documents = await db.collection("feedback").get();
+      return documents.docs
+          .map((doc) => feedbackModel.fromSnapshot(doc))
+          .toList();
+    } catch (e) {
+      print(e.toString());
+      return [];
+    }
+  }
 }

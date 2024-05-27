@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:yapple/models/eventModel.dart';
 import 'package:yapple/widgets/MyButton.dart';
 
 class CreateEvent extends StatefulWidget {
@@ -42,12 +43,12 @@ class _CreateEventState extends State<CreateEvent> {
         final evDoc =
             await FirebaseFirestore.instance.collection('events').doc();
         String evID = evDoc.id;
-        var event = {
-          'id': evID,
-          'uploadedDate': Timestamp.fromDate(DateTime.now()),
-          'image': '',
-        };
-        await evDoc.set(event);
+        var event = eventModel(
+          id: evID,
+          imageUrl: '',
+          date: DateTime.now(),
+        );
+        await evDoc.set(event.toJson());
         UploadTask? task;
         final ref = FirebaseStorage.instance.ref('events/').child(evID);
         task = ref.putFile(image);

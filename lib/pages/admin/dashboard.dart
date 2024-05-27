@@ -1,13 +1,22 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fab_circular_menu_plus/fab_circular_menu_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:yapple/firebase/AuthService.dart';
 import 'package:vector_math/vector_math.dart' show radians;
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:yapple/firebase/ClassService.dart';
+import 'package:yapple/firebase/ModuleService.dart';
+import 'package:yapple/firebase/PaymentService.dart';
+import 'package:yapple/pages/admin/addClass.dart';
+import 'package:yapple/pages/admin/addParent.dart';
+import 'package:yapple/pages/admin/addTeacher.dart';
 import 'package:yapple/pages/admin/createStudentExcel.dart';
+import 'package:yapple/pages/admin/viewFeedback.dart';
+import 'package:yapple/widgets/Carousel.dart';
 import '../../models/barchart.dart';
 import 'package:d_chart/d_chart.dart';
 
@@ -21,14 +30,12 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage>
     with SingleTickerProviderStateMixin {
   late AnimationController controller;
-  final myAnnouncements = [
-    'assets/ann_marketing.png',
-    'assets/ann_marketing.png',
-    'assets/ann_marketing.png',
-  ];
-  int myCurrentIndex = 0;
 
   late Stream<QuerySnapshot<Map<String, dynamic>>> streamChart;
+  int unpaid = 0;
+  int paid = 0;
+  int modules = 0;
+  int classes = 0;
 
   @override
   void initState() {
@@ -45,6 +52,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     controller.addListener(() {
       setState(() {});
     });
+    getStats();
   }
 
   @override
@@ -53,10 +61,120 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     super.dispose();
   }
 
+  void getStats() async {
+    int p = await PaymentService().getPaidPaymentsCount();
+    int u = await PaymentService().getUnpaidPaymentsCount();
+    int m = await ModuleService().getModulesCount();
+    int c = await ClassService().getClassesCount();
+    setState(() {
+      paid = p;
+      unpaid = u;
+      modules = m;
+      classes = c;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
+      floatingActionButton: FabCircularMenuPlus(
+        fabMargin: const EdgeInsets.all(0),
+        ringDiameter: 500,
+        alignment: Alignment.bottomRight,
+        fabColor: Theme.of(context).colorScheme.primary,
+        ringColor: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+        fabOpenIcon: Icon(Icons.menu,
+            color: Theme.of(context).appBarTheme.backgroundColor),
+        fabCloseIcon: Icon(Icons.close,
+            color: Theme.of(context).appBarTheme.backgroundColor),
+        children: [
+          IconButton(
+            icon: Icon(null),
+            onPressed: () {},
+          ),
+          IconButton(
+            tooltip: 'Create Students',
+            icon: Icon(
+              Icons.face,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateStudentsExcel(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Create Classes',
+            icon: Icon(
+              Icons.class_,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddClass(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Create Parents',
+            icon: Icon(
+              Icons.family_restroom,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddParent(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Create Teachers',
+            icon: Icon(
+              Icons.badge,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddTeacher(),
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'View Feedbacks',
+            icon: Icon(
+              Icons.help_center,
+              color: Colors.white,
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewFeedback(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -98,7 +216,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                       height: 20,
                     ),
                     Text(
-                      'Hi, Administration!',
+                      'Hi, Administrator!',
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w600,
@@ -114,68 +232,199 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             SizedBox(
               height: 25,
             ),
-            CarouselSlider(
-              options: CarouselOptions(
-                autoPlay: true,
-                height: 200,
-                viewportFraction: 0.9, // Increase the fraction to zoom in
-                enlargeCenterPage: true, // This will enlarge the center item
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    myCurrentIndex = index;
-                  });
-                },
-              ),
-              items: myAnnouncements.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal:
-                          1.0), // Adjust the horizontal padding for spacing
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.asset(
-                      item,
-                      fit: BoxFit.fill, // Ensures the image covers the space
+            Wrap(
+              direction: Axis.horizontal,
+              runSpacing: 20,
+              spacing: 20,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.width / 3.5,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-            SizedBox(
-              height: 20, // Space between carousel and menu
-            ),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  height:
-                      400, // Set a specific height for the RadialAnimatedMenu
-                  child: Stack(
-                    alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      AnimatedPositioned(
-                        duration: const Duration(milliseconds: 400),
-                        top: controller.status == AnimationStatus.dismissed
-                            ? 80
-                            : 200, // Adjust this value to animate the text
-                        child: Visibility(
-                          visible:
-                              controller.status == AnimationStatus.dismissed,
-                          child: Text(
-                            "Menu",
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
+                      Text(
+                        paid.toString(),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                      Center(
-                        child: RadialAnimatedMenu(controller: controller),
+                      SizedBox(height: 5),
+                      Text(
+                        'Completed',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.6),
+                        ),
+                      ),
+                      Text(
+                        'Payments',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.width / 3.5,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        unpaid.toString(),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Non-Completed Payments',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.width / 3.5,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        modules.toString(),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Modules',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.width / 3.5,
+                  width: MediaQuery.of(context).size.width / 2.3,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).appBarTheme.backgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        classes.toString(),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Classes',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1,
+                          wordSpacing: 2,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .tertiary
+                              .withOpacity(0.6),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
+            ),
+            SizedBox(
+              height: 10,
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -184,26 +433,26 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 child: BarChartWidget(),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: StreamBuilder(
-                stream: streamChart,
-                builder: (context,
-                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                        snapshot) {
-                  if (snapshot.hasData) {
-                    return AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: DChartBarO(
-                        groupList: _buildOrdinalGroupList(snapshot),
-                      ),
-                    );
-                  } else {
-                    return CircularProgressIndicator(); // Or any other loading indicator
-                  }
-                },
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: StreamBuilder(
+            //     stream: streamChart,
+            //     builder: (context,
+            //         AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+            //             snapshot) {
+            //       if (snapshot.hasData) {
+            //         return AspectRatio(
+            //           aspectRatio: 16 / 9,
+            //           child: DChartBarO(
+            //             groupList: _buildOrdinalGroupList(snapshot),
+            //           ),
+            //         );
+            //       } else {
+            //         return CircularProgressIndicator(); // Or any other loading indicator
+            //       }
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -263,10 +512,8 @@ class RadialAnimatedMenu extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              GestureDetector(
-                  child: itemsButton(-45, context,
-                      color: Color(0xfff83f3f), icon: Icons.face),
-                  onTap: () {}),
+              itemsButton(-45, context,
+                  color: Color(0xfff83f3f), icon: Icons.face),
               itemsButton(30, context,
                   color: Color(0xfff83f3f), icon: Icons.class_),
               itemsButton(100, context,
@@ -311,11 +558,7 @@ class RadialAnimatedMenu extends StatelessWidget {
       child: Transform.scale(
         scale: itemScale.value,
         child: FloatingActionButton(
-          onPressed: () {
-            print('clicked');
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateStudentsExcel()));
-          },
+          onPressed: () {},
           backgroundColor: color,
           child: Icon(icon),
         ),

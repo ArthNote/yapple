@@ -5,7 +5,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class BarChartWidget extends StatefulWidget {
-  const BarChartWidget({Key? key}) : super(key: key);
+  BarChartWidget({Key? key}) : super(key: key);
 
   @override
   _BarChartWidgetState createState() => _BarChartWidgetState();
@@ -29,13 +29,34 @@ class _BarChartWidgetState extends State<BarChartWidget> {
           await FirebaseFirestore.instance.collection('students').get();
 
       for (var doc in snapshot.docs) {
-        String major = doc['major'];
-        if (majorCounts.containsKey(major)) {
-          majorCounts[major] = majorCounts[major]! + 1;
+        if (majorCounts.containsKey('students')) {
+          majorCounts['students'] = majorCounts['students']! + 1;
         } else {
-          majorCounts[major] = 9;
+          majorCounts['students'] = 1;
         }
       }
+
+      var teachers =
+          await FirebaseFirestore.instance.collection('teachers').get();
+      for (var element in teachers.docs) {
+        if (majorCounts.containsKey('teachers')) {
+          majorCounts['teachers'] = majorCounts['teachers']! + 1;
+        } else {
+          majorCounts['teachers'] = 1;
+        }
+      }
+
+      var parents =
+          await FirebaseFirestore.instance.collection('parents').get();
+      for (var element in parents.docs) {
+        if (majorCounts.containsKey('parents')) {
+          majorCounts['parents'] = majorCounts['parents']! + 1;
+        } else {
+          majorCounts['parents'] = 1;
+        }
+      }
+
+      const colors = [];
 
       int index = 0;
       majorCounts.forEach((major, count) {
@@ -45,7 +66,14 @@ class _BarChartWidgetState extends State<BarChartWidget> {
             barRods: [
               BarChartRodData(
                 toY: count.toDouble(),
-                color: Colors.blue,
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                width: 60,
+                borderRadius: BorderRadius.circular(4),
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  toY: count.toDouble() + 10,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
             ],
           ),
@@ -79,17 +107,29 @@ class _BarChartWidgetState extends State<BarChartWidget> {
   Widget _buildChart(List<BarChartGroupData> data) {
     List<String> majors =
         majorCounts.keys.toList(); // Extract major names for labels
-    return SizedBox(
-      height: 400,
+    return Container(
+      height: 300,
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).appBarTheme.backgroundColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.secondary,
+          width: 2,
+        ),
+      ),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
           barGroups: data,
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: true),
+              sideTitles: SideTitles(showTitles: true, reservedSize: 30),
             ),
             rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: AxisTitles(
               sideTitles: SideTitles(showTitles: false),
             ),
             bottomTitles: AxisTitles(
@@ -107,6 +147,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
                   }
                   return SideTitleWidget(
                     axisSide: meta.axisSide,
+                    space: 4,
                     child: Text(majors[value.toInt()], style: style),
                   );
                 },
@@ -114,7 +155,7 @@ class _BarChartWidgetState extends State<BarChartWidget> {
             ),
           ),
           borderData: FlBorderData(
-            show: true,
+            show: false,
           ),
           gridData: FlGridData(
             show: false,

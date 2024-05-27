@@ -37,4 +37,23 @@ class ClassService {
       return false;
     }
   }
+
+  Future<int> getClassesCount() async {
+    try {
+      int count = 0;
+      final snapshot = await db.collection('classes').get();
+        if (snapshot.docs.isNotEmpty) {
+          for (var doc in snapshot.docs) {
+            count += 1;
+          }
+        } else {
+          count = 0;
+        }
+    
+      return count;
+    } catch (e) {
+      print(e);
+      return 0;
+    }
+  }
 }

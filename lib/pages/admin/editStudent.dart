@@ -7,6 +7,7 @@ import 'package:yapple/firebase/ChatService.dart';
 import 'package:yapple/firebase/ClassService.dart';
 import 'package:yapple/firebase/FeedbackService.dart';
 import 'package:yapple/firebase/QuizzService.dart';
+import 'package:yapple/firebase/SessionService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/classModel.dart';
 import 'package:yapple/models/studentModel.dart';
@@ -104,25 +105,19 @@ class _BodyState extends State<Body> {
           ),
         );
         if (widget.col != 'temporary') {
-          await QuizzService()
-            .updateStudentInfo(widget.student.id, context, nameController.text);
-        await AssignmentService()
-            .updateStudentInfo(widget.student.id, context, nameController.text);
-        await FeedbackService().updateFeedbackSenderInfo(widget.student.id,
-            context, nameController.text, emailController.text);
-        await ChatService().updateChatProfileInfo(widget.student.id,
-            emailController.text, context, nameController.text);
-            await UserService().updateParentStudent(context, student);
+          await QuizzService().updateStudentInfo(
+              widget.student.id,nameController.text);
+          await AssignmentService().updateStudentInfo(
+              widget.student.id, nameController.text);
+          await FeedbackService().updateFeedbackSenderInfo(
+              widget.student.id, nameController.text, emailController.text);
+          await ChatService().updateChatProfileInfo(widget.student.id,
+              emailController.text, nameController.text);
+          await UserService().updateParentStudent(student);
+          await SessionService().updateStudent(student);
         } else {
           print('object');
         }
-        setState(() {
-          nameController.clear();
-          emailController.clear();
-          passwordController.clear();
-          searchController.clear();
-          selectedMajor = "";
-        });
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -159,20 +154,6 @@ class _BodyState extends State<Body> {
               isPass: false,
               hintText: 'Enter student name',
               keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: emailController,
-              isPass: false,
-              hintText: 'Enter student email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: passwordController,
-              isPass: true,
-              hintText: 'Enter student password',
-              keyboardType: TextInputType.visiblePassword,
             ),
             SizedBox(height: 20),
             FutureBuilder<List<classModel>>(
@@ -257,6 +238,20 @@ class _BodyState extends State<Body> {
                     return Center(child: CircularProgressIndicator());
                   }
                 }),
+            SizedBox(height: 20),
+            MyTextField(
+              myController: emailController,
+              isPass: false,
+              hintText: 'Enter student email',
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: 20),
+            MyTextField(
+              myController: passwordController,
+              isPass: true,
+              hintText: 'Enter student password',
+              keyboardType: TextInputType.visiblePassword,
+            ),
             SizedBox(height: 20),
             MyButton(
               backgroundColor: Theme.of(context).colorScheme.primary,

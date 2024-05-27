@@ -19,6 +19,8 @@ void main() async {
         storageBucket: "gs://yapple-1bc28.appspot.com"),
   );
 
+
+
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,

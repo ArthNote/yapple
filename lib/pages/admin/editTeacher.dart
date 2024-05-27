@@ -86,10 +86,10 @@ class _BodyState extends State<Body> {
           ),
         );
         if (widget.col != 'temporary') {
-          await FeedbackService().updateFeedbackSenderInfo(widget.teacher.id,
-              context, nameController.text, emailController.text);
-          await ChatService().updateChatProfileInfo(widget.teacher.id,
-              emailController.text, context, nameController.text);
+          await FeedbackService().updateFeedbackSenderInfo(
+              widget.teacher.id, nameController.text, emailController.text);
+          await ChatService().updateChatProfileInfo(
+              widget.teacher.id, emailController.text, nameController.text);
           await ModuleService().updateTeacher(teacher, context);
         } else {
           print('object');

@@ -10,6 +10,7 @@ class MyButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.isOutlined,
+    this.loading,
   });
 
   final Color backgroundColor;
@@ -17,6 +18,7 @@ class MyButton extends StatelessWidget {
   final String label;
   final Function() onPressed;
   final bool? isOutlined;
+  final Widget? loading;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +28,16 @@ class MyButton extends StatelessWidget {
             height: 60,
             child: OutlinedButton(
               onPressed: onPressed,
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                ),
-              ),
+              child: loading != null
+                  ? loading!
+                  : Text(
+                      label,
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
               style: ButtonStyle(
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
@@ -51,14 +55,16 @@ class MyButton extends StatelessWidget {
             height: 60,
             child: ElevatedButton(
               onPressed: onPressed,
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: textColor,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                ),
-              ),
+              child: loading != null
+                  ? loading!
+                  : Text(
+                      label,
+                      style: TextStyle(
+                        color: textColor,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(backgroundColor),
                 shape: MaterialStateProperty.all(

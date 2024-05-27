@@ -112,6 +112,8 @@ class _ManuallyState extends State<Manually> {
           passwordController.clear();
           searchController.clear();
           selectedMajor = "";
+          isSelected = true;
+          selectedClass = null;
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -148,20 +150,6 @@ class _ManuallyState extends State<Manually> {
               isPass: false,
               hintText: 'Enter student name',
               keyboardType: TextInputType.text,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: emailController,
-              isPass: false,
-              hintText: 'Enter student email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 20),
-            MyTextField(
-              myController: passwordController,
-              isPass: true,
-              hintText: 'Enter student password',
-              keyboardType: TextInputType.visiblePassword,
             ),
             SizedBox(height: 20),
             FutureBuilder<List<classModel>>(
@@ -247,6 +235,20 @@ class _ManuallyState extends State<Manually> {
                   }
                 }),
             SizedBox(height: 20),
+            MyTextField(
+              myController: emailController,
+              isPass: false,
+              hintText: 'Enter student email',
+              keyboardType: TextInputType.emailAddress,
+            ),
+            SizedBox(height: 20),
+            MyTextField(
+              myController: passwordController,
+              isPass: true,
+              hintText: 'Enter student password',
+              keyboardType: TextInputType.visiblePassword,
+            ),
+            SizedBox(height: 20),
             MyButton(
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).appBarTheme.backgroundColor!,
@@ -292,12 +294,12 @@ class _BodyState extends State<FromExcel> {
     for (var i = 1; i < fields.length; i++) {
       var student = studentModel(
         id: '',
-        name: fields[i][1].toString(),
-        email: fields[i][2].toString(),
-        password: fields[i][3].toString(),
+        name: fields[i][0].toString(),
+        email: fields[i][1].toString(),
+        password: fields[i][2].toString(),
         profilePicUrl: 'null',
         role: 'Student',
-        major: fields[i][4].toString().isEmpty ? '' : fields[i][4].toString(),
+        major: fields[i][3].toString().isEmpty ? '' : fields[i][3].toString(),
         classID: '',
       );
       setState(() {

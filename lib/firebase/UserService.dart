@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:yapple/firebase/PaymentService.dart';
 import 'package:yapple/models/feedbackModel.dart';
 import 'package:yapple/models/parentModel.dart';
 import 'package:yapple/models/studentModel.dart';
@@ -35,7 +36,6 @@ class UserService {
       return false;
     }
   }
-  
 
   Future<String> getType(
       String email, String password, BuildContext context) async {
@@ -181,26 +181,31 @@ class UserService {
 
   Future<List<studentModel>> getAllActiveStudents() async {
     try {
-      final documents =
-          await db.collection("students").get();
+      final documents = await db.collection("students").get();
       return documents.docs.map((e) => studentModel.fromSnapshot(e)).toList();
     } catch (e) {
       print(e);
       return [];
     }
   }
+
   Future<List<studentModel>> getInActiveStudents() async {
     try {
-      final documents = await db.collection("temporary").where("role", isEqualTo: "Student").get();
+      final documents = await db
+          .collection("temporary")
+          .where("role", isEqualTo: "Student")
+          .get();
       return documents.docs.map((e) => studentModel.fromSnapshot(e)).toList();
     } catch (e) {
       print(e);
       return [];
     }
   }
+
   Future<List<teacherModel>> getInActiveTeachers() async {
     try {
-      final documents = await db.collection("temporary")
+      final documents = await db
+          .collection("temporary")
           .where("role", isEqualTo: "Teacher")
           .get();
       return documents.docs.map((e) => teacherModel.fromSnapshot(e)).toList();
@@ -209,9 +214,11 @@ class UserService {
       return [];
     }
   }
+
   Future<List<parentModel>> getInActiveParents() async {
     try {
-      final documents = await db.collection("temporary")
+      final documents = await db
+          .collection("temporary")
           .where("role", isEqualTo: "Parent")
           .get();
       return documents.docs.map((e) => parentModel.fromSnapshot(e)).toList();
@@ -247,10 +254,37 @@ class UserService {
       final snapShot = await docUser.get();
       return snapShot.get("classID");
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(e.toString()),
-      ));
+      print(e);
       return "";
+    }
+  }
+
+  Future<parentModel> getParent(String id, BuildContext context) async {
+    try {
+      final docUser = FirebaseFirestore.instance.collection("parents").doc(id);
+      final snapShot = await docUser.get();
+      return parentModel.fromSnapshot(snapShot);
+    } catch (e) {
+      print(e);
+      return parentModel(
+        id: "",
+        name: "",
+        email: "",
+        password: "",
+        profilePicUrl: "",
+        role: "",
+        student: studentModel(
+          id: "",
+          name: "",
+          email: "",
+          password: "",
+          profilePicUrl: "",
+          role: "",
+          major: "",
+          classID: "",
+        ),
+        studentId: '',
+      );
     }
   }
 
@@ -373,16 +407,16 @@ class UserService {
     }
   }
 
-  Future<bool> createParentRecord(parentModel parent) async {
+  Future<Map<String, dynamic>> createParentRecord(parentModel parent) async {
     try {
       final doc = await db.collection("temporary").doc();
       String sid = doc.id;
       parent.id = sid;
       await doc.set(parent.toJson());
-      return true;
+      return {"id": sid, "result": true};
     } catch (e) {
       print(e);
-      return false;
+      return {"id": "", "result": false};
     }
   }
 
@@ -399,11 +433,13 @@ class UserService {
     }
   }
 
-
-  Future<void> updateParentStudent(BuildContext context, studentModel student) async {
+  Future<void> updateParentStudent(studentModel student) async {
     try {
       List<parentModel> parents = [];
-      final documents = await db.collection("parents").where('studentId', isEqualTo: student.id).get();
+      final documents = await db
+          .collection("parents")
+          .where('studentId', isEqualTo: student.id)
+          .get();
       for (var element in documents.docs) {
         parents.add(parentModel.fromSnapshot(element));
       }
@@ -422,9 +458,6 @@ class UserService {
         await docFeedback.update({"student": newStudent.toJson()});
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("issue " + e.toString()),
-      ));
       print(e.toString());
     }
   }

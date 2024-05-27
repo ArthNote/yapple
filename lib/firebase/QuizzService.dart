@@ -123,7 +123,7 @@ class QuizzService {
   }
 
   Future<void> updateStudentInfo(
-      String uid, BuildContext context, String name) async {
+      String uid, String name) async {
     try {
     
       final documents = await db.collection("classes").get();

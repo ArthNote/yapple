@@ -5,12 +5,14 @@ class feedbackModel {
   String title;
   String content;
   feedbackSenderModel sender;
+  DateTime createdAt;
 
   feedbackModel({
     required this.id,
     required this.title,
     required this.content,
     required this.sender,
+    required this.createdAt,
   });
 
   factory feedbackModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class feedbackModel {
       title: json['title'],
       content: json['content'],
       sender: feedbackSenderModel.fromJson(json['sender']),
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
     );
   }
 
@@ -27,6 +30,7 @@ class feedbackModel {
         'title': title,
         'content': content,
         'sender': sender.toJson(),
+        'createdAt': Timestamp.fromDate(createdAt),
       };
 
       factory feedbackModel.fromSnapshot(
@@ -38,6 +42,7 @@ class feedbackModel {
       title: data['title'] ?? '',
       content: data['content'] ?? '',
       sender: feedbackSenderModel.fromJson(data['sender']),
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
     //return something
   }

@@ -79,95 +79,100 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          MySearchField(
-            myController: searchController,
-            hintText: "Search",
-            icon: Icons.search,
-            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-            onchanged: (value) {
-              setState(() {
-                searchTerm = value;
-              });
-            },
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          FutureBuilder<List<classModel>>(
-              future: runFilter(searchTerm),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    List<classModel> classes =
-                        snapshot.data! as List<classModel>;
-                    return Expanded(
-                      child: ListView(
-                        children: List.generate(classes.length, (index) {
-                          var Class = classes[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return ClassModules(classID: Class.id);
-                              }));
-                            },
-                            child: ClassCard(
-                                className: Class.name,
-                                classMajor: Class.major,
-                                classYear: Class.year,
-                                onDelete: () async {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        backgroundColor: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor!,
-                                        surfaceTintColor: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor!,
-                                        title: Text('Delete Class'),
-                                        content: Text(
-                                            'Are you sure you want to delete this class?'),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text('Delete'),
-                                            onPressed: () async {
-                                              await ClassService()
-                                                  .deleteClass(Class.id);
-                                              setState(() {});
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }),
-                          );
-                        }),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            MySearchField(
+              myController: searchController,
+              hintText: "Search",
+              icon: Icons.search,
+              bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+              onchanged: (value) {
+                setState(() {
+                  searchTerm = value;
+                });
+              },
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            FutureBuilder<List<classModel>>(
+                future: runFilter(searchTerm),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      List<classModel> classes =
+                          snapshot.data! as List<classModel>;
+                      return Expanded(
+                        child: ListView(
+                          children: List.generate(classes.length, (index) {
+                            var Class = classes[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ClassModules(classID: Class.id);
+                                }));
+                              },
+                              child: ClassCard(
+                                  className: Class.name,
+                                  classMajor: Class.major,
+                                  classYear: Class.year,
+                                  onDelete: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          backgroundColor: Theme.of(context)
+                                              .appBarTheme
+                                              .backgroundColor!,
+                                          surfaceTintColor: Theme.of(context)
+                                              .appBarTheme
+                                              .backgroundColor!,
+                                          title: Text('Delete Class'),
+                                          content: Text(
+                                              'Are you sure you want to delete this class?'),
+                                          actions: [
+                                            TextButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text('Delete'),
+                                              onPressed: () async {
+                                                await ClassService()
+                                                    .deleteClass(Class.id);
+                                                setState(() {});
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }),
+                            );
+                          }),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: Text("Something went wrong"));
+                    }
                   } else {
-                    return Center(child: Text("Something went wrong"));
+                    return Center(child: CircularProgressIndicator());
                   }
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-        ],
+                }),
+          ],
+        ),
       ),
     );
   }

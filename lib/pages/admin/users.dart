@@ -167,136 +167,146 @@ class _StudentsSideState extends State<StudentsSide> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        children: [
-          MySearchField(
-            myController: searchController,
-            hintText: "Search",
-            icon: Icons.search,
-            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-            onchanged: (value) {
-              setState(() {
-                searchTerm = value;
-              });
-            },
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          FutureBuilder<List<studentModel>>(
-              future: runFilter(searchTerm),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    List<studentModel> students =
-                        snapshot.data! as List<studentModel>;
-                    return Expanded(
-                      child: ListView(
-                        children: students
-                            .map((student) => GestureDetector(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => ProfileDialog(
-                                        name: student.name,
-                                        email: student.email,
-                                        profilePicUrl: student.profilePicUrl,
-                                        role: student.major,
-                                        showButton: false,
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            MySearchField(
+              myController: searchController,
+              hintText: "Search",
+              icon: Icons.search,
+              bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+              onchanged: (value) {
+                setState(() {
+                  searchTerm = value;
+                });
+              },
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            FutureBuilder<List<studentModel>>(
+                future: runFilter(searchTerm),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      List<studentModel> students =
+                          snapshot.data! as List<studentModel>;
+                      return Expanded(
+                        child: ListView(
+                          children: students
+                              .map((student) => GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => ProfileDialog(
+                                          name: student.name,
+                                          email: student.email,
+                                          profilePicUrl: student.profilePicUrl,
+                                          role: student.major,
+                                          showButton: false,
+                                        ),
+                                      );
+                                    },
+                                    child: StudentItem(
+                                      name: student.name,
+                                      email: student.email,
+                                      profilePicUrl: student.profilePicUrl,
+                                      showArrow: false,
+                                      btn: PopupMenuButton(
+                                        color: Theme.of(context)
+                                            .appBarTheme
+                                            .backgroundColor,
+                                        surfaceTintColor: Theme.of(context)
+                                            .appBarTheme
+                                            .backgroundColor,
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                              title: Text("Edit Record"),
+                                              leading: Icon(Icons.edit),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditStudent(
+                                                              student: student,
+                                                              col: 'students',
+                                                            )));
+                                              },
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                              title: Text("Delete Record"),
+                                              leading: Icon(Icons.delete),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .appBarTheme
+                                                            .backgroundColor,
+                                                    surfaceTintColor:
+                                                        Theme.of(context)
+                                                            .appBarTheme
+                                                            .backgroundColor,
+                                                    title:
+                                                        Text("Delete Record"),
+                                                    content: Text(
+                                                        "Are you sure you want to delete this record?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Cancel"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await userService
+                                                              .deleteUser(
+                                                                  'students',
+                                                                  student.id);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Delete"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                  child: StudentItem(
-                                    name: student.name,
-                                    email: student.email,
-                                    profilePicUrl: student.profilePicUrl,
-                                    showArrow: false,
-                                    btn: PopupMenuButton(
-                                      color: Theme.of(context)
-                                          .appBarTheme
-                                          .backgroundColor,
-                                      surfaceTintColor: Theme.of(context)
-                                          .appBarTheme
-                                          .backgroundColor,
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          child: ListTile(
-                                            title: Text("Edit Record"),
-                                            leading: Icon(Icons.edit),
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditStudent(
-                                                            student: student,
-                                                            col: 'students',
-                                                          )));
-                                            },
-                                          ),
-                                        ),
-                                        PopupMenuItem(
-                                          child: ListTile(
-                                            title: Text("Delete Record"),
-                                            leading: Icon(Icons.delete),
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .appBarTheme
-                                                          .backgroundColor,
-                                                  surfaceTintColor:
-                                                      Theme.of(context)
-                                                          .appBarTheme
-                                                          .backgroundColor,
-                                                  title: Text("Delete Record"),
-                                                  content: Text(
-                                                      "Are you sure you want to delete this record?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("Cancel"),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        await userService
-                                                            .deleteUser(
-                                                                'students',
-                                                                student.id);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("Delete"),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                ))
-                            .toList(),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
+                                  ))
+                              .toList(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: Text("Something went wrong"));
+                    }
                   } else {
-                    return Center(child: Text("Something went wrong"));
+                    return Center(child: CircularProgressIndicator());
                   }
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-        ],
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -334,136 +344,146 @@ class _TeachersSideState extends State<TeachersSide> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        children: [
-          MySearchField(
-            myController: searchController,
-            hintText: "Search",
-            icon: Icons.search,
-            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-            onchanged: (value) {
-              setState(() {
-                searchTerm = value;
-              });
-            },
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          FutureBuilder<List<teacherModel>>(
-              future: runFilter(searchTerm),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    List<teacherModel> teachers =
-                        snapshot.data! as List<teacherModel>;
-                    return Expanded(
-                      child: ListView(
-                        children: teachers
-                            .map((teacher) => GestureDetector(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => ProfileDialog(
-                                        name: teacher.name,
-                                        email: teacher.email,
-                                        profilePicUrl: teacher.profilePicUrl,
-                                        role: teacher.role,
-                                        showButton: false,
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            MySearchField(
+              myController: searchController,
+              hintText: "Search",
+              icon: Icons.search,
+              bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+              onchanged: (value) {
+                setState(() {
+                  searchTerm = value;
+                });
+              },
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            FutureBuilder<List<teacherModel>>(
+                future: runFilter(searchTerm),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      List<teacherModel> teachers =
+                          snapshot.data! as List<teacherModel>;
+                      return Expanded(
+                        child: ListView(
+                          children: teachers
+                              .map((teacher) => GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => ProfileDialog(
+                                          name: teacher.name,
+                                          email: teacher.email,
+                                          profilePicUrl: teacher.profilePicUrl,
+                                          role: teacher.role,
+                                          showButton: false,
+                                        ),
+                                      );
+                                    },
+                                    child: StudentItem(
+                                      name: teacher.name,
+                                      email: teacher.email,
+                                      profilePicUrl: teacher.profilePicUrl,
+                                      showArrow: false,
+                                      btn: PopupMenuButton(
+                                        color: Theme.of(context)
+                                            .appBarTheme
+                                            .backgroundColor,
+                                        surfaceTintColor: Theme.of(context)
+                                            .appBarTheme
+                                            .backgroundColor,
+                                        itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                              title: Text("Edit Record"),
+                                              leading: Icon(Icons.edit),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            EditTeacher(
+                                                              teacher: teacher,
+                                                              col: 'teachers',
+                                                            )));
+                                              },
+                                            ),
+                                          ),
+                                          PopupMenuItem(
+                                            child: ListTile(
+                                              title: Text("Delete Record"),
+                                              leading: Icon(Icons.delete),
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .appBarTheme
+                                                            .backgroundColor,
+                                                    surfaceTintColor:
+                                                        Theme.of(context)
+                                                            .appBarTheme
+                                                            .backgroundColor,
+                                                    title:
+                                                        Text("Delete Record"),
+                                                    content: Text(
+                                                        "Are you sure you want to delete this record?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Cancel"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          await userService
+                                                              .deleteUser(
+                                                                  'teachers',
+                                                                  teacher.id);
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text("Delete"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                  child: StudentItem(
-                                    name: teacher.name,
-                                    email: teacher.email,
-                                    profilePicUrl: teacher.profilePicUrl,
-                                    showArrow: false,
-                                    btn: PopupMenuButton(
-                                      color: Theme.of(context)
-                                          .appBarTheme
-                                          .backgroundColor,
-                                      surfaceTintColor: Theme.of(context)
-                                          .appBarTheme
-                                          .backgroundColor,
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          child: ListTile(
-                                            title: Text("Edit Record"),
-                                            leading: Icon(Icons.edit),
-                                            onTap: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          EditTeacher(
-                                                            teacher: teacher,
-                                                            col: 'teachers',
-                                                          )));
-                                            },
-                                          ),
-                                        ),
-                                        PopupMenuItem(
-                                          child: ListTile(
-                                            title: Text("Delete Record"),
-                                            leading: Icon(Icons.delete),
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .appBarTheme
-                                                          .backgroundColor,
-                                                  surfaceTintColor:
-                                                      Theme.of(context)
-                                                          .appBarTheme
-                                                          .backgroundColor,
-                                                  title: Text("Delete Record"),
-                                                  content: Text(
-                                                      "Are you sure you want to delete this record?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("Cancel"),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        await userService
-                                                            .deleteUser(
-                                                                'teachers',
-                                                                teacher.id);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text("Delete"),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                ))
-                            .toList(),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
+                                  ))
+                              .toList(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: Text("Something went wrong"));
+                    }
                   } else {
-                    return Center(child: Text("Something went wrong"));
+                    return Center(child: CircularProgressIndicator());
                   }
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-        ],
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -506,138 +526,145 @@ class _ParentsSideState extends State<ParentsSide> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      child: Column(
-        children: [
-          MySearchField(
-            myController: searchController,
-            hintText: "Search",
-            icon: Icons.search,
-            bgColor: Theme.of(context).appBarTheme.backgroundColor!,
-            onchanged: (value) {
-              setState(() {
-                searchTerm = value;
-              });
-            },
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          FutureBuilder<List<parentModel>>(
-              future: runFilter(searchTerm),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasData) {
-                    List<parentModel> parents =
-                        snapshot.data! as List<parentModel>;
-                    return Expanded(
-                      child: ListView(
-                        children: parents
-                            .map((parent) => GestureDetector(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => ProfileDialog(
+    return RefreshIndicator(
+      onRefresh: () async {
+        setState(() {});
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            MySearchField(
+              myController: searchController,
+              hintText: "Search",
+              icon: Icons.search,
+              bgColor: Theme.of(context).appBarTheme.backgroundColor!,
+              onchanged: (value) {
+                setState(() {
+                  searchTerm = value;
+                });
+              },
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            FutureBuilder<List<parentModel>>(
+                future: runFilter(searchTerm),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      List<parentModel> parents =
+                          snapshot.data! as List<parentModel>;
+                      return Expanded(
+                        child: ListView(
+                          children: parents
+                              .map((parent) => GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => ProfileDialog(
+                                          name: parent.name,
+                                          email: parent.email,
+                                          profilePicUrl: parent.profilePicUrl,
+                                          role: parent.student.name,
+                                          showButton: false,
+                                        ),
+                                      );
+                                    },
+                                    child: StudentItem(
                                         name: parent.name,
                                         email: parent.email,
                                         profilePicUrl: parent.profilePicUrl,
-                                        role: parent.student.name,
-                                        showButton: false,
-                                      ),
-                                    );
-                                  },
-                                  child: StudentItem(
-                                      name: parent.name,
-                                      email: parent.email,
-                                      profilePicUrl: parent.profilePicUrl,
-                                      showArrow: false,
-                                      btn: PopupMenuButton(
-                                        color: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor,
-                                        surfaceTintColor: Theme.of(context)
-                                            .appBarTheme
-                                            .backgroundColor,
-                                        itemBuilder: (context) => [
-                                          PopupMenuItem(
-                                            child: ListTile(
-                                              title: Text("Edit Record"),
-                                              leading: Icon(Icons.edit),
-                                              onTap: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditParent(
-                                                              parent: parent,
-                                                              col: 'parents',
-                                                            )));
-                                              },
+                                        showArrow: false,
+                                        btn: PopupMenuButton(
+                                          color: Theme.of(context)
+                                              .appBarTheme
+                                              .backgroundColor,
+                                          surfaceTintColor: Theme.of(context)
+                                              .appBarTheme
+                                              .backgroundColor,
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: ListTile(
+                                                title: Text("Edit Record"),
+                                                leading: Icon(Icons.edit),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditParent(
+                                                                parent: parent,
+                                                                col: 'parents',
+                                                              )));
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                          PopupMenuItem(
-                                            child: ListTile(
-                                              title: Text("Delete Record"),
-                                              leading: Icon(Icons.delete),
-                                              onTap: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AlertDialog(
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .appBarTheme
-                                                            .backgroundColor,
-                                                    surfaceTintColor:
-                                                        Theme.of(context)
-                                                            .appBarTheme
-                                                            .backgroundColor,
-                                                    title:
-                                                        Text("Delete Record"),
-                                                    content: Text(
-                                                        "Are you sure you want to delete this record?"),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text("Cancel"),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          await userService
-                                                              .deleteUser(
-                                                                  'parents',
-                                                                  parent.id);
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: Text("Delete"),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
+                                            PopupMenuItem(
+                                              child: ListTile(
+                                                title: Text("Delete Record"),
+                                                leading: Icon(Icons.delete),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AlertDialog(
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .appBarTheme
+                                                              .backgroundColor,
+                                                      surfaceTintColor:
+                                                          Theme.of(context)
+                                                              .appBarTheme
+                                                              .backgroundColor,
+                                                      title:
+                                                          Text("Delete Record"),
+                                                      content: Text(
+                                                          "Are you sure you want to delete this record?"),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text("Cancel"),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            await userService
+                                                                .deleteUser(
+                                                                    'parents',
+                                                                    parent.id);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: Text("Delete"),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      )),
-                                ))
-                            .toList(),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text(snapshot.error.toString()));
+                                          ],
+                                        )),
+                                  ))
+                              .toList(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text(snapshot.error.toString()));
+                    } else {
+                      return Center(child: Text("Something went wrong"));
+                    }
                   } else {
-                    return Center(child: Text("Something went wrong"));
+                    return Center(child: CircularProgressIndicator());
                   }
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              }),
-        ],
+                }),
+          ],
+        ),
       ),
     );
   }

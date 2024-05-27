@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sort_child_properties_last
 
 import 'package:flutter/material.dart';
 import 'package:searchfield/searchfield.dart';
+import 'package:yapple/firebase/PaymentService.dart';
 import 'package:yapple/firebase/UserService.dart';
 import 'package:yapple/models/parentModel.dart';
+import 'package:yapple/models/paymentModel.dart';
 import 'package:yapple/models/studentModel.dart';
+import 'package:yapple/widgets/DropdownList.dart';
 import 'package:yapple/widgets/GroupChatStudentItem.dart';
 import 'package:yapple/widgets/MyButton.dart';
 import 'package:yapple/widgets/MyTextField.dart';
@@ -42,6 +45,7 @@ class _BodyState extends State<Body> {
   TextEditingController searchController = TextEditingController();
   studentModel? selectedStudent;
   bool isSelected = true;
+  String selectedPayment = 'Select Payment';
 
   void createParentRecord() async {
     if (nameController.text.isEmpty ||
@@ -69,8 +73,47 @@ class _BodyState extends State<Body> {
         student: selectedStudent!,
       );
 
-      bool isCreated = await UserService().createParentRecord(parent);
-      if (isCreated) {
+      Map<String, dynamic> isCreated =
+          await UserService().createParentRecord(parent);
+      if (isCreated['result'] as bool) {
+        if (selectedPayment == 'One time') {
+          var payment = paymentModel(
+            id: '',
+            fullAmount: '60000dh',
+            payingAmount: '60000dh',
+            dueDate: DateTime(DateTime.now().year, 5, 27),
+            paidDate: DateTime.now(),
+            isPaid: false,
+          );
+          bool isAdded = await PaymentService()
+              .addPayment(payment, isCreated['id'] as String);
+          if (isAdded) {
+            print('Payment added successfully');
+          } else {
+            print('Failed to add payment');
+          }
+        } else if (selectedPayment == 'Per Semester') {
+          var payment1 = paymentModel(
+            id: '',
+            fullAmount: '60000dh',
+            payingAmount: '30000dh',
+            dueDate: DateTime(DateTime.now().year, 1, 27),
+            paidDate: DateTime.now(),
+            isPaid: false,
+          );
+          await PaymentService()
+              .addPayment(payment1, isCreated['id'] as String);
+          var payment2 = paymentModel(
+            id: '',
+            fullAmount: '60000dh',
+            payingAmount: '30000dh',
+            dueDate: DateTime(DateTime.now().year, 5, 27),
+            paidDate: DateTime.now(),
+            isPaid: false,
+          );
+          await PaymentService()
+              .addPayment(payment2, isCreated['id'] as String);
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -216,6 +259,33 @@ class _BodyState extends State<Body> {
                     return Center(child: CircularProgressIndicator());
                   }
                 }),
+            SizedBox(height: 20),
+            DropdownList(
+              selectedItem: selectedPayment,
+              title: 'Select Payment',
+              selectedType: selectedPayment,
+              onPressed: (String value) {
+                setState(() {
+                  selectedPayment = value;
+                });
+              },
+              items: [
+                DropdownMenuItem(
+                  enabled: false,
+                  child: Text('Select Payment',
+                      style: TextStyle(color: Colors.grey)),
+                  value: 'Select Payment',
+                ),
+                DropdownMenuItem(
+                  child: Text('One time'),
+                  value: 'One time',
+                ),
+                DropdownMenuItem(
+                  child: Text('Per Semester'),
+                  value: 'Per Semester',
+                ),
+              ],
+            ),
             SizedBox(height: 20),
             MyButton(
               backgroundColor: Theme.of(context).colorScheme.primary,

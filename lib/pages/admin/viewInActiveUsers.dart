@@ -158,6 +158,7 @@ class _StudentsSideState extends State<StudentsSide> {
                                             title: Text("Edit Record"),
                                             leading: Icon(Icons.edit),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -174,6 +175,7 @@ class _StudentsSideState extends State<StudentsSide> {
                                             title: Text("Delete Record"),
                                             leading: Icon(Icons.delete),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               showDialog(
                                                 context: context,
                                                 builder: (context) =>
@@ -325,6 +327,7 @@ class _TeachersSideState extends State<TeachersSide> {
                                             title: Text("Edit Record"),
                                             leading: Icon(Icons.edit),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -341,6 +344,7 @@ class _TeachersSideState extends State<TeachersSide> {
                                             title: Text("Delete Record"),
                                             leading: Icon(Icons.delete),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               showDialog(
                                                 context: context,
                                                 builder: (context) =>
@@ -497,6 +501,7 @@ class _ParentsSideState extends State<ParentsSide> {
                                             title: Text("Edit Record"),
                                             leading: Icon(Icons.edit),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -513,6 +518,7 @@ class _ParentsSideState extends State<ParentsSide> {
                                             title: Text("Delete Record"),
                                             leading: Icon(Icons.delete),
                                             onTap: () {
+                                              Navigator.pop(context);
                                               showDialog(
                                                 context: context,
                                                 builder: (context) =>
